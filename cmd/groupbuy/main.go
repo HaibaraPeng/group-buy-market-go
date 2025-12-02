@@ -1,21 +1,30 @@
 package main
 
 import (
+	"fmt"
+	"group-buy-market-go/internal/infrastructure"
 	httpInterface "group-buy-market-go/internal/interfaces/http"
 	"log"
 	"net/http"
 )
 
 func main() {
+	// Load configuration
+	config, err := infrastructure.LoadConfig("configs/config.yaml")
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
 	// Initialize server with Wire
 	server := initializeServer()
 
 	// Register routes
 	server.RegisterRoutes()
 
-	log.Println("Server starting on :8080")
+	log.Printf("Server starting on %s:%d", config.Server.Host, config.Server.Port)
 	// Start server
-	err := http.ListenAndServe(":8080", server)
+	addr := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
+	err = http.ListenAndServe(addr, server)
 	if err != nil {
 		log.Fatal(err)
 	}
