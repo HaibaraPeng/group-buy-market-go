@@ -1,0 +1,18 @@
+server:
+  port: 8080
+  host: localhost
+
+database:
+  host: localhost
+  port: 5432
+  username: user
+  password: password
+  dbname: groupbuy
+
+redis:
+  host: localhost
+  port: 6379
+
+logging:
+  level: info
+  format: json

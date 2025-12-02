@@ -5,11 +5,11 @@ package main
 
 import (
 	"github.com/google/wire"
-	"group-buy-market-go/pkg/server"
+	httpInterface "group-buy-market-go/internal/interfaces/http"
 )
 
-func initializeServer() (*server.Server, error) {
+func initializeServer() (*httpInterface.Server, error) {
 	panic(wire.Build(
-		ServerSet,
+		httpInterface.NewServer,
 	))
 }
