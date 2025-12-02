@@ -21,3 +21,19 @@ func (s *Server) Route(pattern string, handler http.HandlerFunc) {
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)
 }
+
+// RegisterRoutes registers all HTTP routes
+func (s *Server) RegisterRoutes() {
+	s.Route("/", s.handleHome)
+	s.Route("/test", s.handleTest)
+}
+
+// handleHome handles requests to the home page
+func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Hello, Group Buy Market!"))
+}
+
+// handleTest handles requests to the test endpoint
+func (s *Server) handleTest(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Test endpoint is working!"))
+}

@@ -11,13 +11,7 @@ func main() {
 	server := initializeServer()
 
 	// Register routes
-	server.Route("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, Group Buy Market!"))
-	})
-
-	server.Route("/test", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Test endpoint is working!"))
-	})
+	server.RegisterRoutes()
 
 	log.Println("Server starting on :8080")
 	// Start server
