@@ -15,8 +15,8 @@ import (
 var ServerSet = wire.NewSet(
 	http.NewServer,
 	application.NewService,
-	infrastructure.NewInMemoryProductRepository,
+	infrastructure.NewMySQLProductRepository,
 	domain.NewProductService,
-	infrastructure.NewInMemoryGroupBuyActivityRepository,
+	infrastructure.NewMySQLGroupBuyActivityRepository,
 	domain.NewGroupBuyService,
 )

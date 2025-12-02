@@ -7,6 +7,7 @@
 package main
 
 import (
+	"database/sql"
 	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/infrastructure"
 	"group-buy-market-go/internal/interfaces/http"
@@ -14,9 +15,9 @@ import (
 
 // Injectors from wire.go:
 
-func initializeServer() (*http.Server, error) {
-	inMemoryGroupBuyActivityRepository := infrastructure.NewInMemoryGroupBuyActivityRepository()
-	groupBuyService := domain.NewGroupBuyService(inMemoryGroupBuyActivityRepository)
-	server := http.NewServer(inMemoryGroupBuyActivityRepository, groupBuyService)
+func initializeServer(db *sql.DB) (*http.Server, error) {
+	mySQLGroupBuyActivityRepository := infrastructure.NewMySQLGroupBuyActivityRepository(db)
+	groupBuyService := domain.NewGroupBuyService(mySQLGroupBuyActivityRepository)
+	server := http.NewServer(mySQLGroupBuyActivityRepository, groupBuyService)
 	return server, nil
 }
