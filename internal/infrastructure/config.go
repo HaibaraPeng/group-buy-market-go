@@ -1,10 +1,12 @@
 package infrastructure
 
 import (
+	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"os"
 
+	_ "github.com/go-sql-driver/mysql"
 	"gopkg.in/yaml.v2"
 )
 
@@ -55,4 +57,27 @@ func LoadConfig(path string) (*Config, error) {
 	}
 
 	return config, nil
+}
+
+// InitDB initializes the database connection
+func (c *Config) InitDB() (*sql.DB, error) {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true",
+		c.Database.Username,
+		c.Database.Password,
+		c.Database.Host,
+		c.Database.Port,
+		c.Database.DBName)
+
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open database: %v", err)
+	}
+
+	// Test the connection
+	err = db.Ping()
+	if err != nil {
+		return nil, fmt.Errorf("failed to ping database: %v", err)
+	}
+
+	return db, nil
 }

@@ -15,8 +15,15 @@ func main() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
+	// Initialize database
+	db, err := config.InitDB()
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+	defer db.Close()
+
 	// Initialize server with Wire
-	server := httpInterface.NewServer(nil, nil)
+	server := httpInterface.NewServer(db)
 
 	// Register routes
 	server.RegisterRoutes()

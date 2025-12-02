@@ -1,8 +1,10 @@
 package http
 
 import (
+	"database/sql"
 	"group-buy-market-go/internal/application"
 	"group-buy-market-go/internal/domain"
+	"group-buy-market-go/internal/infrastructure"
 	"net/http"
 )
 
@@ -12,9 +14,14 @@ type Server struct {
 }
 
 func NewServer(
-	activityRepo domain.GroupBuyActivityRepository,
-	groupBuyService *domain.GroupBuyService,
+	db *sql.DB,
 ) *Server {
+	// Create repositories
+	activityRepo := infrastructure.NewMySQLGroupBuyActivityRepository(db)
+
+	// Create services
+	groupBuyService := domain.NewGroupBuyService(activityRepo)
+
 	// Create handlers
 	groupBuyHandler := application.NewGroupBuyHandler(groupBuyService, activityRepo)
 
