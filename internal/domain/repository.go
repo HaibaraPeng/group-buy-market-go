@@ -20,3 +20,12 @@ type OrderRepository interface {
 	FindByID(id int64) (*Order, error)
 	FindByUserID(userID int64) ([]*Order, error)
 }
+
+// GroupBuyActivityRepository defines the interface for group buy activity persistence
+type GroupBuyActivityRepository interface {
+	Save(activity *GroupBuyActivity) error
+	FindByID(id int64) (*GroupBuyActivity, error)
+	FindByActivityID(activityID int64) (*GroupBuyActivity, error)
+	FindAll() ([]*GroupBuyActivity, error)
+	UpdateStatus(id int64, status int) error
+}

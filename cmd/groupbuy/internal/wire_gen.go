@@ -7,12 +7,16 @@
 package main
 
 import (
+	"group-buy-market-go/internal/domain"
+	"group-buy-market-go/internal/infrastructure"
 	"group-buy-market-go/internal/interfaces/http"
 )
 
 // Injectors from wire.go:
 
 func initializeServer() (*http.Server, error) {
-	server := http.NewServer()
+	inMemoryGroupBuyActivityRepository := infrastructure.NewInMemoryGroupBuyActivityRepository()
+	groupBuyService := domain.NewGroupBuyService(inMemoryGroupBuyActivityRepository)
+	server := http.NewServer(inMemoryGroupBuyActivityRepository, groupBuyService)
 	return server, nil
 }

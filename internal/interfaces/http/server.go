@@ -1,16 +1,26 @@
 package http
 
 import (
+	"group-buy-market-go/internal/application"
+	"group-buy-market-go/internal/domain"
 	"net/http"
 )
 
 type Server struct {
-	router *http.ServeMux
+	router          *http.ServeMux
+	groupBuyHandler *application.GroupBuyHandler
 }
 
-func NewServer() *Server {
+func NewServer(
+	activityRepo domain.GroupBuyActivityRepository,
+	groupBuyService *domain.GroupBuyService,
+) *Server {
+	// Create handlers
+	groupBuyHandler := application.NewGroupBuyHandler(groupBuyService, activityRepo)
+
 	return &Server{
-		router: http.NewServeMux(),
+		router:          http.NewServeMux(),
+		groupBuyHandler: groupBuyHandler,
 	}
 }
 
@@ -26,6 +36,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (s *Server) RegisterRoutes() {
 	s.Route("/", s.handleHome)
 	s.Route("/test", s.handleTest)
+	s.Route("/groupbuy/activity", s.groupBuyHandler.GetActivity)
 }
 
 // handleHome handles requests to the home page

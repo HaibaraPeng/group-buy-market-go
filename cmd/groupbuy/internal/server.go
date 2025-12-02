@@ -17,4 +17,6 @@ var ServerSet = wire.NewSet(
 	application.NewService,
 	infrastructure.NewInMemoryProductRepository,
 	domain.NewProductService,
+	infrastructure.NewInMemoryGroupBuyActivityRepository,
+	domain.NewGroupBuyService,
 )
