@@ -14,8 +14,8 @@ import (
 func initializeServer(db *gorm.DB) (*httpInterface.Server, error) {
 	panic(wire.Build(
 		httpInterface.NewServer,
-		infrastructure.NewMySQLGroupBuyActivityRepository,
+		infrastructure.NewMySQLGroupBuyActivityDAO,
 		domain.NewGroupBuyService,
-		wire.Bind(new(domain.GroupBuyActivityRepository), new(*infrastructure.MySQLGroupBuyActivityRepository)),
+		wire.Bind(new(domain.GroupBuyActivityRepository), new(*infrastructure.MySQLGroupBuyActivityDAO)),
 	))
 }

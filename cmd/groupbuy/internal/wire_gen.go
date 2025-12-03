@@ -16,8 +16,8 @@ import (
 // Injectors from wire.go:
 
 func initializeServer(db *gorm.DB) (*http.Server, error) {
-	mySQLGroupBuyActivityRepository := infrastructure.NewMySQLGroupBuyActivityRepository(db)
-	groupBuyService := domain.NewGroupBuyService(mySQLGroupBuyActivityRepository)
-	server := http.NewServer(mySQLGroupBuyActivityRepository, groupBuyService)
+	mySQLGroupBuyActivityDAO := infrastructure.NewMySQLGroupBuyActivityDAO(db)
+	groupBuyService := domain.NewGroupBuyService(mySQLGroupBuyActivityDAO)
+	server := http.NewServer(mySQLGroupBuyActivityDAO, groupBuyService)
 	return server, nil
 }
