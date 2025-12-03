@@ -17,5 +17,5 @@ var ServerSet = wire.NewSet(
 	application.NewService,
 	dao.NewMySQLGroupBuyActivityDAO,
 	domain.NewGroupBuyService,
-	wire.Bind(new(domain.GroupBuyActivityRepository), new(*dao.MySQLGroupBuyActivityDAO)),
+	wire.Bind(new(dao.GroupBuyActivityRepository), new(*dao.MySQLGroupBuyActivityDAO)),
 )

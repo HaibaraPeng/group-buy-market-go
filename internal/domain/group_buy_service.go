@@ -1,14 +1,17 @@
 package domain
 
-import "group-buy-market-go/internal/infrastructure/po"
+import (
+	"group-buy-market-go/internal/infrastructure/dao"
+	"group-buy-market-go/internal/infrastructure/po"
+)
 
 // GroupBuyService provides group buying domain services
 type GroupBuyService struct {
-	repo GroupBuyActivityRepository
+	repo dao.GroupBuyActivityRepository
 }
 
 // NewGroupBuyService creates a new group buy service
-func NewGroupBuyService(repo GroupBuyActivityRepository) *GroupBuyService {
+func NewGroupBuyService(repo dao.GroupBuyActivityRepository) *GroupBuyService {
 	return &GroupBuyService{repo: repo}
 }
 

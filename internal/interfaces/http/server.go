@@ -3,6 +3,7 @@ package http
 import (
 	"group-buy-market-go/internal/application"
 	"group-buy-market-go/internal/domain"
+	"group-buy-market-go/internal/infrastructure/dao"
 	"net/http"
 )
 
@@ -12,7 +13,7 @@ type Server struct {
 }
 
 func NewServer(
-	activityRepo domain.GroupBuyActivityRepository,
+	activityRepo dao.GroupBuyActivityRepository,
 	groupBuyService *domain.GroupBuyService,
 ) *Server {
 	// Create handlers
