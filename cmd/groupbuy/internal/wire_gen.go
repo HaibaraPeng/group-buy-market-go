@@ -7,7 +7,6 @@
 package main
 
 import (
-	"github.com/google/wire"
 	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/infrastructure"
 	httpInterface "group-buy-market-go/internal/interfaces/http"
