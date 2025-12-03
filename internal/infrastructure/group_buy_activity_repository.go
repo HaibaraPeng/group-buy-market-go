@@ -1,8 +1,8 @@
 package infrastructure
 
 import (
-	"group-buy-market-go/internal/domain"
 	"gorm.io/gorm"
+	"group-buy-market-go/internal/domain"
 	"time"
 )
 
