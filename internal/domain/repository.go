@@ -1,5 +1,7 @@
 package domain
 
+import "group-buy-market-go/internal/infrastructure/po"
+
 // ProductRepository defines the interface for product persistence
 type ProductRepository interface {
 	Save(product *Product) error
@@ -23,9 +25,9 @@ type OrderRepository interface {
 
 // GroupBuyActivityRepository defines the interface for group buy activity persistence
 type GroupBuyActivityRepository interface {
-	Save(activity *GroupBuyActivity) error
-	FindByID(id int64) (*GroupBuyActivity, error)
-	FindByActivityID(activityID int64) (*GroupBuyActivity, error)
-	FindAll() ([]*GroupBuyActivity, error)
+	Save(activity *po.GroupBuyActivity) error
+	FindByID(id int64) (*po.GroupBuyActivity, error)
+	FindByActivityID(activityID int64) (*po.GroupBuyActivity, error)
+	FindAll() ([]*po.GroupBuyActivity, error)
 	UpdateStatus(id int64, status int) error
 }

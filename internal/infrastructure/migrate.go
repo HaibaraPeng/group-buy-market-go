@@ -1,8 +1,9 @@
 package infrastructure
 
 import (
-	"group-buy-market-go/internal/domain"
 	"gorm.io/gorm"
+	"group-buy-market-go/internal/domain"
+	"group-buy-market-go/internal/infrastructure/po"
 )
 
 // Migrate runs database migrations for all models
@@ -13,7 +14,7 @@ func Migrate(db *gorm.DB) error {
 		&domain.User{},
 		&domain.Order{},
 		&domain.Item{},
-		&domain.GroupBuyActivity{},
+		&po.GroupBuyActivity{},
 	)
 	return err
 }

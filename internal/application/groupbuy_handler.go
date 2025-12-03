@@ -3,6 +3,7 @@ package application
 import (
 	"encoding/json"
 	"group-buy-market-go/internal/domain"
+	"group-buy-market-go/internal/infrastructure/po"
 	"net/http"
 )
 
@@ -25,7 +26,7 @@ func (h *GroupBuyHandler) GetActivity(w http.ResponseWriter, r *http.Request) {
 	// In a real implementation, we would extract the ID from the request
 	// For now, we'll just return a sample activity
 
-	activity := &domain.GroupBuyActivity{
+	activity := &po.GroupBuyActivity{
 		ID:             1,
 		ActivityId:     1001,
 		ActivityName:   "Sample Group Buy Activity",

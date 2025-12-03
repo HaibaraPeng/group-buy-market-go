@@ -1,5 +1,7 @@
 package domain
 
+import "group-buy-market-go/internal/infrastructure/po"
+
 // GroupBuyService provides group buying domain services
 type GroupBuyService struct {
 	repo GroupBuyActivityRepository
@@ -11,7 +13,7 @@ func NewGroupBuyService(repo GroupBuyActivityRepository) *GroupBuyService {
 }
 
 // IsValid checks if a group buy activity is valid
-func (s *GroupBuyService) IsValid(activity *GroupBuyActivity) bool {
+func (s *GroupBuyService) IsValid(activity *po.GroupBuyActivity) bool {
 	// Check if activity is in active status
 	if activity.Status != 1 {
 		return false
@@ -22,7 +24,7 @@ func (s *GroupBuyService) IsValid(activity *GroupBuyActivity) bool {
 }
 
 // CanJoin checks if a user can join a group buy activity
-func (s *GroupBuyService) CanJoin(activity *GroupBuyActivity, userID int64) bool {
+func (s *GroupBuyService) CanJoin(activity *po.GroupBuyActivity, userID int64) bool {
 	// Check if activity is valid
 	if !s.IsValid(activity) {
 		return false
