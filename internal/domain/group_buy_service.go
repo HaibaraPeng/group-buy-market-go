@@ -7,12 +7,16 @@ import (
 
 // GroupBuyService provides group buying domain services
 type GroupBuyService struct {
-	repo dao.GroupBuyActivityDAO
+	activityRepo dao.GroupBuyActivityDAO
+	discountRepo dao.GroupBuyDiscountDAO
 }
 
 // NewGroupBuyService creates a new group buy service
-func NewGroupBuyService(repo dao.GroupBuyActivityDAO) *GroupBuyService {
-	return &GroupBuyService{repo: repo}
+func NewGroupBuyService(activityRepo dao.GroupBuyActivityDAO, discountRepo dao.GroupBuyDiscountDAO) *GroupBuyService {
+	return &GroupBuyService{
+		activityRepo: activityRepo,
+		discountRepo: discountRepo,
+	}
 }
 
 // IsValid checks if a group buy activity is valid
@@ -35,4 +39,14 @@ func (s *GroupBuyService) CanJoin(activity *po.GroupBuyActivity, userID int64) b
 
 	// Could add more business logic here
 	return true
+}
+
+// GetDiscountByID retrieves a discount by its ID
+func (s *GroupBuyService) GetDiscountByID(id int64) (*po.GroupBuyDiscount, error) {
+	return s.discountRepo.FindByID(id)
+}
+
+// GetAllDiscounts retrieves all discounts
+func (s *GroupBuyService) GetAllDiscounts() ([]*po.GroupBuyDiscount, error) {
+	return s.discountRepo.FindAll()
 }

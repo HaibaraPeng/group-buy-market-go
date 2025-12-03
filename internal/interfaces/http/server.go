@@ -36,4 +36,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // RegisterRoutes registers all HTTP routes
 func (s *Server) RegisterRoutes() {
 	s.Route("/groupbuy/activities", s.groupBuyHandler.GetAllActivities)
+	s.Route("/groupbuy/discounts", s.groupBuyHandler.GetAllDiscounts)
+	s.Route("/groupbuy/discount", s.groupBuyHandler.GetDiscountByID)
 }

@@ -17,7 +17,8 @@ import (
 
 func initializeServer(db *gorm.DB) (*http.Server, error) {
 	mySQLGroupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(db)
-	groupBuyService := domain.NewGroupBuyService(mySQLGroupBuyActivityDAO)
+	mySQLGroupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(db)
+	groupBuyService := domain.NewGroupBuyService(mySQLGroupBuyActivityDAO, mySQLGroupBuyDiscountDAO)
 	server := http.NewServer(mySQLGroupBuyActivityDAO, groupBuyService)
 	return server, nil
 }
