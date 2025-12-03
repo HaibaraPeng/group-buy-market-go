@@ -9,6 +9,7 @@ import (
 	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/infrastructure"
 	"group-buy-market-go/internal/interfaces/http"
+	"gorm.io/gorm"
 )
 
 // ServerSet is a provider set for building the server
@@ -19,4 +20,6 @@ var ServerSet = wire.NewSet(
 	domain.NewProductService,
 	infrastructure.NewMySQLGroupBuyActivityRepository,
 	domain.NewGroupBuyService,
+	wire.Bind(new(domain.ProductRepository), new(*infrastructure.MySQLProductRepository)),
+	wire.Bind(new(domain.GroupBuyActivityRepository), new(*infrastructure.MySQLGroupBuyActivityRepository)),
 )

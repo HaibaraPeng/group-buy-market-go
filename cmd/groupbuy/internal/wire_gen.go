@@ -7,17 +7,18 @@
 package main
 
 import (
-	"database/sql"
+	"github.com/google/wire"
 	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/infrastructure"
-	"group-buy-market-go/internal/interfaces/http"
+	httpInterface "group-buy-market-go/internal/interfaces/http"
+	"gorm.io/gorm"
 )
 
 // Injectors from wire.go:
 
-func initializeServer(db *sql.DB) (*http.Server, error) {
+func initializeServer(db *gorm.DB) (*httpInterface.Server, error) {
 	mySQLGroupBuyActivityRepository := infrastructure.NewMySQLGroupBuyActivityRepository(db)
 	groupBuyService := domain.NewGroupBuyService(mySQLGroupBuyActivityRepository)
-	server := http.NewServer(mySQLGroupBuyActivityRepository, groupBuyService)
+	server := httpInterface.NewServer(mySQLGroupBuyActivityRepository, groupBuyService)
 	return server, nil
 }

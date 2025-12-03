@@ -1,13 +1,13 @@
 package infrastructure
 
 import (
-	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql"
 	"gopkg.in/yaml.v2"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 // Config holds the application configuration
@@ -59,24 +59,18 @@ func LoadConfig(path string) (*Config, error) {
 	return config, nil
 }
 
-// InitDB initializes the database connection
-func (c *Config) InitDB() (*sql.DB, error) {
-	// First connect without specifying a database to create it if needed
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/",
+// InitDB initializes the database connection with GORM
+func (c *Config) InitDB() (*gorm.DB, error) {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		c.Database.Username,
 		c.Database.Password,
 		c.Database.Host,
-		c.Database.Port)
+		c.Database.Port,
+		c.Database.DBName)
 
-	db, err := sql.Open("mysql", dsn)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return nil, fmt.Errorf("failed to open admin database connection: %v", err)
-	}
-
-	// Test the connection
-	err = db.Ping()
-	if err != nil {
-		return nil, fmt.Errorf("failed to ping database: %v", err)
+		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
 
 	return db, nil
