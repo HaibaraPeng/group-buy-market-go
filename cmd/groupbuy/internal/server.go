@@ -7,7 +7,7 @@ import (
 	"github.com/google/wire"
 	"group-buy-market-go/internal/application"
 	"group-buy-market-go/internal/domain"
-	"group-buy-market-go/internal/infrastructure"
+	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/interfaces/http"
 )
 
@@ -15,7 +15,7 @@ import (
 var ServerSet = wire.NewSet(
 	http.NewServer,
 	application.NewService,
-	infrastructure.NewMySQLGroupBuyActivityDAO,
+	dao.NewMySQLGroupBuyActivityDAO,
 	domain.NewGroupBuyService,
-	wire.Bind(new(domain.GroupBuyActivityRepository), new(*infrastructure.MySQLGroupBuyActivityDAO)),
+	wire.Bind(new(domain.GroupBuyActivityRepository), new(*dao.MySQLGroupBuyActivityDAO)),
 )

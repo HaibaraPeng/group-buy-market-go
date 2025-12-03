@@ -9,14 +9,14 @@ package main
 import (
 	"gorm.io/gorm"
 	"group-buy-market-go/internal/domain"
-	"group-buy-market-go/internal/infrastructure"
+	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/interfaces/http"
 )
 
 // Injectors from wire.go:
 
 func initializeServer(db *gorm.DB) (*http.Server, error) {
-	mySQLGroupBuyActivityDAO := infrastructure.NewMySQLGroupBuyActivityDAO(db)
+	mySQLGroupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(db)
 	groupBuyService := domain.NewGroupBuyService(mySQLGroupBuyActivityDAO)
 	server := http.NewServer(mySQLGroupBuyActivityDAO, groupBuyService)
 	return server, nil

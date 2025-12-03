@@ -7,15 +7,15 @@ import (
 	"github.com/google/wire"
 	"gorm.io/gorm"
 	"group-buy-market-go/internal/domain"
-	"group-buy-market-go/internal/infrastructure"
+	"group-buy-market-go/internal/infrastructure/dao"
 	httpInterface "group-buy-market-go/internal/interfaces/http"
 )
 
 func initializeServer(db *gorm.DB) (*httpInterface.Server, error) {
 	panic(wire.Build(
 		httpInterface.NewServer,
-		infrastructure.NewMySQLGroupBuyActivityDAO,
+		dao.NewMySQLGroupBuyActivityDAO,
 		domain.NewGroupBuyService,
-		wire.Bind(new(domain.GroupBuyActivityRepository), new(*infrastructure.MySQLGroupBuyActivityDAO)),
+		wire.Bind(new(domain.GroupBuyActivityRepository), new(*dao.MySQLGroupBuyActivityDAO)),
 	))
 }
