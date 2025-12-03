@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-// GroupBuyActivityRepository defines the interface for group buy activity persistence
-type GroupBuyActivityRepository interface {
+// GroupBuyActivityDAO defines the interface for group buy activity persistence
+type GroupBuyActivityDAO interface {
 	Save(activity *po.GroupBuyActivity) error
 	FindByID(id int64) (*po.GroupBuyActivity, error)
 	FindByActivityID(activityID int64) (*po.GroupBuyActivity, error)
@@ -15,7 +15,7 @@ type GroupBuyActivityRepository interface {
 	UpdateStatus(id int64, status int) error
 }
 
-// MySQLGroupBuyActivityDAO is a GORM implementation of GroupBuyActivityRepository
+// MySQLGroupBuyActivityDAO is a GORM implementation of GroupBuyActivityDAO
 type MySQLGroupBuyActivityDAO struct {
 	db *gorm.DB
 }

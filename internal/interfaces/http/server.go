@@ -13,7 +13,7 @@ type Server struct {
 }
 
 func NewServer(
-	activityRepo dao.GroupBuyActivityRepository,
+	activityRepo dao.GroupBuyActivityDAO,
 	groupBuyService *domain.GroupBuyService,
 ) *Server {
 	// Create handlers

@@ -7,11 +7,11 @@ import (
 
 // GroupBuyService provides group buying domain services
 type GroupBuyService struct {
-	repo dao.GroupBuyActivityRepository
+	repo dao.GroupBuyActivityDAO
 }
 
 // NewGroupBuyService creates a new group buy service
-func NewGroupBuyService(repo dao.GroupBuyActivityRepository) *GroupBuyService {
+func NewGroupBuyService(repo dao.GroupBuyActivityDAO) *GroupBuyService {
 	return &GroupBuyService{repo: repo}
 }
 

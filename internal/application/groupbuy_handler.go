@@ -11,11 +11,11 @@ import (
 // GroupBuyHandler handles group buy related HTTP requests
 type GroupBuyHandler struct {
 	groupBuyService *domain.GroupBuyService
-	activityRepo    dao.GroupBuyActivityRepository
+	activityRepo    dao.GroupBuyActivityDAO
 }
 
 // NewGroupBuyHandler creates a new group buy handler
-func NewGroupBuyHandler(groupBuyService *domain.GroupBuyService, activityRepo dao.GroupBuyActivityRepository) *GroupBuyHandler {
+func NewGroupBuyHandler(groupBuyService *domain.GroupBuyService, activityRepo dao.GroupBuyActivityDAO) *GroupBuyHandler {
 	return &GroupBuyHandler{
 		groupBuyService: groupBuyService,
 		activityRepo:    activityRepo,
