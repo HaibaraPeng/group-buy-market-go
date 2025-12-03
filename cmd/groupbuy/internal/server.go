@@ -9,7 +9,6 @@ import (
 	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/infrastructure"
 	"group-buy-market-go/internal/interfaces/http"
-	"gorm.io/gorm"
 )
 
 // ServerSet is a provider set for building the server
