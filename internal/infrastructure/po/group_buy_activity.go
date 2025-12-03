@@ -46,5 +46,5 @@ type GroupBuyActivity struct {
 
 // TableName specifies the table name for GroupBuyActivity
 func (GroupBuyActivity) TableName() string {
-	return "group_buy_activities"
+	return "group_buy_activity"
 }

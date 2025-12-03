@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/infrastructure/dao"
-	"group-buy-market-go/internal/infrastructure/po"
 	"net/http"
 )
 
@@ -22,26 +21,14 @@ func NewGroupBuyHandler(groupBuyService *domain.GroupBuyService, activityRepo da
 	}
 }
 
-// GetActivity retrieves a group buy activity by ID
-func (h *GroupBuyHandler) GetActivity(w http.ResponseWriter, r *http.Request) {
-	// In a real implementation, we would extract the ID from the request
-	// For now, we'll just return a sample activity
-
-	activity := &po.GroupBuyActivity{
-		ID:             1,
-		ActivityId:     1001,
-		ActivityName:   "Sample Group Buy Activity",
-		Source:         "SYSTEM",
-		Channel:        "ONLINE",
-		GoodsId:        "G001",
-		DiscountId:     "D001",
-		GroupType:      1,
-		TakeLimitCount: 5,
-		Target:         10,
-		ValidTime:      60,
-		Status:         1,
+// GetAllActivities retrieves all group buy activities
+func (h *GroupBuyHandler) GetAllActivities(w http.ResponseWriter, r *http.Request) {
+	activities, err := h.activityRepo.FindAll()
+	if err != nil {
+		http.Error(w, "Failed to retrieve activities: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(activity)
+	json.NewEncoder(w).Encode(activities)
 }
