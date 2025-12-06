@@ -1,6 +1,7 @@
 package trial_test
 
 import (
+	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/service/trial"
 	"group-buy-market-go/internal/domain/service/trial/types"
 	"testing"
@@ -11,7 +12,7 @@ func TestGroupBuyMarketService_CalculateTrialBalance(t *testing.T) {
 	service := trial.NewGroupBuyMarketService()
 
 	// 准备测试数据
-	product := &types.MarketProductEntity{
+	product := &model.MarketProductEntity{
 		ID:          1001,
 		Name:        "测试商品",
 		Description: "这是一个测试商品",
@@ -50,7 +51,7 @@ func TestRootNode_Get(t *testing.T) {
 	// 测试根节点获取下一个处理器
 	rootNode := trial.NewRootNode()
 
-	product := &types.MarketProductEntity{
+	product := &model.MarketProductEntity{
 		ID:    1001,
 		Price: 100.0,
 	}
