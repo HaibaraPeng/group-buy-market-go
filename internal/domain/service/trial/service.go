@@ -2,7 +2,7 @@ package trial
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
-	"group-buy-market-go/internal/domain/service/trial/factory"
+	"group-buy-market-go/internal/domain/activity/service/trial/factory"
 	"group-buy-market-go/internal/domain/service/trial/types"
 	"log"
 )
