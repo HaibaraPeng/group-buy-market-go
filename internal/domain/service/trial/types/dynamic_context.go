@@ -1,4 +1,4 @@
-package trial
+package types
 
 // DynamicContext 动态上下文
 // 在策略树执行过程中传递的动态上下文信息
