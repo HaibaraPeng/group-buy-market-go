@@ -2,9 +2,9 @@ package trial_test
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
 	"group-buy-market-go/internal/domain/service/trial"
-	"group-buy-market-go/internal/domain/service/trial/types"
 	"testing"
 )
 
@@ -22,7 +22,7 @@ func TestGroupBuyMarketService_CalculateTrialBalance(t *testing.T) {
 		Stock:       100,
 	}
 
-	context := &types.DynamicContext{
+	context := &core.DynamicContext{
 		UserID:     12345,
 		ActivityID: 5001,
 		UserLevel:  2, // 黄金用户
@@ -57,7 +57,7 @@ func TestRootNode_Get(t *testing.T) {
 		Price: 100.0,
 	}
 
-	context := &types.DynamicContext{
+	context := &core.DynamicContext{
 		UserID: 12345,
 	}
 

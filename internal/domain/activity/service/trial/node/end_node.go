@@ -20,7 +20,7 @@ func NewEndNode() *EndNode {
 
 // Apply 应用结束节点策略
 // 结束节点汇总前面节点的处理结果，并做最后的封装
-func (e *EndNode) Apply(requestParameter *model.MarketProductEntity, dynamicContext *types.DynamicContext) (*model.TrialBalanceEntity, error) {
+func (e *EndNode) Apply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
 	log.Printf("营销活动处理流程结束，商品ID: %d", requestParameter.ID)
 
 	// 这里可以做一些收尾工作，比如记录日志、更新统计数据等
@@ -38,7 +38,7 @@ func (e *EndNode) Apply(requestParameter *model.MarketProductEntity, dynamicCont
 
 // Get 获取下一个策略处理器（结束节点通常返回nil）
 // 结束节点之后没有其他处理器
-func (e *EndNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *types.DynamicContext) (types.StrategyHandler, error) {
+func (e *EndNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (types.StrategyHandler, error) {
 	log.Printf("处理流程完全结束")
 
 	// 结束节点没有下一个处理器

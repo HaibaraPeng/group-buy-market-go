@@ -20,7 +20,7 @@ func NewMarketNode() *MarketNode {
 
 // Apply 应用营销节点策略
 // 计算商品的营销优惠，包括折扣、满减等
-func (m *MarketNode) Apply(requestParameter *model.MarketProductEntity, dynamicContext *types.DynamicContext) (*model.TrialBalanceEntity, error) {
+func (m *MarketNode) Apply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
 	log.Printf("计算商品营销优惠，商品ID: %d, 原价: %.2f", requestParameter.ID, requestParameter.Price)
 
 	// 模拟营销优惠计算过程
@@ -54,7 +54,7 @@ func (m *MarketNode) Apply(requestParameter *model.MarketProductEntity, dynamicC
 
 // Get 获取下一个策略处理器
 // 营销节点处理完成后进入结束节点
-func (m *MarketNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *types.DynamicContext) (types.StrategyHandler, error) {
+func (m *MarketNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (types.StrategyHandler, error) {
 	log.Printf("营销节点处理完成，进入结束节点")
 
 	// 返回结束节点作为下一个处理器

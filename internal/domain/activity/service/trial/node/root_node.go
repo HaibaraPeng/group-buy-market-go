@@ -20,7 +20,7 @@ func NewRootNode() *RootNode {
 
 // Apply 应用根节点策略
 // 根节点主要负责初始化处理流程
-func (r *RootNode) Apply(requestParameter *model.MarketProductEntity, dynamicContext *types.DynamicContext) (*model.TrialBalanceEntity, error) {
+func (r *RootNode) Apply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
 	log.Printf("开始处理营销活动请求，商品ID: %d, 用户ID: %d", requestParameter.ID, dynamicContext.UserID)
 
 	// 根节点不进行具体业务处理，直接返回空结果
@@ -32,7 +32,7 @@ func (r *RootNode) Apply(requestParameter *model.MarketProductEntity, dynamicCon
 
 // Get 获取下一个策略处理器
 // 根节点之后通常是开关节点，用于判断是否启用营销活动
-func (r *RootNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *types.DynamicContext) (types.StrategyHandler, error) {
+func (r *RootNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (types.StrategyHandler, error) {
 	log.Printf("根节点处理完成，进入开关节点")
 
 	// 返回开关节点作为下一个处理器

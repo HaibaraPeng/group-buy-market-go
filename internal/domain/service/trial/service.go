@@ -2,9 +2,9 @@ package trial
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/activity/service/trial/factory"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
-	"group-buy-market-go/internal/domain/service/trial/types"
 	"log"
 )
 
@@ -27,7 +27,7 @@ func NewGroupBuyMarketService() *GroupBuyMarketService {
 
 // CalculateTrialBalance 计算试算平衡
 // 执行完整的策略树流程，返回最终的试算结果
-func (s *GroupBuyMarketService) CalculateTrialBalance(product *model.MarketProductEntity, context *types.DynamicContext) (*model.TrialBalanceEntity, error) {
+func (s *GroupBuyMarketService) CalculateTrialBalance(product *model.MarketProductEntity, context *core.DynamicContext) (*model.TrialBalanceEntity, error) {
 	log.Printf("开始执行营销试算流程，商品ID: %d, 用户ID: %d", product.ID, context.UserID)
 
 	// 获取策略树的根节点
