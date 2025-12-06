@@ -2,6 +2,7 @@ package trial_test
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/domain/activity/service/trial/node"
 	"group-buy-market-go/internal/domain/service/trial"
 	"group-buy-market-go/internal/domain/service/trial/types"
 	"testing"
@@ -49,7 +50,7 @@ func TestGroupBuyMarketService_CalculateTrialBalance(t *testing.T) {
 
 func TestRootNode_Get(t *testing.T) {
 	// 测试根节点获取下一个处理器
-	rootNode := trial.NewRootNode()
+	rootNode := node.NewRootNode()
 
 	product := &model.MarketProductEntity{
 		ID:    1001,
@@ -66,7 +67,7 @@ func TestRootNode_Get(t *testing.T) {
 	}
 
 	// 验证下一个处理器是否为开关节点
-	if _, ok := nextHandler.(*trial.SwitchRoot); !ok {
+	if _, ok := nextHandler.(*node.SwitchRoot); !ok {
 		t.Error("根节点的下一个处理器应该是开关节点")
 	}
 }

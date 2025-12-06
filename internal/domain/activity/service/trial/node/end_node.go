@@ -1,7 +1,8 @@
-package trial
+package node
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/service/trial/types"
 	"log"
 )
@@ -9,7 +10,7 @@ import (
 // EndNode 结束节点
 // 策略树的终止节点，负责收尾工作和返回最终结果
 type EndNode struct {
-	AbstractGroupBuyMarketSupport
+	core.AbstractGroupBuyMarketSupport
 }
 
 // NewEndNode 创建结束节点

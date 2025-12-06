@@ -1,7 +1,8 @@
-package trial
+package node
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/service/trial/types"
 	"log"
 )
@@ -9,7 +10,7 @@ import (
 // SwitchRoot 开关节点
 // 用于判断营销活动是否开启
 type SwitchRoot struct {
-	AbstractGroupBuyMarketSupport
+	core.AbstractGroupBuyMarketSupport
 }
 
 // NewSwitchRoot 创建开关节点

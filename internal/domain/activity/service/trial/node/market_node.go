@@ -1,7 +1,8 @@
-package trial
+package node
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/service/trial/types"
 	"log"
 )
@@ -9,7 +10,7 @@ import (
 // MarketNode 营销优惠节点
 // 负责计算各种营销优惠
 type MarketNode struct {
-	AbstractGroupBuyMarketSupport
+	core.AbstractGroupBuyMarketSupport
 }
 
 // NewMarketNode 创建营销节点

@@ -1,7 +1,8 @@
-package trial
+package node
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/service/trial/types"
 	"log"
 )
@@ -9,7 +10,7 @@ import (
 // RootNode 根节点
 // 策略树的起始节点，负责初始化处理流程
 type RootNode struct {
-	AbstractGroupBuyMarketSupport
+	core.AbstractGroupBuyMarketSupport
 }
 
 // NewRootNode 创建根节点

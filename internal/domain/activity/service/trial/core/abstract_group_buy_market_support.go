@@ -1,4 +1,4 @@
-package trial
+package core
 
 // AbstractGroupBuyMarketSupport 是拼团营销支撑的抽象基类
 // 它提供了所有策略节点的公共功能和基础实现
