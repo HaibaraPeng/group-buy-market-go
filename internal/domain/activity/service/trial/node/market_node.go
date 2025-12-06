@@ -3,7 +3,6 @@ package node
 import (
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
-	"group-buy-market-go/internal/domain/service/trial/types"
 	"log"
 )
 
@@ -54,7 +53,7 @@ func (m *MarketNode) Apply(requestParameter *model.MarketProductEntity, dynamicC
 
 // Get 获取下一个策略处理器
 // 营销节点处理完成后进入结束节点
-func (m *MarketNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (types.StrategyHandler, error) {
+func (m *MarketNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (core.StrategyHandler, error) {
 	log.Printf("营销节点处理完成，进入结束节点")
 
 	// 返回结束节点作为下一个处理器
@@ -63,4 +62,4 @@ func (m *MarketNode) Get(requestParameter *model.MarketProductEntity, dynamicCon
 }
 
 // 确保 MarketNode 实现了 StrategyHandler 接口
-var _ types.StrategyHandler = (*MarketNode)(nil)
+var _ core.StrategyHandler = (*MarketNode)(nil)

@@ -3,7 +3,6 @@ package node
 import (
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
-	"group-buy-market-go/internal/domain/service/trial/types"
 	"log"
 )
 
@@ -44,7 +43,7 @@ func (s *SwitchRoot) Apply(requestParameter *model.MarketProductEntity, dynamicC
 
 // Get 获取下一个策略处理器
 // 如果活动开启，则进入营销节点；否则进入结束节点
-func (s *SwitchRoot) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (types.StrategyHandler, error) {
+func (s *SwitchRoot) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (core.StrategyHandler, error) {
 	log.Printf("开关节点处理完成，进入营销节点")
 
 	// 返回营销节点作为下一个处理器
@@ -53,4 +52,4 @@ func (s *SwitchRoot) Get(requestParameter *model.MarketProductEntity, dynamicCon
 }
 
 // 确保 SwitchRoot 实现了 StrategyHandler 接口
-var _ types.StrategyHandler = (*SwitchRoot)(nil)
+var _ core.StrategyHandler = (*SwitchRoot)(nil)
