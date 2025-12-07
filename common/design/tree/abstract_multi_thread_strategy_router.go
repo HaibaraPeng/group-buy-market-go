@@ -1,9 +1,5 @@
 package tree
 
-import (
-	"time"
-)
-
 // AbstractMultiThreadStrategyRouter 异步资源加载策略路由器
 type AbstractMultiThreadStrategyRouter[T any, D any, R any] struct {
 	AbstractStrategyRouter[T, D, R]
@@ -26,7 +22,6 @@ func (r *AbstractMultiThreadStrategyRouter[T, D, R]) Apply(requestParameter T, d
 func (r *AbstractMultiThreadStrategyRouter[T, D, R]) MultiThread(requestParameter T, dynamicContext D) error {
 	// 子类需要实现此方法
 	// 这里可以设置超时时间
-	time.Sleep(100 * time.Millisecond) // 示例延迟
 	return nil
 }
 
