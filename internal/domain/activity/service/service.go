@@ -14,9 +14,8 @@ type IIndexGroupBuyMarketService struct {
 }
 
 // NewIIndexGroupBuyMarketService 创建拼团营销服务实例
-func NewIIndexGroupBuyMarketService() *IIndexGroupBuyMarketService {
+func NewIIndexGroupBuyMarketService(rootNode *node.RootNode) *IIndexGroupBuyMarketService {
 	// 构建策略树：根节点 -> 开关节点 -> 营销节点 -> 结束节点
-	rootNode := node.NewRootNode()
 	strategyFactory := factory.NewDefaultActivityStrategyFactory(rootNode)
 
 	return &IIndexGroupBuyMarketService{

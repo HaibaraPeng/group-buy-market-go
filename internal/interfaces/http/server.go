@@ -3,6 +3,7 @@ package http
 import (
 	"group-buy-market-go/internal/application"
 	"group-buy-market-go/internal/domain"
+	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/infrastructure/dao"
 	"net/http"
 )
@@ -10,11 +11,13 @@ import (
 type Server struct {
 	router          *http.ServeMux
 	groupBuyHandler *application.GroupBuyHandler
+	marketService   *service.IIndexGroupBuyMarketService
 }
 
 func NewServer(
 	activityRepo dao.GroupBuyActivityDAO,
 	groupBuyService *domain.GroupBuyService,
+	marketService *service.IIndexGroupBuyMarketService,
 ) *Server {
 	// Create handlers
 	groupBuyHandler := application.NewGroupBuyHandler(groupBuyService, activityRepo)
@@ -22,6 +25,7 @@ func NewServer(
 	return &Server{
 		router:          http.NewServeMux(),
 		groupBuyHandler: groupBuyHandler,
+		marketService:   marketService,
 	}
 }
 

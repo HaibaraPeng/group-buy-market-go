@@ -4,7 +4,6 @@ import (
 	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
-	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"log"
 )
 
@@ -16,11 +15,9 @@ type SwitchNode struct {
 }
 
 // NewSwitchNode 创建开关节点
-func NewSwitchNode() *SwitchNode {
-	// 这里应该注入MarketNode，暂时直接创建
-	// 实际项目中应该通过依赖注入来获取MarketNode实例
+func NewSwitchNode(marketNode *MarketNode) *SwitchNode {
 	switchNode := &SwitchNode{
-		marketNode: NewMarketNode(repository.ActivityRepository{}), // 这里的nil需要替换成真实的repository
+		marketNode: marketNode,
 	}
 
 	// 设置自定义方法实现

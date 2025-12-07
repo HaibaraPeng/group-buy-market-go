@@ -16,9 +16,9 @@ type RootNode struct {
 }
 
 // NewRootNode 创建根节点
-func NewRootNode() *RootNode {
+func NewRootNode(switchNode *SwitchNode) *RootNode {
 	root := &RootNode{
-		switchNode: NewSwitchNode(),
+		switchNode: switchNode,
 	}
 
 	// 设置自定义方法实现
