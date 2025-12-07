@@ -1,6 +1,7 @@
 package node
 
 import (
+	"errors"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"log"
@@ -17,26 +18,22 @@ func NewRootNode() *RootNode {
 	return &RootNode{}
 }
 
-// Apply 应用根节点策略
-// 根节点主要负责初始化处理流程
-func (r *RootNode) Apply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
-	log.Printf("开始处理营销活动请求，商品ID: %d, 用户ID: %d", requestParameter.ID, dynamicContext.UserID)
+// doApply 业务流程受理
+// 对应Java中的doApply方法
+func (r *RootNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
+	log.Printf("拼团商品查询试算服务-RootNode userId:%d requestParameter:%+v", dynamicContext.UserID, requestParameter)
 
-	// 根节点不进行具体业务处理，直接返回空结果
-	return &model.TrialBalanceEntity{
-		Success: true,
-		Message: "根节点处理完成",
-	}, nil
-}
+	// 参数判断
+	if requestParameter == nil || dynamicContext == nil {
+		return nil, errors.New("参数不能为空")
+	}
 
-// Get 获取下一个策略处理器
-// 根节点之后通常是开关节点，用于判断是否启用营销活动
-func (r *RootNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (core.StrategyHandler, error) {
-	log.Printf("根节点处理完成，进入开关节点")
+	// 注意：Go版本的实体结构与Java版本略有不同，这里根据Go的实际情况进行校验
+	if dynamicContext.UserID <= 0 || requestParameter.ID <= 0 {
+		return nil, errors.New("非法参数: 用户ID和商品ID不能为空")
+	}
 
-	// 返回开关节点作为下一个处理器
-	switchNode := NewSwitchRoot()
-	return switchNode, nil
+	return r.Router(requestParameter, dynamicContext)
 }
 
 // 确保 RootNode 实现了 StrategyHandler 接口
