@@ -11,7 +11,6 @@ import (
 type Server struct {
 	router          *http.ServeMux
 	groupBuyHandler *application.GroupBuyHandler
-	marketService   *service.IIndexGroupBuyMarketService
 }
 
 func NewServer(
@@ -20,12 +19,11 @@ func NewServer(
 	marketService *service.IIndexGroupBuyMarketService,
 ) *Server {
 	// Create handlers
-	groupBuyHandler := application.NewGroupBuyHandler(groupBuyService, activityRepo)
+	groupBuyHandler := application.NewGroupBuyHandler(groupBuyService, activityRepo, marketService)
 
 	return &Server{
 		router:          http.NewServeMux(),
 		groupBuyHandler: groupBuyHandler,
-		marketService:   marketService,
 	}
 }
 
@@ -42,4 +40,5 @@ func (s *Server) RegisterRoutes() {
 	s.Route("/groupbuy/activities", s.groupBuyHandler.GetAllActivities)
 	s.Route("/groupbuy/discounts", s.groupBuyHandler.GetAllDiscounts)
 	s.Route("/groupbuy/discount", s.groupBuyHandler.GetDiscountByID)
+	s.Route("/market/trial", s.groupBuyHandler.MarketTrial)
 }
