@@ -31,14 +31,14 @@ func (s *AbstractGroupBuyMarketSupport) Apply(requestParameter *model.MarketProd
 	return s.AbstractMultiThreadStrategyRouter.Apply(requestParameter, dynamicContext)
 }
 
-// multiThread 异步加载数据 - 需要子类实现
-func (s *AbstractGroupBuyMarketSupport) multiThread(requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) error {
+// MultiThread 异步加载数据 - 需要子类实现
+func (s *AbstractGroupBuyMarketSupport) MultiThread(requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) error {
 	// 子类需要实现此方法
 	return nil
 }
 
-// doApply 业务流程受理 - 需要子类实现
-func (s *AbstractGroupBuyMarketSupport) doApply(requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) (*model.TrialBalanceEntity, error) {
+// DoApply 业务流程受理 - 需要子类实现
+func (s *AbstractGroupBuyMarketSupport) DoApply(requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) (*model.TrialBalanceEntity, error) {
 	// 子类需要实现此方法
 	return &model.TrialBalanceEntity{}, nil
 }
