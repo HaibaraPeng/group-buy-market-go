@@ -29,6 +29,5 @@ func initializeServer(db *gorm.DB) (*httpInterface.Server, error) {
 		wire.Bind(new(dao.GroupBuyActivityDAO), new(*dao.MySQLGroupBuyActivityDAO)),
 		wire.Bind(new(dao.GroupBuyDiscountDAO), new(*dao.MySQLGroupBuyDiscountDAO)),
 		wire.Bind(new(dao.SkuDAO), new(*dao.MySQLSkuDAO)),
-		wire.Bind(new(repository.ActivityRepository), new(*repository.ActivityRepository)),
 	))
 }
