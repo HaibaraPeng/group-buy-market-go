@@ -2,6 +2,7 @@ package node
 
 import (
 	"errors"
+	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"log"
@@ -36,5 +37,15 @@ func (r *RootNode) doApply(requestParameter *model.MarketProductEntity, dynamicC
 	return r.Router(requestParameter, dynamicContext)
 }
 
+// Get 获取下一个策略处理器
+// 根节点之后通常是开关节点，用于判断是否启用营销活动
+func (r *RootNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
+	log.Printf("根节点处理完成，进入开关节点")
+
+	// 返回开关节点作为下一个处理器
+	switchNode := NewSwitchRoot()
+	return switchNode, nil
+}
+
 // 确保 RootNode 实现了 StrategyHandler 接口
-var _ core.StrategyHandler = (*RootNode)(nil)
+var _ tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity] = (*RootNode)(nil)

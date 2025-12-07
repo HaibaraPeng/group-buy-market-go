@@ -1,52 +1,34 @@
 package core
 
 import (
+	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 )
 
 // AbstractGroupBuyMarketSupport 是拼团营销支撑的抽象基类
 // 它提供了所有策略节点的公共功能和基础实现
 type AbstractGroupBuyMarketSupport struct {
-	defaultStrategyHandler StrategyHandler
+	tree.AbstractMultiThreadStrategyRouter[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity]
 }
 
 // SetDefaultStrategyHandler 设置默认策略处理器
-func (s *AbstractGroupBuyMarketSupport) SetDefaultStrategyHandler(handler StrategyHandler) {
-	s.defaultStrategyHandler = handler
+func (s *AbstractGroupBuyMarketSupport) SetDefaultStrategyHandler(handler tree.StrategyHandler[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity]) {
+	s.AbstractMultiThreadStrategyRouter.SetDefaultStrategyHandler(handler)
 }
 
 // GetDefaultStrategyHandler 获取默认策略处理器
-func (s *AbstractGroupBuyMarketSupport) GetDefaultStrategyHandler() StrategyHandler {
-	if s.defaultStrategyHandler == nil {
-		return nil // 或者返回一个默认处理器
-	}
-	return s.defaultStrategyHandler
+func (s *AbstractGroupBuyMarketSupport) GetDefaultStrategyHandler() tree.StrategyHandler[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity] {
+	return s.AbstractMultiThreadStrategyRouter.GetDefaultStrategyHandler()
 }
 
 // Router 路由策略
 func (s *AbstractGroupBuyMarketSupport) Router(requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) (*model.TrialBalanceEntity, error) {
-	strategyHandler, err := s.Get(requestParameter, dynamicContext)
-	if err != nil || strategyHandler == nil {
-		if s.defaultStrategyHandler != nil {
-			return s.defaultStrategyHandler.Apply(requestParameter, dynamicContext)
-		}
-		// 如果没有默认处理器，返回空结果
-		return &model.TrialBalanceEntity{}, nil
-	}
-
-	return strategyHandler.Apply(requestParameter, dynamicContext)
+	return s.AbstractMultiThreadStrategyRouter.Router(requestParameter, dynamicContext)
 }
 
 // Apply 应用策略
 func (s *AbstractGroupBuyMarketSupport) Apply(requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) (*model.TrialBalanceEntity, error) {
-	// 异步加载数据
-	multiThreadErr := s.multiThread(requestParameter, dynamicContext)
-	if multiThreadErr != nil {
-		return &model.TrialBalanceEntity{}, multiThreadErr
-	}
-
-	// 业务流程受理
-	return s.doApply(requestParameter, dynamicContext)
+	return s.AbstractMultiThreadStrategyRouter.Apply(requestParameter, dynamicContext)
 }
 
 // multiThread 异步加载数据 - 需要子类实现
@@ -62,7 +44,8 @@ func (s *AbstractGroupBuyMarketSupport) doApply(requestParameter *model.MarketPr
 }
 
 // Get 获取待执行策略 - 需要子类实现
-func (s *AbstractGroupBuyMarketSupport) Get(requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) (StrategyHandler, error) {
+func (s *AbstractGroupBuyMarketSupport) Get(requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity], error) {
 	// 子类需要实现此方法
-	return nil, nil
+	var handler tree.StrategyHandler[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity]
+	return handler, nil
 }

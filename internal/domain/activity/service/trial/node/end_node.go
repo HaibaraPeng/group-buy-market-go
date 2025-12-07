@@ -1,6 +1,7 @@
 package node
 
 import (
+	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"log"
@@ -42,5 +43,14 @@ func (e *EndNode) doApply(requestParameter *model.MarketProductEntity, dynamicCo
 	return result, nil
 }
 
+// Get 获取下一个策略处理器（结束节点通常返回nil）
+// 结束节点之后没有其他处理器
+func (e *EndNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
+	log.Printf("处理流程完全结束")
+
+	// 结束节点没有下一个处理器
+	return nil, nil
+}
+
 // 确保 EndNode 实现了 StrategyHandler 接口
-var _ core.StrategyHandler = (*EndNode)(nil)
+var _ tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity] = (*EndNode)(nil)

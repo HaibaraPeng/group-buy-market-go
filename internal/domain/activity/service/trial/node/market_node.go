@@ -1,6 +1,7 @@
 package node
 
 import (
+	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/activity/service/trial/thread"
@@ -64,11 +65,13 @@ func (m *MarketNode) multiThread(requestParameter *model.MarketProductEntity, dy
 	}
 	skuVO = skuResult.Result
 
-	// 写入上下文 - 对于一些复杂场景，获取数据的操作，
-	// 有时候会在下N个节点获取，这样前置查询数据，可以提高接口响应效率
-	// 注意：由于Go中struct无法像Java那样动态添加属性，这里仅作示意
-	_ = activityVO
-	_ = skuVO
+	// 写入上下文
+	if activityVO != nil {
+		dynamicContext.SetGroupBuyActivityDiscountVO(activityVO)
+	}
+	if skuVO != nil {
+		dynamicContext.SetSkuVO(skuVO)
+	}
 
 	log.Printf("拼团商品查询试算服务-MarketNode异步线程加载数据完成")
 	return nil
@@ -84,5 +87,14 @@ func (m *MarketNode) doApply(requestParameter *model.MarketProductEntity, dynami
 	return m.Router(requestParameter, dynamicContext)
 }
 
+// Get 获取下一个策略处理器
+// 营销节点处理完成后进入结束节点
+func (m *MarketNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
+	log.Printf("营销节点处理完成，进入结束节点")
+
+	// 返回结束节点作为下一个处理器
+	return m.endNode, nil
+}
+
 // 确保 MarketNode 实现了 StrategyHandler 接口
-var _ core.StrategyHandler = (*MarketNode)(nil)
+var _ tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity] = (*MarketNode)(nil)

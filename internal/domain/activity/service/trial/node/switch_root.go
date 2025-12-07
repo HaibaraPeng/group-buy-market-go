@@ -1,6 +1,7 @@
 package node
 
 import (
+	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
 )
@@ -23,4 +24,4 @@ func (r *SwitchRoot) doApply(requestParameter *model.MarketProductEntity, dynami
 }
 
 // 确保 SwitchRoot 实现了 StrategyHandler 接口
-var _ core.StrategyHandler = (*SwitchRoot)(nil)
+var _ tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity] = (*SwitchRoot)(nil)
