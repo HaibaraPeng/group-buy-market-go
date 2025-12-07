@@ -1,4 +1,4 @@
-package trial
+package service
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
@@ -8,26 +8,26 @@ import (
 	"log"
 )
 
-// GroupBuyMarketService 拼团营销服务
+// IIndexGroupBuyMarketService 拼团营销服务
 // 提供对外的营销试算服务接口
-type GroupBuyMarketService struct {
+type IIndexGroupBuyMarketService struct {
 	strategyFactory *factory.DefaultActivityStrategyFactory
 }
 
-// NewGroupBuyMarketService 创建拼团营销服务实例
-func NewGroupBuyMarketService() *GroupBuyMarketService {
+// NewIIndexGroupBuyMarketService 创建拼团营销服务实例
+func NewIIndexGroupBuyMarketService() *IIndexGroupBuyMarketService {
 	// 构建策略树：根节点 -> 开关节点 -> 营销节点 -> 结束节点
 	rootNode := node.NewRootNode()
 	strategyFactory := factory.NewDefaultActivityStrategyFactory(rootNode)
 
-	return &GroupBuyMarketService{
+	return &IIndexGroupBuyMarketService{
 		strategyFactory: strategyFactory,
 	}
 }
 
 // CalculateTrialBalance 计算试算平衡
 // 执行完整的策略树流程，返回最终的试算结果
-func (s *GroupBuyMarketService) CalculateTrialBalance(product *model.MarketProductEntity, context *core.DynamicContext) (*model.TrialBalanceEntity, error) {
+func (s *IIndexGroupBuyMarketService) CalculateTrialBalance(product *model.MarketProductEntity, context *core.DynamicContext) (*model.TrialBalanceEntity, error) {
 	log.Printf("开始执行营销试算流程，商品ID: %d, 用户ID: %d", product.ID, context.UserID)
 
 	// 获取策略树的根节点

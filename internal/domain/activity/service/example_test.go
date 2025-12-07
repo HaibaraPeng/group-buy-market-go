@@ -1,16 +1,16 @@
-package trial_test
+package service_test
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
-	"group-buy-market-go/internal/domain/service/trial"
 	"testing"
 )
 
 func TestGroupBuyMarketService_CalculateTrialBalance(t *testing.T) {
 	// 创建服务实例
-	service := trial.NewGroupBuyMarketService()
+	service := service.NewIIndexGroupBuyMarketService()
 
 	// 准备测试数据
 	product := &model.MarketProductEntity{
