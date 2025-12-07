@@ -70,14 +70,14 @@ func (m *MarketNode) multiThread(requestParameter *model.MarketProductEntity, dy
 	_ = activityVO
 	_ = skuVO
 
-	log.Printf("拼团商品查询试算服务-MarketNode userId:%d 异步线程加载数据完成", dynamicContext.UserID)
+	log.Printf("拼团商品查询试算服务-MarketNode异步线程加载数据完成")
 	return nil
 }
 
 // doApply 业务流程受理
 // 对应Java中的doApply方法
 func (m *MarketNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
-	log.Printf("拼团商品查询试算服务-MarketNode userId:%d requestParameter:%+v", dynamicContext.UserID, requestParameter)
+	log.Printf("拼团商品查询试算服务-MarketNode requestParameter:%+v", requestParameter)
 
 	// todo xfg 拼团优惠试算
 

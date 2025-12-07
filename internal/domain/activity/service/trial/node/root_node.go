@@ -21,7 +21,7 @@ func NewRootNode() *RootNode {
 // doApply 业务流程受理
 // 对应Java中的doApply方法
 func (r *RootNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
-	log.Printf("拼团商品查询试算服务-RootNode userId:%d requestParameter:%+v", dynamicContext.UserID, requestParameter)
+	log.Printf("拼团商品查询试算服务-RootNode requestParameter:%+v", requestParameter)
 
 	// 参数判断
 	if requestParameter == nil || dynamicContext == nil {
@@ -29,8 +29,8 @@ func (r *RootNode) doApply(requestParameter *model.MarketProductEntity, dynamicC
 	}
 
 	// 注意：Go版本的实体结构与Java版本略有不同，这里根据Go的实际情况进行校验
-	if dynamicContext.UserID <= 0 || requestParameter.ID <= 0 {
-		return nil, errors.New("非法参数: 用户ID和商品ID不能为空")
+	if requestParameter.ID <= 0 {
+		return nil, errors.New("非法参数: 商品ID不能为空")
 	}
 
 	return r.Router(requestParameter, dynamicContext)
