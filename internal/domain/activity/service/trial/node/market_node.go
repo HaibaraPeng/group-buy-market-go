@@ -84,21 +84,5 @@ func (m *MarketNode) doApply(requestParameter *model.MarketProductEntity, dynami
 	return m.Router(requestParameter, dynamicContext)
 }
 
-// Apply 应用营销节点策略
-// 计算商品的营销优惠，包括折扣、满减等
-func (m *MarketNode) Apply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
-	// 调用父类的Apply方法，会自动执行multiThread和doApply
-	return m.AbstractGroupBuyMarketSupport.Apply(requestParameter, dynamicContext)
-}
-
-// Get 获取下一个策略处理器
-// 营销节点处理完成后进入结束节点
-func (m *MarketNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (core.StrategyHandler, error) {
-	log.Printf("营销节点处理完成，进入结束节点")
-
-	// 返回结束节点作为下一个处理器
-	return m.endNode, nil
-}
-
 // 确保 MarketNode 实现了 StrategyHandler 接口
 var _ core.StrategyHandler = (*MarketNode)(nil)
