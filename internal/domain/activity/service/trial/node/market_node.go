@@ -30,14 +30,14 @@ func NewMarketNode(activityRepository repository.ActivityRepository) *MarketNode
 func (m *MarketNode) multiThread(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
 	// 异步查询活动配置
 	queryActivityTask := thread.NewQueryGroupBuyActivityDiscountVOThreadTask(
-		"", // source参数需要从requestParameter获取，此处简化处理
-		"", // channel参数需要从requestParameter获取，此处简化处理
+		requestParameter.Source,
+		requestParameter.Channel,
 		m.activityRepository,
 	)
 
 	// 异步查询商品信息
 	querySkuTask := thread.NewQuerySkuVOFromDBThreadTask(
-		"", // goodsId参数需要从requestParameter获取，此处简化处理
+		requestParameter.GoodsId,
 		m.activityRepository,
 	)
 

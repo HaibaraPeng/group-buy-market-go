@@ -12,17 +12,20 @@ import (
 // 策略树的起始节点，负责初始化处理流程
 type RootNode struct {
 	core.AbstractGroupBuyMarketSupport
+	switchNode *SwitchRoot
 }
 
 // NewRootNode 创建根节点
 func NewRootNode() *RootNode {
-	return &RootNode{}
+	return &RootNode{
+		switchNode: NewSwitchRoot(),
+	}
 }
 
 // doApply 业务流程受理
 // 对应Java中的doApply方法
 func (r *RootNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
-	log.Printf("拼团商品查询试算服务-RootNode requestParameter:%+v", requestParameter)
+	log.Printf("拼团商品查询试算服务-RootNode userId:%s requestParameter:%+v", requestParameter.UserId, requestParameter)
 
 	// 参数判断
 	if requestParameter == nil || dynamicContext == nil {
@@ -30,8 +33,9 @@ func (r *RootNode) doApply(requestParameter *model.MarketProductEntity, dynamicC
 	}
 
 	// 注意：Go版本的实体结构与Java版本略有不同，这里根据Go的实际情况进行校验
-	if requestParameter.ID <= 0 {
-		return nil, errors.New("非法参数: 商品ID不能为空")
+	if requestParameter.UserId == "" || requestParameter.GoodsId == "" ||
+		requestParameter.Source == "" || requestParameter.Channel == "" {
+		return nil, errors.New("非法参数: UserId、GoodsId、Source和Channel不能为空")
 	}
 
 	return r.Router(requestParameter, dynamicContext)
@@ -43,8 +47,7 @@ func (r *RootNode) Get(requestParameter *model.MarketProductEntity, dynamicConte
 	log.Printf("根节点处理完成，进入开关节点")
 
 	// 返回开关节点作为下一个处理器
-	switchNode := NewSwitchRoot()
-	return switchNode, nil
+	return r.switchNode, nil
 }
 
 // 确保 RootNode 实现了 StrategyHandler 接口
