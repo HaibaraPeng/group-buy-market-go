@@ -11,7 +11,7 @@ type GroupBuyDiscountDAO interface {
 	Save(discount *po.GroupBuyDiscount) error
 	FindByID(id int64) (*po.GroupBuyDiscount, error)
 	FindByDiscountID(discountID int) (*po.GroupBuyDiscount, error)
-	FindAll() ([]*po.GroupBuyDiscount, error)
+	QueryGroupBuyDiscountList() ([]*po.GroupBuyDiscount, error)
 	Update(discount *po.GroupBuyDiscount) error
 }
 
@@ -59,7 +59,7 @@ func (r *MySQLGroupBuyDiscountDAO) FindByDiscountID(discountID int) (*po.GroupBu
 }
 
 // FindAll returns all group buy discounts
-func (r *MySQLGroupBuyDiscountDAO) FindAll() ([]*po.GroupBuyDiscount, error) {
+func (r *MySQLGroupBuyDiscountDAO) QueryGroupBuyDiscountList() ([]*po.GroupBuyDiscount, error) {
 	var discounts []*po.GroupBuyDiscount
 	err := r.db.Find(&discounts).Error
 	return discounts, err

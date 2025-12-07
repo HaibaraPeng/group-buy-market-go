@@ -48,5 +48,5 @@ func (s *GroupBuyService) GetDiscountByID(id int64) (*po.GroupBuyDiscount, error
 
 // GetAllDiscounts retrieves all discounts
 func (s *GroupBuyService) GetAllDiscounts() ([]*po.GroupBuyDiscount, error) {
-	return s.discountRepo.FindAll()
+	return s.discountRepo.QueryGroupBuyDiscountList()
 }

@@ -59,7 +59,7 @@ func (r *MySQLGroupBuyActivityDAO) FindByActivityID(activityID int64) (*po.Group
 	return &activity, nil
 }
 
-// FindAll returns all group buy activities
+// QueryGroupBuyDiscountList returns all group buy activities
 func (r *MySQLGroupBuyActivityDAO) QueryGroupBuyActivityList() ([]*po.GroupBuyActivity, error) {
 	var activities []*po.GroupBuyActivity
 	err := r.db.Find(&activities).Error
