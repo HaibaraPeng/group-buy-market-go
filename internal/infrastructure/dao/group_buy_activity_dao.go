@@ -11,7 +11,7 @@ type GroupBuyActivityDAO interface {
 	Save(activity *po.GroupBuyActivity) error
 	FindByID(id int64) (*po.GroupBuyActivity, error)
 	FindByActivityID(activityID int64) (*po.GroupBuyActivity, error)
-	queryGroupBuyActivityList() ([]*po.GroupBuyActivity, error)
+	QueryGroupBuyActivityList() ([]*po.GroupBuyActivity, error)
 	UpdateStatus(id int64, status int) error
 	FindValidBySourceAndChannel(source string, channel string) (*po.GroupBuyActivity, error)
 }
@@ -60,7 +60,7 @@ func (r *MySQLGroupBuyActivityDAO) FindByActivityID(activityID int64) (*po.Group
 }
 
 // FindAll returns all group buy activities
-func (r *MySQLGroupBuyActivityDAO) queryGroupBuyActivityList() ([]*po.GroupBuyActivity, error) {
+func (r *MySQLGroupBuyActivityDAO) QueryGroupBuyActivityList() ([]*po.GroupBuyActivity, error) {
 	var activities []*po.GroupBuyActivity
 	err := r.db.Find(&activities).Error
 	return activities, err

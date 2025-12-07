@@ -24,7 +24,7 @@ func NewGroupBuyHandler(groupBuyService *domain.GroupBuyService, activityRepo da
 
 // GetAllActivities retrieves all group buy activities
 func (h *GroupBuyHandler) GetAllActivities(w http.ResponseWriter, r *http.Request) {
-	activities, err := h.activityRepo.queryGroupBuyActivityList()
+	activities, err := h.activityRepo.QueryGroupBuyActivityList()
 	if err != nil {
 		http.Error(w, "Failed to retrieve activities: "+err.Error(), http.StatusInternalServerError)
 		return
