@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"group-buy-market-go/internal/domain"
+	"group-buy-market-go/internal/domain/activity/service"
+	"group-buy-market-go/internal/domain/activity/service/trial/node"
 	"group-buy-market-go/internal/infrastructure"
+	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/dao"
 	httpInterface "group-buy-market-go/internal/interfaces/http"
 	"log"
@@ -51,7 +54,20 @@ func main() {
 func initializeServer(db *gorm.DB) (*httpInterface.Server, error) {
 	mySQLGroupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(db)
 	mySQLGroupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(db)
+	mySQLSkuDAO := dao.NewMySQLSkuDAO(db)
 	groupBuyService := domain.NewGroupBuyService(mySQLGroupBuyActivityDAO, mySQLGroupBuyDiscountDAO)
-	server := httpInterface.NewServer(mySQLGroupBuyActivityDAO, groupBuyService)
+
+	// Create the market service that was missing
+	activityRepository := repository.NewActivityRepository(mySQLGroupBuyActivityDAO, mySQLGroupBuyDiscountDAO, mySQLSkuDAO)
+
+	// Create the node hierarchy needed for market service
+	endNode := node.NewEndNode()
+	marketNode := node.NewMarketNode(endNode, activityRepository)
+	switchNode := node.NewSwitchNode(marketNode)
+	rootNode := node.NewRootNode(switchNode)
+
+	marketService := service.NewIIndexGroupBuyMarketService(rootNode)
+
+	server := httpInterface.NewServer(mySQLGroupBuyActivityDAO, groupBuyService, marketService)
 	return server, nil
 }

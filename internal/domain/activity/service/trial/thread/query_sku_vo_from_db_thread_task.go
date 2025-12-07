@@ -9,13 +9,13 @@ import (
 // 对应Java中的Callable<SkuVO>接口实现
 type QuerySkuVOFromDBThreadTask struct {
 	goodsId            string
-	activityRepository repository.ActivityRepository
+	activityRepository *repository.ActivityRepository
 }
 
 // NewQuerySkuVOFromDBThreadTask 创建查询商品信息任务实例
 func NewQuerySkuVOFromDBThreadTask(
 	goodsId string,
-	activityRepository repository.ActivityRepository,
+	activityRepository *repository.ActivityRepository,
 ) *QuerySkuVOFromDBThreadTask {
 	return &QuerySkuVOFromDBThreadTask{
 		goodsId:            goodsId,

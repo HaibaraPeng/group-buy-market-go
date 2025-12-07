@@ -13,15 +13,15 @@ import (
 // 负责计算各种营销优惠
 type MarketNode struct {
 	core.AbstractGroupBuyMarketSupport
-	activityRepository repository.ActivityRepository
+	activityRepository *repository.ActivityRepository
 	endNode            *EndNode
 }
 
 // NewMarketNode 创建营销节点
-func NewMarketNode(activityRepository repository.ActivityRepository) *MarketNode {
+func NewMarketNode(endNode *EndNode, activityRepository *repository.ActivityRepository) *MarketNode {
 	marketNode := &MarketNode{
 		activityRepository: activityRepository,
-		endNode:            NewEndNode(),
+		endNode:            endNode,
 	}
 
 	// 设置自定义方法实现

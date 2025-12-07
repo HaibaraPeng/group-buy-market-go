@@ -10,14 +10,14 @@ import (
 type QueryGroupBuyActivityDiscountVOThreadTask struct {
 	source             string
 	channel            string
-	activityRepository repository.ActivityRepository
+	activityRepository *repository.ActivityRepository
 }
 
 // NewQueryGroupBuyActivityDiscountVOThreadTask 创建查询营销配置任务实例
 func NewQueryGroupBuyActivityDiscountVOThreadTask(
 	source string,
 	channel string,
-	activityRepository repository.ActivityRepository,
+	activityRepository *repository.ActivityRepository,
 ) *QueryGroupBuyActivityDiscountVOThreadTask {
 	return &QueryGroupBuyActivityDiscountVOThreadTask{
 		source:             source,
