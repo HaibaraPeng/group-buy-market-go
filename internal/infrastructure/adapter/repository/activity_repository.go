@@ -83,3 +83,26 @@ func (r *ActivityRepository) QueryGroupBuyActivityDiscountVO(source string, chan
 
 	return vo, nil
 }
+
+// QuerySkuByGoodsId queries sku by goods id
+func (r *ActivityRepository) QuerySkuByGoodsId(goodsId string) (*model.SkuVO, error) {
+	// Query sku by goods id
+	sku, err := r.skuDAO.FindByGoodsId(goodsId)
+	if err != nil {
+		return nil, err
+	}
+
+	// If no sku found, return nil
+	if sku == nil {
+		return nil, nil
+	}
+
+	// Build and return the SkuVO
+	skuVO := &model.SkuVO{
+		GoodsId:       sku.GoodsId,
+		GoodsName:     sku.GoodsName,
+		OriginalPrice: sku.OriginalPrice,
+	}
+
+	return skuVO, nil
+}
