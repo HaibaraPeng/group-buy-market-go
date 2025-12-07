@@ -3,21 +3,34 @@ package model
 // MarketProductEntity 营销商品实体
 // 表示参与营销活动的商品信息
 type MarketProductEntity struct {
-	ID          int64   `json:"id"`          // 商品ID
-	Name        string  `json:"name"`        // 商品名称
-	Description string  `json:"description"` // 商品描述
-	Price       float64 `json:"price"`       // 商品价格
-	SkuID       int64   `json:"skuId"`       // SKU ID
-	Stock       int32   `json:"stock"`       // 库存数量
+	// 用户ID
+	UserId string `json:"userId"`
+	// 商品ID
+	GoodsId string `json:"goodsId"`
+	// 渠道
+	Source string `json:"source"`
+	// 来源
+	Channel string `json:"channel"`
 }
 
-// TrialBalanceEntity 试算平衡实体
-// 表示经过各节点处理后的试算结果
+// TrialBalanceEntity 试算结果实体对象（给用户展示拼团可获得的优惠信息）
 type TrialBalanceEntity struct {
-	TotalAmount    float64 `json:"totalAmount"`    // 总金额
-	DiscountAmount float64 `json:"discountAmount"` // 折扣金额
-	FinalAmount    float64 `json:"finalAmount"`    // 最终金额
-	Success        bool    `json:"success"`        // 是否成功
-	Message        string  `json:"message"`        // 处理消息
-	Code           string  `json:"code"`           // 结果码
+	// 商品ID
+	GoodsId string `json:"goodsId"`
+	// 商品名称
+	GoodsName string `json:"goodsName"`
+	// 原始价格
+	OriginalPrice float64 `json:"originalPrice"`
+	// 折扣价格
+	DeductionPrice float64 `json:"deductionPrice"`
+	// 拼团目标数量
+	TargetCount int `json:"targetCount"`
+	// 拼团开始时间
+	StartTime int64 `json:"startTime"`
+	// 拼团结束时间
+	EndTime int64 `json:"endTime"`
+	// 是否可见拼团
+	IsVisible bool `json:"isVisible"`
+	// 是否可参与进团
+	IsEnable bool `json:"isEnable"`
 }
