@@ -12,14 +12,26 @@ import (
 // 策略树的起始节点，负责初始化处理流程
 type RootNode struct {
 	core.AbstractGroupBuyMarketSupport
-	switchNode *SwitchRoot
+	switchNode *SwitchNode
 }
 
 // NewRootNode 创建根节点
 func NewRootNode() *RootNode {
-	return &RootNode{
-		switchNode: NewSwitchRoot(),
+	root := &RootNode{
+		switchNode: NewSwitchNode(),
 	}
+
+	// 设置自定义方法实现
+	root.SetDoApplyFunc(root.doApply)
+	root.SetMultiThreadFunc(root.multiThread)
+
+	return root
+}
+
+// multiThread 异步加载数据 - 根节点不需要异步加载
+func (r *RootNode) multiThread(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
+	// 根节点不需要异步加载数据
+	return nil
 }
 
 // doApply 业务流程受理
