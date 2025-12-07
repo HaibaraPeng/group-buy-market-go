@@ -27,3 +27,27 @@ func NewQuerySkuVOFromDBThreadTask(
 func (t *QuerySkuVOFromDBThreadTask) Call() (*model.SkuVO, error) {
 	return t.activityRepository.QuerySkuByGoodsId(t.goodsId)
 }
+
+// AsyncCall 异步执行查询任务
+func (t *QuerySkuVOFromDBThreadTask) AsyncCall() <-chan struct {
+	Result *model.SkuVO
+	Error  error
+} {
+	// 创建通道用于返回结果
+	resultChan := make(chan struct {
+		Result *model.SkuVO
+		Error  error
+	}, 1)
+
+	// 启动goroutine异步执行
+	go func() {
+		result, err := t.Call()
+		resultChan <- struct {
+			Result *model.SkuVO
+			Error  error
+		}{Result: result, Error: err}
+		close(resultChan)
+	}()
+
+	return resultChan
+}

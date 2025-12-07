@@ -30,3 +30,27 @@ func NewQueryGroupBuyActivityDiscountVOThreadTask(
 func (t *QueryGroupBuyActivityDiscountVOThreadTask) Call() (*model.GroupBuyActivityDiscountVO, error) {
 	return t.activityRepository.QueryGroupBuyActivityDiscountVO(t.source, t.channel)
 }
+
+// AsyncCall 异步执行查询任务
+func (t *QueryGroupBuyActivityDiscountVOThreadTask) AsyncCall() <-chan struct {
+	Result *model.GroupBuyActivityDiscountVO
+	Error  error
+} {
+	// 创建通道用于返回结果
+	resultChan := make(chan struct {
+		Result *model.GroupBuyActivityDiscountVO
+		Error  error
+	}, 1)
+
+	// 启动goroutine异步执行
+	go func() {
+		result, err := t.Call()
+		resultChan <- struct {
+			Result *model.GroupBuyActivityDiscountVO
+			Error  error
+		}{Result: result, Error: err}
+		close(resultChan)
+	}()
+
+	return resultChan
+}
