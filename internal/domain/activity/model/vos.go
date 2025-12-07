@@ -30,3 +30,13 @@ type GroupBuyActivityDiscountVO struct {
 	TagId            string              `json:"tag_id"`
 	TagScope         string              `json:"tag_scope"`
 }
+
+// SkuVO represents the SKU value object
+type SkuVO struct {
+	// Goods ID
+	GoodsId string `json:"goods_id"`
+	// Goods name
+	GoodsName string `json:"goods_name"`
+	// Original price
+	OriginalPrice float64 `json:"original_price"`
+}
