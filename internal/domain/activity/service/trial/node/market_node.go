@@ -19,10 +19,16 @@ type MarketNode struct {
 
 // NewMarketNode 创建营销节点
 func NewMarketNode(activityRepository repository.ActivityRepository) *MarketNode {
-	return &MarketNode{
+	marketNode := &MarketNode{
 		activityRepository: activityRepository,
 		endNode:            NewEndNode(),
 	}
+
+	// 设置自定义方法实现
+	marketNode.SetDoApplyFunc(marketNode.doApply)
+	marketNode.SetMultiThreadFunc(marketNode.multiThread)
+
+	return marketNode
 }
 
 // multiThread 异步加载数据

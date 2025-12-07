@@ -15,7 +15,19 @@ type EndNode struct {
 
 // NewEndNode 创建结束节点
 func NewEndNode() *EndNode {
-	return &EndNode{}
+	endNode := &EndNode{}
+
+	// 设置自定义方法实现
+	endNode.SetDoApplyFunc(endNode.doApply)
+	endNode.SetMultiThreadFunc(endNode.multiThread)
+
+	return endNode
+}
+
+// multiThread 异步加载数据 - 结束节点不需要异步加载
+func (e *EndNode) multiThread(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
+	// 结束节点不需要异步加载数据
+	return nil
 }
 
 // doApply 业务流程受理
