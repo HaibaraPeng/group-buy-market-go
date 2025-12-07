@@ -1,6 +1,8 @@
 package service
 
 import (
+	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/activity/service/trial/factory"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
 )
@@ -20,4 +22,22 @@ func NewIIndexGroupBuyMarketService() *IIndexGroupBuyMarketService {
 	return &IIndexGroupBuyMarketService{
 		strategyFactory: strategyFactory,
 	}
+}
+
+// IndexMarketTrial 首页营销试算
+// 对应Java中的indexMarketTrial方法
+func (s *IIndexGroupBuyMarketService) IndexMarketTrial(marketProductEntity *model.MarketProductEntity) (*model.TrialBalanceEntity, error) {
+	// 获取策略处理器
+	strategyHandler := s.strategyFactory.StrategyHandler()
+
+	// 创建动态上下文
+	dynamicContext := &core.DynamicContext{}
+
+	// 应用策略处理器
+	trialBalanceEntity, err := strategyHandler.Apply(marketProductEntity, dynamicContext)
+	if err != nil {
+		return nil, err
+	}
+
+	return trialBalanceEntity, nil
 }
