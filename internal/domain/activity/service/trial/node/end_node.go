@@ -17,31 +17,29 @@ func NewEndNode() *EndNode {
 	return &EndNode{}
 }
 
-// Apply 应用结束节点策略
-// 结束节点汇总前面节点的处理结果，并做最后的封装
-func (e *EndNode) Apply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
-	log.Printf("营销活动处理流程结束，商品ID: %d", requestParameter.ID)
+// doApply 业务流程受理
+// 对应Java中的doApply方法
+func (e *EndNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
+	log.Printf("拼团商品查询试算服务-EndNode  requestParameter:%+v", requestParameter)
 
-	// 这里可以做一些收尾工作，比如记录日志、更新统计数据等
+	groupBuyActivityDiscountVO := dynamicContext.GetGroupBuyActivityDiscountVO()
+	skuVO := dynamicContext.GetSkuVO()
 
-	// 注意：结束节点不应该修改之前节点的计算结果，应该原样返回
-	// 在这个测试场景中，我们会返回一个默认的成功结果
+	// 返回空结果
 	result := &model.TrialBalanceEntity{
 		Success: true,
-		Message: "营销活动处理完成",
+		Message: "处理完成",
 		Code:    "SUCCESS",
 	}
 
+	// 如果有有效的VO数据，则填充更多字段
+	if skuVO != nil && groupBuyActivityDiscountVO != nil {
+		result.TotalAmount = skuVO.OriginalPrice
+		result.FinalAmount = skuVO.OriginalPrice
+		result.DiscountAmount = 0.0
+	}
+
 	return result, nil
-}
-
-// Get 获取下一个策略处理器（结束节点通常返回nil）
-// 结束节点之后没有其他处理器
-func (e *EndNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (core.StrategyHandler, error) {
-	log.Printf("处理流程完全结束")
-
-	// 结束节点没有下一个处理器
-	return nil, nil
 }
 
 // 确保 EndNode 实现了 StrategyHandler 接口
