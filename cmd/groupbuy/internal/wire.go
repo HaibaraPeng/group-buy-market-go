@@ -23,6 +23,7 @@ func initializeServer(db *gorm.DB) (*httpInterface.Server, error) {
 		repository.NewActivityRepository,
 		domain.NewGroupBuyService,
 		service.NewIIndexGroupBuyMarketService,
+		node.NewEndNode,
 		node.NewMarketNode,
 		node.NewSwitchNode,
 		node.NewRootNode,
