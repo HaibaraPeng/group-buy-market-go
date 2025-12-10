@@ -18,6 +18,11 @@ func (r *AbstractMultiThreadStrategyRouter[T, D, R]) SetDoApplyFunc(f func(reque
 	r.doApplyFunc = f
 }
 
+// SetDoGet 设置获取待执行策略函数
+func (r *AbstractMultiThreadStrategyRouter[T, D, R]) SetDoGet(f func(requestParameter T, dynamicContext D) (StrategyHandler[T, D, R], error)) {
+	r.doGet = f
+}
+
 // Apply 应用策略
 func (r *AbstractMultiThreadStrategyRouter[T, D, R]) Apply(requestParameter T, dynamicContext D) (R, error) {
 	// 异步加载数据

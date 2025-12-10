@@ -23,6 +23,7 @@ func NewSwitchNode(marketNode *MarketNode) *SwitchNode {
 	// 设置自定义方法实现
 	switchNode.SetDoApplyFunc(switchNode.doApply)
 	switchNode.SetMultiThreadFunc(switchNode.multiThread)
+	switchNode.SetDoGet(switchNode.Get)
 
 	return switchNode
 }

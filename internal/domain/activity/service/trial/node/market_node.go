@@ -27,6 +27,7 @@ func NewMarketNode(endNode *EndNode, activityRepository *repository.ActivityRepo
 	// 设置自定义方法实现
 	marketNode.SetDoApplyFunc(marketNode.doApply)
 	marketNode.SetMultiThreadFunc(marketNode.multiThread)
+	marketNode.SetDoGet(marketNode.Get)
 
 	return marketNode
 }

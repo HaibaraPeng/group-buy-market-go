@@ -20,6 +20,7 @@ func NewEndNode() *EndNode {
 	// 设置自定义方法实现
 	endNode.SetDoApplyFunc(endNode.doApply)
 	endNode.SetMultiThreadFunc(endNode.multiThread)
+	endNode.SetDoGet(endNode.Get)
 
 	return endNode
 }

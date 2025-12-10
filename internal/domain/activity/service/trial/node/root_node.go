@@ -24,6 +24,7 @@ func NewRootNode(switchNode *SwitchNode) *RootNode {
 	// 设置自定义方法实现
 	root.SetDoApplyFunc(root.doApply)
 	root.SetMultiThreadFunc(root.multiThread)
+	root.SetDoGet(root.Get)
 
 	return root
 }
