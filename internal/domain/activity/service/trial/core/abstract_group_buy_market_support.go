@@ -11,16 +11,6 @@ type AbstractGroupBuyMarketSupport struct {
 	tree.AbstractMultiThreadStrategyRouter[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity]
 }
 
-// SetDefaultStrategyHandler 设置默认策略处理器
-func (s *AbstractGroupBuyMarketSupport) SetDefaultStrategyHandler(handler tree.StrategyHandler[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity]) {
-	s.AbstractMultiThreadStrategyRouter.SetDefaultStrategyHandler(handler)
-}
-
-// GetDefaultStrategyHandler 获取默认策略处理器
-func (s *AbstractGroupBuyMarketSupport) GetDefaultStrategyHandler() tree.StrategyHandler[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity] {
-	return s.AbstractMultiThreadStrategyRouter.GetDefaultStrategyHandler()
-}
-
 // Get 获取待执行策略 - 需要子类实现
 func (s *AbstractGroupBuyMarketSupport) Get(requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity], error) {
 	// 子类需要实现此方法
