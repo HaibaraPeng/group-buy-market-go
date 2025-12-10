@@ -2,12 +2,11 @@ package tree
 
 // AbstractMultiThreadStrategyRouter 异步资源加载策略路由器
 type AbstractMultiThreadStrategyRouter[T any, D any, R any] struct {
-	// 嵌入基础策略路由器
-	AbstractStrategyRouter[T, D, R]
-
+	defaultStrategyHandler StrategyHandler[T, D, R]
 	// 定义接口字段，用于调用子类方法
 	multiThreadFunc func(requestParameter T, dynamicContext D) error
 	doApplyFunc     func(requestParameter T, dynamicContext D) (R, error)
+	doGet           func(requestParameter T, dynamicContext D) (StrategyHandler[T, D, R], error)
 }
 
 // SetMultiThreadFunc 设置异步加载数据函数
@@ -50,4 +49,27 @@ func (r *AbstractMultiThreadStrategyRouter[T, D, R]) DoApply(requestParameter T,
 	// 默认实现
 	var zero R
 	return zero, nil
+}
+
+func (r *AbstractMultiThreadStrategyRouter[T, D, R]) Router(requestParameter T, dynamicContext D) (R, error) {
+	strategyHandler, err := r.Get(requestParameter, dynamicContext)
+	if err != nil {
+		return nil, err
+	}
+
+	if strategyHandler != nil {
+		return strategyHandler.Apply(requestParameter, dynamicContext)
+	}
+
+	return nil, err
+}
+
+// Get 获取待执行策略 - 可以被子类重写或使用设置的函数
+func (r *AbstractMultiThreadStrategyRouter[T, D, R]) Get(requestParameter T, dynamicContext D) (StrategyHandler[T, D, R], error) {
+	if r.doGet != nil {
+		return r.doGet(requestParameter, dynamicContext)
+	}
+	// 默认实现
+	var handler StrategyHandler[T, D, R]
+	return handler, nil
 }
