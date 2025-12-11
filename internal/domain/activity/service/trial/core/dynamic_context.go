@@ -2,6 +2,7 @@ package core
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"math/big"
 )
 
 // DynamicContext 动态上下文
@@ -11,6 +12,8 @@ type DynamicContext struct {
 	GroupBuyActivityDiscountVO *model.GroupBuyActivityDiscountVO `json:"-"` // 不序列化到JSON
 	// 商品信息
 	SkuVO *model.SkuVO `json:"-"` // 不序列化到JSON
+	// 折扣价格
+	DeductionPrice *big.Float `json:"-"` // 不序列化到JSON
 }
 
 // SetGroupBuyActivityDiscountVO 设置拼团活动营销配置值对象
@@ -31,4 +34,14 @@ func (d *DynamicContext) SetSkuVO(vo *model.SkuVO) {
 // GetSkuVO 获取商品信息
 func (d *DynamicContext) GetSkuVO() *model.SkuVO {
 	return d.SkuVO
+}
+
+// SetDeductionPrice 设置折扣价格
+func (d *DynamicContext) SetDeductionPrice(price *big.Float) {
+	d.DeductionPrice = price
+}
+
+// GetDeductionPrice 获取折扣价格
+func (d *DynamicContext) GetDeductionPrice() *big.Float {
+	return d.DeductionPrice
 }

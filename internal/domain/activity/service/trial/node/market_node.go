@@ -1,27 +1,54 @@
 package node
 
 import (
+	"fmt"
 	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/activity/service/trial/thread"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"log"
+	"math/big"
 )
 
 // MarketNode 营销优惠节点
 // 负责计算各种营销优惠
 type MarketNode struct {
 	core.AbstractGroupBuyMarketSupport
-	activityRepository *repository.ActivityRepository
-	endNode            *EndNode
+	activityRepository          *repository.ActivityRepository
+	endNode                     *EndNode
+	discountCalculateServiceMap map[model.MarketPlanEnum]discount.IDiscountCalculateService
+	zjCalculateService          *discount.ZJCalculateService
+	zkCalculateService          *discount.ZKCalculateService
+	mjCalculateService          *discount.MJCalculateService
+	nCalculateService           *discount.NCalculateService
 }
 
 // NewMarketNode 创建营销节点
-func NewMarketNode(endNode *EndNode, activityRepository *repository.ActivityRepository) *MarketNode {
+func NewMarketNode(
+	endNode *EndNode,
+	activityRepository *repository.ActivityRepository,
+	zjCalculateService *discount.ZJCalculateService,
+	zkCalculateService *discount.ZKCalculateService,
+	mjCalculateService *discount.MJCalculateService,
+	nCalculateService *discount.NCalculateService,
+) *MarketNode {
 	marketNode := &MarketNode{
 		activityRepository: activityRepository,
 		endNode:            endNode,
+		zjCalculateService: zjCalculateService,
+		zkCalculateService: zkCalculateService,
+		mjCalculateService: mjCalculateService,
+		nCalculateService:  nCalculateService,
+	}
+
+	// 初始化折扣计算服务映射
+	marketNode.discountCalculateServiceMap = map[model.MarketPlanEnum]discount.IDiscountCalculateService{
+		model.ZJ: zjCalculateService,
+		model.ZK: zkCalculateService,
+		model.MJ: mjCalculateService,
+		model.N:  nCalculateService,
 	}
 
 	// 设置自定义方法实现
@@ -89,9 +116,42 @@ func (m *MarketNode) multiThread(requestParameter *model.MarketProductEntity, dy
 func (m *MarketNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
 	log.Printf("拼团商品查询试算服务-MarketNode requestParameter:%+v", requestParameter)
 
-	// todo xfg 拼团优惠试算
+	groupBuyActivityDiscountVO := dynamicContext.GetGroupBuyActivityDiscountVO()
+	if groupBuyActivityDiscountVO == nil {
+		return nil, fmt.Errorf("拼团活动配置为空")
+	}
+
+	groupBuyDiscount := groupBuyActivityDiscountVO.GroupBuyDiscount
+	if groupBuyDiscount == nil {
+		return nil, fmt.Errorf("拼团折扣配置为空")
+	}
+
+	skuVO := dynamicContext.GetSkuVO()
+	if skuVO == nil {
+		return nil, fmt.Errorf("商品信息为空")
+	}
+
+	discountCalculateService, exists := m.discountCalculateServiceMap[groupBuyDiscount.MarketPlan]
+	if !exists {
+		log.Printf("不存在%s类型的折扣计算服务，支持类型为:%v", groupBuyDiscount.MarketPlan, m.getSupportedMarketPlans())
+		return nil, fmt.Errorf("不支持的折扣类型: %s", groupBuyDiscount.MarketPlan)
+	}
+
+	// 折扣价格
+	originalPrice := big.NewFloat(skuVO.OriginalPrice)
+	deductionPrice := discountCalculateService.Calculate(requestParameter.UserId, originalPrice, groupBuyDiscount)
+	dynamicContext.SetDeductionPrice(deductionPrice)
 
 	return m.Router(requestParameter, dynamicContext)
+}
+
+// getSupportedMarketPlans 获取支持的营销计划类型
+func (m *MarketNode) getSupportedMarketPlans() []model.MarketPlanEnum {
+	plans := make([]model.MarketPlanEnum, 0, len(m.discountCalculateServiceMap))
+	for plan := range m.discountCalculateServiceMap {
+		plans = append(plans, plan)
+	}
+	return plans
 }
 
 // Get 获取下一个策略处理器

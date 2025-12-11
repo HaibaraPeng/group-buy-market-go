@@ -38,13 +38,20 @@ func (e *EndNode) doApply(requestParameter *model.MarketProductEntity, dynamicCo
 
 	groupBuyActivityDiscountVO := dynamicContext.GetGroupBuyActivityDiscountVO()
 	skuVO := dynamicContext.GetSkuVO()
+	deductionPrice := dynamicContext.GetDeductionPrice()
 
-	// 返回空结果
+	// 如果没有计算出折扣价格，默认为0
+	deductionPriceValue := 0.0
+	if deductionPrice != nil {
+		deductionPriceValue, _ = deductionPrice.Float64()
+	}
+
+	// 返回结果
 	result := &model.TrialBalanceEntity{
 		GoodsId:        skuVO.GoodsId,
 		GoodsName:      skuVO.GoodsName,
 		OriginalPrice:  skuVO.OriginalPrice,
-		DeductionPrice: 0.0,
+		DeductionPrice: deductionPriceValue,
 		TargetCount:    groupBuyActivityDiscountVO.Target,
 		StartTime:      groupBuyActivityDiscountVO.StartTime.Unix(),
 		EndTime:        groupBuyActivityDiscountVO.EndTime.Unix(),
