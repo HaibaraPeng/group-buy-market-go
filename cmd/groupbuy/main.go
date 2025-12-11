@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/domain/activity/service"
+	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
 	"group-buy-market-go/internal/infrastructure"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
@@ -60,9 +61,15 @@ func initializeServer(db *gorm.DB) (*httpInterface.Server, error) {
 	// Create the market service that was missing
 	activityRepository := repository.NewActivityRepository(mySQLGroupBuyActivityDAO, mySQLGroupBuyDiscountDAO, mySQLSkuDAO)
 
+	// Create discount calculation services
+	zjCalculateService := discount.NewZJCalculateService()
+	zkCalculateService := discount.NewZKCalculateService()
+	mjCalculateService := discount.NewMJCalculateService()
+	nCalculateService := discount.NewNCalculateService()
+
 	// Create the node hierarchy needed for market service
 	endNode := node.NewEndNode()
-	marketNode := node.NewMarketNode(endNode, activityRepository)
+	marketNode := node.NewMarketNode(endNode, activityRepository, zjCalculateService, zkCalculateService, mjCalculateService, nCalculateService)
 	switchNode := node.NewSwitchNode(marketNode)
 	rootNode := node.NewRootNode(switchNode)
 
