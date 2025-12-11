@@ -13,6 +13,9 @@ type MJCalculateService struct {
 	*AbstractDiscountCalculateService
 }
 
+// Ensure MJCalculateService implements IDiscountCalculateService
+var _ IDiscountCalculateService = (*MJCalculateService)(nil)
+
 // NewMJCalculateService 创建满减优惠计算服务实例
 func NewMJCalculateService() *MJCalculateService {
 	service := &MJCalculateService{

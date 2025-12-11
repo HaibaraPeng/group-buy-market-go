@@ -11,6 +11,9 @@ type ZKCalculateService struct {
 	*AbstractDiscountCalculateService
 }
 
+// Ensure ZKCalculateService implements IDiscountCalculateService
+var _ IDiscountCalculateService = (*ZKCalculateService)(nil)
+
 // NewZKCalculateService 创建折扣优惠计算服务实例
 func NewZKCalculateService() *ZKCalculateService {
 	service := &ZKCalculateService{

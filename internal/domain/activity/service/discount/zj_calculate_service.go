@@ -11,6 +11,9 @@ type ZJCalculateService struct {
 	*AbstractDiscountCalculateService
 }
 
+// Ensure ZJCalculateService implements IDiscountCalculateService
+var _ IDiscountCalculateService = (*ZJCalculateService)(nil)
+
 // NewZJCalculateService 创建直减优惠计算服务实例
 func NewZJCalculateService() *ZJCalculateService {
 	service := &ZJCalculateService{

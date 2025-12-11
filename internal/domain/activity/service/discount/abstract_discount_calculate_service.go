@@ -10,6 +10,9 @@ type AbstractDiscountCalculateService struct {
 	doCalculateFunc func(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float
 }
 
+// Ensure AbstractDiscountCalculateService implements IDiscountCalculateService
+var _ IDiscountCalculateService = (*AbstractDiscountCalculateService)(nil)
+
 // SetDoCalculateFunc 设置具体的折扣计算实现函数
 func (s *AbstractDiscountCalculateService) SetDoCalculateFunc(f func(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float) {
 	s.doCalculateFunc = f

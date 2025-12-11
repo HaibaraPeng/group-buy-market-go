@@ -11,6 +11,9 @@ type NCalculateService struct {
 	*AbstractDiscountCalculateService
 }
 
+// Ensure NCalculateService implements IDiscountCalculateService
+var _ IDiscountCalculateService = (*NCalculateService)(nil)
+
 // NewNCalculateService 创建N元购优惠计算服务实例
 func NewNCalculateService() *NCalculateService {
 	service := &NCalculateService{
