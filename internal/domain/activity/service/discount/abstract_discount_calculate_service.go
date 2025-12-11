@@ -5,8 +5,15 @@ import (
 	"math/big"
 )
 
-// AbstractDiscountCalculateService 折扣计算服务抽象类
-type AbstractDiscountCalculateService struct{}
+// AbstractDiscountCalculateService 折扣计算服务抽象基类
+type AbstractDiscountCalculateService struct {
+	doCalculateFunc func(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float
+}
+
+// SetDoCalculateFunc 设置具体的折扣计算实现函数
+func (s *AbstractDiscountCalculateService) SetDoCalculateFunc(f func(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float) {
+	s.doCalculateFunc = f
+}
 
 // Calculate 折扣计算
 func (s *AbstractDiscountCalculateService) Calculate(userId string, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
@@ -30,6 +37,9 @@ func (s *AbstractDiscountCalculateService) filterTagId(userId string, tagId stri
 
 // doCalculate 抽象方法，由子类实现具体的折扣计算逻辑
 func (s *AbstractDiscountCalculateService) doCalculate(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
-	// 子类需要实现此方法
+	if s.doCalculateFunc != nil {
+		return s.doCalculateFunc(originalPrice, groupBuyDiscount)
+	}
+	// 默认实现
 	return nil
 }
