@@ -56,8 +56,8 @@ func (r *ActivityRepository) QueryGroupBuyActivityDiscountVO(source string, chan
 	groupBuyDiscount := &model.GroupBuyDiscountVO{
 		DiscountName: groupBuyDiscountRes.DiscountName,
 		DiscountDesc: groupBuyDiscountRes.DiscountDesc,
-		DiscountType: groupBuyDiscountRes.DiscountType,
-		MarketPlan:   groupBuyDiscountRes.MarketPlan,
+		DiscountType: model.DiscountTypeEnum(groupBuyDiscountRes.DiscountType), // 类型转换
+		MarketPlan:   model.MarketPlanEnum(groupBuyDiscountRes.MarketPlan),     // 类型转换
 		MarketExpr:   groupBuyDiscountRes.MarketExpr,
 		TagId:        groupBuyDiscountRes.TagId,
 	}
