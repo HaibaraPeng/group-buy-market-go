@@ -2,14 +2,22 @@ package model
 
 import "time"
 
+// DiscountTypeEnum 折扣类型枚举
+type DiscountTypeEnum byte
+
+const (
+	BaseDiscount DiscountTypeEnum = iota // 基础优惠
+	TagDiscount                          // 人群标签
+)
+
 // GroupBuyDiscountVO represents the discount part of GroupBuyActivityDiscountVO
 type GroupBuyDiscountVO struct {
-	DiscountName string `json:"discount_name"`
-	DiscountDesc string `json:"discount_desc"`
-	DiscountType byte   `json:"discount_type"`
-	MarketPlan   string `json:"market_plan"`
-	MarketExpr   string `json:"market_expr"`
-	TagId        string `json:"tag_id"`
+	DiscountName string           `json:"discount_name"`
+	DiscountDesc string           `json:"discount_desc"`
+	DiscountType DiscountTypeEnum `json:"discount_type"`
+	MarketPlan   string           `json:"market_plan"`
+	MarketExpr   string           `json:"market_expr"`
+	TagId        string           `json:"tag_id"`
 }
 
 // GroupBuyActivityDiscountVO represents the combined view of group buy activity and discount
