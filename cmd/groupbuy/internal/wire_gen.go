@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/domain/activity/service"
+	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/dao"
@@ -25,7 +26,11 @@ func initializeServer(db *gorm.DB) (*http.Server, error) {
 	endNode := node.NewEndNode()
 	mySQLSkuDAO := dao.NewMySQLSkuDAO(db)
 	activityRepository := repository.NewActivityRepository(mySQLGroupBuyActivityDAO, mySQLGroupBuyDiscountDAO, mySQLSkuDAO)
-	marketNode := node.NewMarketNode(endNode, activityRepository)
+	zjCalculateService := discount.NewZJCalculateService()
+	zkCalculateService := discount.NewZKCalculateService()
+	mjCalculateService := discount.NewMJCalculateService()
+	nCalculateService := discount.NewNCalculateService()
+	marketNode := node.NewMarketNode(endNode, activityRepository, zjCalculateService, zkCalculateService, mjCalculateService, nCalculateService)
 	switchNode := node.NewSwitchNode(marketNode)
 	rootNode := node.NewRootNode(switchNode)
 	iIndexGroupBuyMarketService := service.NewIIndexGroupBuyMarketService(rootNode)
