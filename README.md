@@ -11,6 +11,7 @@ This project follows a DDD-based layered architecture:
 ├── cmd/                   # Application entry points
 │   └── groupbuy/          # Main application
 │       └── main.go        # Entry point
+│       └── main_kratos.go # Kratos framework entry point
 ├── configs/               # Configuration files
 ├── docs/                  # Documentation
 ├── internal/              # Private application code
@@ -27,7 +28,7 @@ This project follows a DDD-based layered architecture:
 
 ### 1. Domain Layer (`internal/domain`)
 Contains enterprise business logic and domain entities:
-- Entities: [Product](file:///C:/Users/Roc/Documents/Code/Me/group-buy-market-go/internal/domain/model.go#L4-L8), [User](file:///C:/Users/Roc/Documents/Code/Me/group-buy-market-go/internal/domain/model.go#L11-L15), [Order](file:///C:/Users/Roc/Documents/Code/Me/group-buy-market-go/internal/domain/model.go#L18-L23)
+- Entities: Product, User, Order
 - Value Objects
 - Aggregates
 - Domain Services
@@ -64,12 +65,20 @@ go mod tidy
 
 ### Running the Application
 ```bash
+# Run with standard HTTP server
 go run cmd/groupbuy/main.go
+
+# Run with Kratos framework
+go run cmd/groupbuy/main_kratos.go
 ```
 
 ### Building the Application
 ```bash
+# Standard build
 go build -o bin/groupbuy cmd/groupbuy/main.go
+
+# Kratos build
+go build -o bin/groupbuy_kratos cmd/groupbuy/main_kratos.go
 ```
 
 ## Dependency Injection

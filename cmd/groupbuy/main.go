@@ -1,7 +1,15 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
+	"os"
+
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"gorm.io/gorm"
+
 	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
@@ -10,15 +18,40 @@ import (
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/dao"
 	httpInterface "group-buy-market-go/internal/interfaces/http"
-	"log"
-	"net/http"
-
-	"gorm.io/gorm"
 )
 
+// go build -ldflags "-X main.Version=x.y.z" .
+var (
+	// Name is the name of the compiled software.
+	Name string
+	// Version is the version of the compiled software.
+	Version string
+	// flagconf is the config flag.
+	flagconf string
+
+	id, _ = os.Hostname()
+)
+
+func init() {
+	flag.StringVar(&flagconf, "conf", "configs/config.yaml", "config path, eg: -conf config.yaml")
+}
+
+func newApp(hs *http.Server) *kratos.App {
+	return kratos.New(
+		kratos.ID(id),
+		kratos.Name(Name),
+		kratos.Version(Version),
+		kratos.Server(
+			hs,
+		),
+	)
+}
+
 func main() {
+	flag.Parse()
+
 	// Load configuration
-	cfg, err := infrastructure.LoadConfig("configs/config.yaml")
+	cfg, err := infrastructure.LoadConfig(flagconf)
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
@@ -34,20 +67,23 @@ func main() {
 	}()
 
 	// Initialize server with Wire
-	server, err := initializeServer(db)
+	srv, err := initializeServer(db)
 	if err != nil {
 		log.Fatalf("Failed to initialize server: %v", err)
 	}
 
 	// Register routes
-	server.RegisterRoutes()
+	srv.RegisterRoutes()
 
-	log.Printf("Server starting on %s:%d", cfg.Server.Host, cfg.Server.Port)
-	// Start server
-	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
-	err = http.ListenAndServe(addr, server)
-	if err != nil {
-		log.Fatal(err)
+	httpSrv := http.NewServer(http.Address(fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)))
+
+	// Convert our existing http.Handler to Kratos transport
+	httpSrv.HandlePrefix("/", srv)
+
+	app := newApp(httpSrv)
+	// start and wait for stop signal
+	if err := app.Run(); err != nil {
+		panic(err)
 	}
 }
 
