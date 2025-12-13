@@ -2,10 +2,9 @@ package infrastructure
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
 
-	"gopkg.in/yaml.v2"
+	"github.com/go-kratos/kratos/v2/config"
+	"github.com/go-kratos/kratos/v2/config/file"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -38,25 +37,25 @@ type Config struct {
 
 // LoadConfig loads configuration from file
 func LoadConfig(path string) (*Config, error) {
-	// Check if file exists
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return nil, fmt.Errorf("config file not found: %s", path)
+	// Create a config instance with file source
+	c := config.New(
+		config.WithSource(
+			file.NewSource(path),
+		),
+	)
+
+	// Load the config
+	if err := c.Load(); err != nil {
+		return nil, fmt.Errorf("failed to load config: %v", err)
 	}
 
-	// Read file
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read config file: %v", err)
+	// Create config struct and unmarshal
+	var cfg Config
+	if err := c.Scan(&cfg); err != nil {
+		return nil, fmt.Errorf("failed to scan config: %v", err)
 	}
 
-	// Parse YAML
-	config := &Config{}
-	err = yaml.Unmarshal(data, config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse config file: %v", err)
-	}
-
-	return config, nil
+	return &cfg, nil
 }
 
 // InitDB initializes the database connection with GORM
