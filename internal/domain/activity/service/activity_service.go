@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+	v1 "group-buy-market-go/api/v1"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/activity/service/trial/factory"
@@ -10,6 +12,7 @@ import (
 // IIndexGroupBuyMarketService 拼团营销服务
 // 提供对外的营销试算服务接口
 type IIndexGroupBuyMarketService struct {
+	v1.UnimplementedActivityHTTPServer
 	strategyFactory *factory.DefaultActivityStrategyFactory
 }
 
@@ -37,6 +40,34 @@ func (s *IIndexGroupBuyMarketService) IndexMarketTrial(marketProductEntity *mode
 	if err != nil {
 		return nil, err
 	}
+
+	return trialBalanceEntity, nil
+}
+
+// IndexMarketTrial 首页营销试算
+// 对应Java中的indexMarketTrial方法
+func (s *IIndexGroupBuyMarketService) MarketTrial(ctx context.Context, req *v1.MarketTrialRequest) (*v1.MarketTrialReply, error) {
+	// 获取策略处理器
+	strategyHandler := s.strategyFactory.StrategyHandler()
+
+	// 创建动态上下文
+	dynamicContext := &core.DynamicContext{}
+
+	// Create market product entity
+	marketProduct := &model.MarketProductEntity{
+		UserId:  req.UserId,
+		GoodsId: req.GoodsId,
+		Source:  req.Source,
+		Channel: req.Channel,
+	}
+
+	// 应用策略处理器
+	trialBalanceEntity, err := strategyHandler.Apply(marketProduct, dynamicContext)
+	if err != nil {
+		return nil, err
+	}
+
+	// 转换trialBalanceEntity为MarketTrialReply
 
 	return trialBalanceEntity, nil
 }
