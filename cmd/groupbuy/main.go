@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"gorm.io/gorm"
 
@@ -36,11 +36,13 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "configs/config.yaml", "config path, eg: -conf config.yaml")
 }
 
-func newApp(hs *http.Server) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
 		kratos.Version(Version),
+		kratos.Metadata(map[string]string{}),
+		kratos.Logger(logger),
 		kratos.Server(
 			hs,
 		),
@@ -50,16 +52,25 @@ func newApp(hs *http.Server) *kratos.App {
 func main() {
 	flag.Parse()
 
+	// Create logger
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+	)
+
 	// Load configuration
 	cfg, err := conf.LoadConfig(flagconf)
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		logger.Log(log.LevelFatal, "msg", "Failed to load config", "error", err)
 	}
 
 	// Initialize database
 	db, err := cfg.InitDB()
 	if err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
+		logger.Log(log.LevelFatal, "msg", "Failed to initialize database", "error", err)
 	}
 	defer func() {
 		sqlDB, _ := db.DB()
@@ -69,7 +80,7 @@ func main() {
 	// Initialize server with Wire
 	srv, err := initializeServer(db)
 	if err != nil {
-		log.Fatalf("Failed to initialize server: %v", err)
+		logger.Log(log.LevelFatal, "msg", "Failed to initialize server", "error", err)
 	}
 
 	// Create HTTP server
@@ -78,10 +89,10 @@ func main() {
 	// Register HTTP handlers using Kratos transport
 	httpSrv.HandlePrefix("/", srv)
 
-	app := newApp(httpSrv)
+	app := newApp(logger, httpSrv)
 	// start and wait for stop signal
 	if err := app.Run(); err != nil {
-		panic(err)
+		logger.Log(log.LevelFatal, "msg", "Application failed to run", "error", err)
 	}
 }
 
