@@ -4,36 +4,16 @@ package api.http;
 
 import "google/api/annotations.proto";
 
-option go_package = "group-buy-market-go/api/http;v1";
+option go_package = "group-buy-market-go/api/v1;v1";
 
 // GroupBuyService HTTP API
-service GroupBuyHTTP {
+service ActivityHTTP {
   // MarketTrial handles market trial requests
   rpc MarketTrial(MarketTrialRequest) returns (MarketTrialReply){
     option (google.api.http) = {
       get: "/market/trial"
     };
   };
-}
-
-message GetAllActivitiesRequest {}
-
-message GetAllActivitiesReply {
-  repeated GroupBuyActivityInfo activities = 1;
-}
-
-message GetAllDiscountsRequest {}
-
-message GetAllDiscountsReply {
-  repeated GroupBuyDiscountInfo discounts = 1;
-}
-
-message GetDiscountByIDRequest {
-  int64 id = 1;
-}
-
-message GetDiscountByIDReply {
-  GroupBuyDiscountInfo discount = 1;
 }
 
 message MarketTrialRequest {
