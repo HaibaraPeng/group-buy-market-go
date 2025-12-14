@@ -64,23 +64,26 @@ func main() {
 	// Load configuration
 	cfg, err := conf.LoadConfig(flagconf)
 	if err != nil {
-		logger.Log(log.LevelFatal, "msg", "Failed to load config", "error", err)
+		panic(err)
 	}
 
 	// Initialize database
 	db, err := cfg.InitDB()
 	if err != nil {
-		logger.Log(log.LevelFatal, "msg", "Failed to initialize database", "error", err)
+		panic(err)
 	}
 	defer func() {
 		sqlDB, _ := db.DB()
-		sqlDB.Close()
+		err := sqlDB.Close()
+		if err != nil {
+			panic(err)
+		}
 	}()
 
 	// Initialize server with Wire
 	srv, err := initializeServer(db, logger)
 	if err != nil {
-		logger.Log(log.LevelFatal, "msg", "Failed to initialize server", "error", err)
+		panic(err)
 	}
 
 	// Create HTTP server
@@ -92,7 +95,7 @@ func main() {
 	app := newApp(logger, httpSrv)
 	// start and wait for stop signal
 	if err := app.Run(); err != nil {
-		logger.Log(log.LevelFatal, "msg", "Application failed to run", "error", err)
+		panic(err)
 	}
 }
 
