@@ -8,27 +8,6 @@ option go_package = "group-buy-market-go/api/http;v1";
 
 // GroupBuyService HTTP API
 service GroupBuyHTTP {
-  // GetAllActivities retrieves all group buy activities
-  rpc GetAllActivities(GetAllActivitiesRequest) returns (GetAllActivitiesReply){
-    option (google.api.http) = {
-      get: "/groupbuy/activities"
-    };
-  };
-  
-  // GetAllDiscounts retrieves all group buy discounts
-  rpc GetAllDiscounts(GetAllDiscountsRequest) returns (GetAllDiscountsReply){
-    option (google.api.http) = {
-      get: "/groupbuy/discounts"
-    };
-  };
-  
-  // GetDiscountByID retrieves a group buy discount by ID
-  rpc GetDiscountByID(GetDiscountByIDRequest) returns (GetDiscountByIDReply){
-    option (google.api.http) = {
-      get: "/groupbuy/discount"
-    };
-  };
-  
   // MarketTrial handles market trial requests
   rpc MarketTrial(MarketTrialRequest) returns (MarketTrialReply){
     option (google.api.http) = {

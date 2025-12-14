@@ -7,68 +7,6 @@ info:
     description: GroupBuyService HTTP API
     version: 0.0.1
 paths:
-    /groupbuy/activities:
-        get:
-            tags:
-                - GroupBuyHTTP
-            description: GetAllActivities retrieves all group buy activities
-            operationId: GroupBuyHTTP_GetAllActivities
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/GetAllActivitiesReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    /groupbuy/discount:
-        get:
-            tags:
-                - GroupBuyHTTP
-            description: GetDiscountByID retrieves a group buy discount by ID
-            operationId: GroupBuyHTTP_GetDiscountByID
-            parameters:
-                - name: id
-                  in: query
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/GetDiscountByIDReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    /groupbuy/discounts:
-        get:
-            tags:
-                - GroupBuyHTTP
-            description: GetAllDiscounts retrieves all group buy discounts
-            operationId: GroupBuyHTTP_GetAllDiscounts
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/GetAllDiscountsReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /market/trial:
         get:
             tags:
