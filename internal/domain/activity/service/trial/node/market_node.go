@@ -24,7 +24,7 @@ type MarketNode struct {
 	zkCalculateService          *discount.ZKCalculateService
 	mjCalculateService          *discount.MJCalculateService
 	nCalculateService           *discount.NCalculateService
-	logger                      log.Logger
+	log                         *log.Helper
 }
 
 // NewMarketNode 创建营销节点
@@ -44,7 +44,7 @@ func NewMarketNode(
 		zkCalculateService: zkCalculateService,
 		mjCalculateService: mjCalculateService,
 		nCalculateService:  nCalculateService,
-		logger:             logger,
+		log:                log.NewHelper(logger),
 	}
 
 	// 初始化折扣计算服务映射
@@ -90,7 +90,7 @@ func (m *MarketNode) multiThread(requestParameter *model.MarketProductEntity, dy
 	// 等待活动查询结果
 	activityResult := <-activityChan
 	if activityResult.Error != nil {
-		m.logger.Log(log.LevelError, "msg", "查询活动配置失败", "error", activityResult.Error)
+		m.log.Errorw("查询活动配置失败", "error", activityResult.Error)
 		return activityResult.Error
 	}
 	activityVO = activityResult.Result
@@ -98,7 +98,7 @@ func (m *MarketNode) multiThread(requestParameter *model.MarketProductEntity, dy
 	// 等待SKU查询结果
 	skuResult := <-skuChan
 	if skuResult.Error != nil {
-		m.logger.Log(log.LevelError, "msg", "查询商品信息失败", "error", skuResult.Error)
+		m.log.Errorw("查询商品信息失败", "error", skuResult.Error)
 		return skuResult.Error
 	}
 	skuVO = skuResult.Result
@@ -111,14 +111,14 @@ func (m *MarketNode) multiThread(requestParameter *model.MarketProductEntity, dy
 		dynamicContext.SetSkuVO(skuVO)
 	}
 
-	m.logger.Log(log.LevelInfo, "msg", "拼团商品查询试算服务-MarketNode异步线程加载数据完成")
+	m.log.Info("拼团商品查询试算服务-MarketNode异步线程加载数据完成")
 	return nil
 }
 
 // doApply 业务流程受理
 // 对应Java中的doApply方法
 func (m *MarketNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
-	m.logger.Log(log.LevelInfo, "msg", "拼团商品查询试算服务-MarketNode", "requestParameter", requestParameter)
+	m.log.Infow("拼团商品查询试算服务-MarketNode", "requestParameter", requestParameter)
 
 	groupBuyActivityDiscountVO := dynamicContext.GetGroupBuyActivityDiscountVO()
 	if groupBuyActivityDiscountVO == nil {
@@ -137,7 +137,7 @@ func (m *MarketNode) doApply(requestParameter *model.MarketProductEntity, dynami
 
 	discountCalculateService, exists := m.discountCalculateServiceMap[groupBuyDiscount.MarketPlan]
 	if !exists {
-		m.logger.Log(log.LevelWarn, "msg", "不存在指定类型的折扣计算服务", "marketPlan", groupBuyDiscount.MarketPlan, "supportedPlans", m.getSupportedMarketPlans())
+		m.log.Warnw("不存在指定类型的折扣计算服务", "marketPlan", groupBuyDiscount.MarketPlan, "supportedPlans", m.getSupportedMarketPlans())
 		return nil, fmt.Errorf("不支持的折扣类型: %s", groupBuyDiscount.MarketPlan)
 	}
 
@@ -161,7 +161,7 @@ func (m *MarketNode) getSupportedMarketPlans() []model.MarketPlanEnum {
 // Get 获取下一个策略处理器
 // 营销节点处理完成后进入结束节点
 func (m *MarketNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
-	m.logger.Log(log.LevelInfo, "msg", "营销节点处理完成，进入结束节点")
+	m.log.Info("营销节点处理完成，进入结束节点")
 
 	// 返回结束节点作为下一个处理器
 	return m.endNode, nil

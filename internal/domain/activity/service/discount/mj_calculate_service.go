@@ -29,14 +29,14 @@ func NewMJCalculateService(logger log.Logger) *MJCalculateService {
 
 // doCalculate 实现满减优惠计算逻辑
 func (s *MJCalculateService) doCalculate(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
-	s.logger.Log(log.LevelInfo, "msg", "优惠策略折扣计算", "discountType", groupBuyDiscount.DiscountType)
+	s.log.Infof("优惠策略折扣计算: %v", groupBuyDiscount.DiscountType)
 
 	// 折扣表达式 - 100,10 满100减10元
 	marketExpr := groupBuyDiscount.MarketExpr
 	parts := strings.Split(marketExpr, consts.SPLIT)
 
 	if len(parts) < 2 {
-		s.logger.Log(log.LevelWarn, "msg", "无效的满减表达式", "marketExpr", marketExpr)
+		s.log.Warnf("无效的满减表达式: %s", marketExpr)
 		return originalPrice
 	}
 
@@ -45,13 +45,13 @@ func (s *MJCalculateService) doCalculate(originalPrice *big.Float, groupBuyDisco
 
 	x, _, err1 := big.ParseFloat(xStr, 10, 64, big.ToZero)
 	if err1 != nil {
-		s.logger.Log(log.LevelError, "msg", "解析满减条件失败", "error", err1)
+		s.log.Errorf("解析满减条件失败: %v", err1)
 		return originalPrice
 	}
 
 	y, _, err2 := big.ParseFloat(yStr, 10, 64, big.ToZero)
 	if err2 != nil {
-		s.logger.Log(log.LevelError, "msg", "解析减免金额失败", "error", err2)
+		s.log.Errorf("解析减免金额失败: %v", err2)
 		return originalPrice
 	}
 

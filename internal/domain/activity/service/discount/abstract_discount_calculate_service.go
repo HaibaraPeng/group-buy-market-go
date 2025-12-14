@@ -10,7 +10,7 @@ import (
 // AbstractDiscountCalculateService 折扣计算服务抽象基类
 type AbstractDiscountCalculateService struct {
 	doCalculateFunc func(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float
-	logger          log.Logger
+	log             *log.Helper
 }
 
 // Ensure AbstractDiscountCalculateService implements IDiscountCalculateService
@@ -23,7 +23,7 @@ func (s *AbstractDiscountCalculateService) SetDoCalculateFunc(f func(originalPri
 
 // SetLogger 设置日志记录器
 func (s *AbstractDiscountCalculateService) SetLogger(logger log.Logger) {
-	s.logger = logger
+	s.log = log.NewHelper(logger)
 }
 
 // Calculate 折扣计算

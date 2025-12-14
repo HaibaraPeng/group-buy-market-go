@@ -27,7 +27,7 @@ func NewZJCalculateService(logger log.Logger) *ZJCalculateService {
 
 // doCalculate 实现直减优惠计算逻辑
 func (s *ZJCalculateService) doCalculate(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
-	s.logger.Log(log.LevelInfo, "msg", "优惠策略折扣计算", "discountType", groupBuyDiscount.DiscountType)
+	s.log.Infof("优惠策略折扣计算: %v", groupBuyDiscount.DiscountType)
 
 	// 折扣表达式 - 直减为扣减金额
 	marketExpr := groupBuyDiscount.MarketExpr
@@ -35,7 +35,7 @@ func (s *ZJCalculateService) doCalculate(originalPrice *big.Float, groupBuyDisco
 	// 折扣价格
 	deductionAmount, _, err := big.ParseFloat(marketExpr, 10, 64, big.ToZero)
 	if err != nil {
-		s.logger.Log(log.LevelError, "msg", "解析折扣金额失败", "error", err)
+		s.log.Errorf("解析折扣金额失败: %v", err)
 		return originalPrice
 	}
 

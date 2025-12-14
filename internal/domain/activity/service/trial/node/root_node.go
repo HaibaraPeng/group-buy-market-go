@@ -14,14 +14,14 @@ import (
 type RootNode struct {
 	core.AbstractGroupBuyMarketSupport
 	switchNode *SwitchNode
-	logger     log.Logger
+	log        *log.Helper
 }
 
 // NewRootNode 创建根节点
 func NewRootNode(switchNode *SwitchNode, logger log.Logger) *RootNode {
 	root := &RootNode{
 		switchNode: switchNode,
-		logger:     logger,
+		log:        log.NewHelper(logger),
 	}
 
 	// 设置自定义方法实现
@@ -41,7 +41,7 @@ func (r *RootNode) multiThread(requestParameter *model.MarketProductEntity, dyna
 // doApply 业务流程受理
 // 对应Java中的doApply方法
 func (r *RootNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
-	r.logger.Log(log.LevelInfo, "msg", "拼团商品查询试算服务-RootNode", "userId", requestParameter.UserId, "requestParameter", requestParameter)
+	r.log.Infow("拼团商品查询试算服务-RootNode", "userId", requestParameter.UserId, "requestParameter", requestParameter)
 
 	// 参数判断
 	if requestParameter == nil || dynamicContext == nil {
@@ -60,7 +60,7 @@ func (r *RootNode) doApply(requestParameter *model.MarketProductEntity, dynamicC
 // Get 获取下一个策略处理器
 // 根节点之后通常是开关节点，用于判断是否启用营销活动
 func (r *RootNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
-	r.logger.Log(log.LevelInfo, "msg", "根节点处理完成，进入开关节点")
+	r.log.Info("根节点处理完成，进入开关节点")
 
 	// 返回开关节点作为下一个处理器
 	return r.switchNode, nil

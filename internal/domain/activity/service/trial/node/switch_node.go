@@ -13,14 +13,14 @@ import (
 type SwitchNode struct {
 	core.AbstractGroupBuyMarketSupport
 	marketNode *MarketNode
-	logger     log.Logger
+	log        *log.Helper
 }
 
 // NewSwitchNode 创建开关节点
 func NewSwitchNode(marketNode *MarketNode, logger log.Logger) *SwitchNode {
 	switchNode := &SwitchNode{
 		marketNode: marketNode,
-		logger:     logger,
+		log:        log.NewHelper(logger),
 	}
 
 	// 设置自定义方法实现
@@ -40,7 +40,7 @@ func (r *SwitchNode) multiThread(requestParameter *model.MarketProductEntity, dy
 // doApply 业务流程受理
 // 对应Java中的doApply方法
 func (r *SwitchNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
-	r.logger.Log(log.LevelInfo, "msg", "拼团商品查询试算服务-SwitchNode", "requestParameter", requestParameter)
+	r.log.Infow("拼团商品查询试算服务-SwitchNode", "requestParameter", requestParameter)
 
 	// todo xfg 判断营销活动开关是否打开
 
@@ -49,7 +49,7 @@ func (r *SwitchNode) doApply(requestParameter *model.MarketProductEntity, dynami
 
 // Get 获取下一个策略处理器
 func (r *SwitchNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
-	r.logger.Log(log.LevelInfo, "msg", "开关节点处理完成，进入营销节点")
+	r.log.Info("开关节点处理完成，进入营销节点")
 
 	// 返回营销节点作为下一个处理器
 	return r.marketNode, nil
