@@ -1,0 +1,246 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: GroupBuyHTTP API
+    description: GroupBuyService HTTP API
+    version: 0.0.1
+paths:
+    /groupbuy/activities:
+        get:
+            tags:
+                - GroupBuyHTTP
+            description: GetAllActivities retrieves all group buy activities
+            operationId: GroupBuyHTTP_GetAllActivities
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetAllActivitiesReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /groupbuy/discount:
+        get:
+            tags:
+                - GroupBuyHTTP
+            description: GetDiscountByID retrieves a group buy discount by ID
+            operationId: GroupBuyHTTP_GetDiscountByID
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetDiscountByIDReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /groupbuy/discounts:
+        get:
+            tags:
+                - GroupBuyHTTP
+            description: GetAllDiscounts retrieves all group buy discounts
+            operationId: GroupBuyHTTP_GetAllDiscounts
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetAllDiscountsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /market/trial:
+        get:
+            tags:
+                - GroupBuyHTTP
+            description: MarketTrial handles market trial requests
+            operationId: GroupBuyHTTP_MarketTrial
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+                - name: goodsId
+                  in: query
+                  schema:
+                    type: string
+                - name: source
+                  in: query
+                  schema:
+                    type: string
+                - name: channel
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MarketTrialReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+components:
+    schemas:
+        GetAllActivitiesReply:
+            type: object
+            properties:
+                activities:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GroupBuyActivityInfo'
+        GetAllDiscountsReply:
+            type: object
+            properties:
+                discounts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GroupBuyDiscountInfo'
+        GetDiscountByIDReply:
+            type: object
+            properties:
+                discount:
+                    $ref: '#/components/schemas/GroupBuyDiscountInfo'
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        GroupBuyActivityInfo:
+            type: object
+            properties:
+                activityId:
+                    type: string
+                activityName:
+                    type: string
+                source:
+                    type: string
+                channel:
+                    type: string
+                goodsId:
+                    type: string
+                groupBuyDiscount:
+                    $ref: '#/components/schemas/GroupBuyDiscountInfo'
+                groupType:
+                    type: integer
+                    format: int32
+                takeLimitCount:
+                    type: integer
+                    format: int32
+                target:
+                    type: integer
+                    format: int32
+                validTime:
+                    type: integer
+                    format: int32
+                status:
+                    type: integer
+                    format: int32
+                startTime:
+                    type: string
+                endTime:
+                    type: string
+                tagId:
+                    type: string
+                tagScope:
+                    type: string
+        GroupBuyDiscountInfo:
+            type: object
+            properties:
+                id:
+                    type: string
+                discountId:
+                    type: integer
+                    format: int32
+                discountName:
+                    type: string
+                discountDesc:
+                    type: string
+                discountType:
+                    type: integer
+                    format: int32
+                marketPlan:
+                    type: string
+                marketExpr:
+                    type: string
+                tagId:
+                    type: string
+                createTime:
+                    type: string
+                updateTime:
+                    type: string
+        MarketTrialReply:
+            type: object
+            properties:
+                trialResult:
+                    $ref: '#/components/schemas/TrialBalanceInfo'
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        TrialBalanceInfo:
+            type: object
+            properties:
+                goodsId:
+                    type: string
+                goodsName:
+                    type: string
+                originalPrice:
+                    type: number
+                    format: double
+                deductionPrice:
+                    type: number
+                    format: double
+                targetCount:
+                    type: integer
+                    format: int32
+                startTime:
+                    type: string
+                endTime:
+                    type: string
+                isVisible:
+                    type: boolean
+                isEnable:
+                    type: boolean
+tags:
+    - name: GroupBuyHTTP
