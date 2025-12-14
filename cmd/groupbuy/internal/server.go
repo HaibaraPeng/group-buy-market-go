@@ -1,21 +1,19 @@
-//go:build !wireinject
-// +build !wireinject
-
 package main
 
 import (
-	"github.com/google/wire"
-	"group-buy-market-go/internal/application"
-	"group-buy-market-go/internal/domain"
-	"group-buy-market-go/internal/infrastructure/dao"
-	"group-buy-market-go/internal/interfaces/http"
+	"context"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"group-buy-market-go/internal/server"
 )
 
-// ServerSet is a provider set for building the server
-var ServerSet = wire.NewSet(
-	http.NewServer,
-	application.NewService,
-	dao.NewMySQLGroupBuyActivityDAO,
-	domain.NewGroupBuyService,
-	wire.Bind(new(dao.GroupBuyActivityDAO), new(*dao.MySQLGroupBuyActivityDAO)),
-)
+func NewHTTPServer(s *server.Server, opts ...http.ServerOption) *http.Server {
+	srv := http.NewServer(opts...)
+	srv.HandlePrefix("/", s)
+	return srv
+}
+
+func NewHTTPServerWithContext(ctx context.Context, s *server.Server, opts ...http.ServerOption) *http.Server {
+	srv := http.NewServer(opts...)
+	srv.HandlePrefix("/", s)
+	return srv
+}

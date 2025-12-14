@@ -1,11 +1,12 @@
-package http
+package server
 
 import (
+	"net/http"
+
 	"group-buy-market-go/internal/application"
 	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/infrastructure/dao"
-	"net/http"
 )
 
 type Server struct {
