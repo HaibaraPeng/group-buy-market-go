@@ -1,4 +1,4 @@
-// Copyright 2015 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -111,7 +111,8 @@ message Http {
 // HTTP | gRPC
 // -----|-----
 // `GET /v1/messages/123456?revision=2&sub.subfield=foo` |
-// `GetMessage(message_id: "123456" revision: 2 sub: SubMessage(subfield: "foo"))`
+// `GetMessage(message_id: "123456" revision: 2 sub: SubMessage(subfield:
+// "foo"))`
 //
 // Note that fields which are mapped to URL query parameters must have a
 // primitive type or a repeated primitive type or a non-repeated message type.
@@ -162,7 +163,6 @@ message Http {
 //     message Message {
 //       string message_id = 1;
 //       string text = 2;
-//       int64 revision = 3;
 //     }
 //
 //
@@ -271,13 +271,15 @@ message Http {
 // transcoding in your service config YAML files. You do this by specifying a
 // `HttpRule` that maps the gRPC method to a REST endpoint, achieving the same
 // effect as the proto annotation. This can be particularly useful if you
-// have a legacy API service that uses gRPC internally but do not want to
-// modify the proto files.
+// have a proto that is reused in multiple services. Note that any transcoding
+// specified in the service config will override any matching transcoding
+// configuration in the proto.
 //
 // Example:
 //
 //     http:
 //       rules:
+//         # Selects a gRPC method and applies HttpRule to it.
 //         - selector: example.v1.Messaging.GetMessage
 //           get: /v1/messages/{message_id}/{sub.subfield}
 //
