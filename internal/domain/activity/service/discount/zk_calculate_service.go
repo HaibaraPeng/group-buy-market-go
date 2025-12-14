@@ -2,8 +2,9 @@ package discount
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
-	"log"
 	"math/big"
+
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 // ZKCalculateService 折扣优惠计算服务
@@ -15,17 +16,18 @@ type ZKCalculateService struct {
 var _ IDiscountCalculateService = (*ZKCalculateService)(nil)
 
 // NewZKCalculateService 创建折扣优惠计算服务实例
-func NewZKCalculateService() *ZKCalculateService {
+func NewZKCalculateService(logger log.Logger) *ZKCalculateService {
 	service := &ZKCalculateService{
 		AbstractDiscountCalculateService: &AbstractDiscountCalculateService{},
 	}
 	service.SetDoCalculateFunc(service.doCalculate)
+	service.SetLogger(logger)
 	return service
 }
 
 // doCalculate 实现折扣优惠计算逻辑
 func (s *ZKCalculateService) doCalculate(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
-	log.Printf("优惠策略折扣计算:%v", groupBuyDiscount.DiscountType)
+	s.logger.Log(log.LevelInfo, "msg", "优惠策略折扣计算", "discountType", groupBuyDiscount.DiscountType)
 
 	// 折扣表达式 - 折扣百分比
 	marketExpr := groupBuyDiscount.MarketExpr
@@ -33,7 +35,7 @@ func (s *ZKCalculateService) doCalculate(originalPrice *big.Float, groupBuyDisco
 	// 折扣价格
 	discountRate, _, err := big.ParseFloat(marketExpr, 10, 64, big.ToZero)
 	if err != nil {
-		log.Printf("解析折扣率失败: %v", err)
+		s.logger.Log(log.LevelError, "msg", "解析折扣率失败", "error", err)
 		return originalPrice
 	}
 

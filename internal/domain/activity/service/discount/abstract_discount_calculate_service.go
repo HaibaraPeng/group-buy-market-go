@@ -3,11 +3,14 @@ package discount
 import (
 	"group-buy-market-go/internal/domain/activity/model"
 	"math/big"
+
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 // AbstractDiscountCalculateService 折扣计算服务抽象基类
 type AbstractDiscountCalculateService struct {
 	doCalculateFunc func(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float
+	logger          log.Logger
 }
 
 // Ensure AbstractDiscountCalculateService implements IDiscountCalculateService
@@ -16,6 +19,11 @@ var _ IDiscountCalculateService = (*AbstractDiscountCalculateService)(nil)
 // SetDoCalculateFunc 设置具体的折扣计算实现函数
 func (s *AbstractDiscountCalculateService) SetDoCalculateFunc(f func(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float) {
 	s.doCalculateFunc = f
+}
+
+// SetLogger 设置日志记录器
+func (s *AbstractDiscountCalculateService) SetLogger(logger log.Logger) {
+	s.logger = logger
 }
 
 // Calculate 折扣计算
