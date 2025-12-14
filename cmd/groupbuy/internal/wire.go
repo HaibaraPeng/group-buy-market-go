@@ -6,9 +6,10 @@
 package main
 
 import (
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"gorm.io/gorm"
-	"group-buy-market-go/internal/conf"
+
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
@@ -17,12 +18,14 @@ import (
 	"group-buy-market-go/internal/server"
 )
 
-func initializeServer(db *gorm.DB) (*server.Server, error) {
+func initializeServer(db *gorm.DB, logger log.Logger) (*server.Server, error) {
 	panic(wire.Build(
+		wire.Bind(new(dao.GroupBuyActivityDAO), new(*dao.MySQLGroupBuyActivityDAO)),
+		wire.Bind(new(dao.GroupBuyDiscountDAO), new(*dao.MySQLGroupBuyDiscountDAO)),
+		wire.Bind(new(dao.SkuDAO), new(*dao.MySQLSkuDAO)),
 		dao.NewMySQLGroupBuyActivityDAO,
 		dao.NewMySQLGroupBuyDiscountDAO,
 		dao.NewMySQLSkuDAO,
-		domain.NewGroupBuyService,
 		repository.NewActivityRepository,
 		discount.NewZJCalculateService,
 		discount.NewZKCalculateService,
