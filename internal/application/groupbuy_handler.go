@@ -2,7 +2,6 @@ package application
 
 import (
 	"encoding/json"
-	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/infrastructure/dao"
@@ -11,21 +10,18 @@ import (
 
 // GroupBuyHandler handles group buy related HTTP requests
 type GroupBuyHandler struct {
-	groupBuyService *domain.GroupBuyService
-	activityRepo    dao.GroupBuyActivityDAO
-	marketService   *service.IIndexGroupBuyMarketService
+	activityRepo  dao.GroupBuyActivityDAO
+	marketService *service.IIndexGroupBuyMarketService
 }
 
 // NewGroupBuyHandler creates a new group buy handler
 func NewGroupBuyHandler(
-	groupBuyService *domain.GroupBuyService,
 	activityRepo dao.GroupBuyActivityDAO,
 	marketService *service.IIndexGroupBuyMarketService,
 ) *GroupBuyHandler {
 	return &GroupBuyHandler{
-		groupBuyService: groupBuyService,
-		activityRepo:    activityRepo,
-		marketService:   marketService,
+		activityRepo:  activityRepo,
+		marketService: marketService,
 	}
 }
 

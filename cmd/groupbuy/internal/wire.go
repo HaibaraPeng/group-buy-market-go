@@ -9,7 +9,6 @@ import (
 	"github.com/google/wire"
 	"gorm.io/gorm"
 	"group-buy-market-go/internal/conf"
-	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"

@@ -11,7 +11,6 @@ import (
 	"gorm.io/gorm"
 
 	"group-buy-market-go/internal/conf"
-	"group-buy-market-go/internal/domain"
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
@@ -104,7 +103,6 @@ func initializeServer(db *gorm.DB, logger log.Logger) (*server.Server, error) {
 	mySQLGroupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(db)
 	mySQLGroupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(db)
 	mySQLSkuDAO := dao.NewMySQLSkuDAO(db)
-	groupBuyService := domain.NewGroupBuyService(mySQLGroupBuyActivityDAO, mySQLGroupBuyDiscountDAO)
 
 	// Create the market service that was missing
 	activityRepository := repository.NewActivityRepository(mySQLGroupBuyActivityDAO, mySQLGroupBuyDiscountDAO, mySQLSkuDAO)
@@ -123,6 +121,6 @@ func initializeServer(db *gorm.DB, logger log.Logger) (*server.Server, error) {
 
 	marketService := service.NewIIndexGroupBuyMarketService(rootNode)
 
-	server := server.NewServer(mySQLGroupBuyActivityDAO, groupBuyService, marketService)
+	server := server.NewServer(mySQLGroupBuyActivityDAO, marketService)
 	return server, nil
 }
