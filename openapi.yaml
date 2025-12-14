@@ -3,16 +3,16 @@
 
 openapi: 3.0.3
 info:
-    title: GroupBuyHTTP API
+    title: ActivityHTTP API
     description: GroupBuyService HTTP API
     version: 0.0.1
 paths:
     /market/trial:
         get:
             tags:
-                - GroupBuyHTTP
+                - ActivityHTTP
             description: MarketTrial handles market trial requests
-            operationId: GroupBuyHTTP_MarketTrial
+            operationId: ActivityHTTP_MarketTrial
             parameters:
                 - name: userId
                   in: query
@@ -45,25 +45,6 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        GetAllActivitiesReply:
-            type: object
-            properties:
-                activities:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/GroupBuyActivityInfo'
-        GetAllDiscountsReply:
-            type: object
-            properties:
-                discounts:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/GroupBuyDiscountInfo'
-        GetDiscountByIDReply:
-            type: object
-            properties:
-                discount:
-                    $ref: '#/components/schemas/GroupBuyDiscountInfo'
         GoogleProtobufAny:
             type: object
             properties:
@@ -72,69 +53,6 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-        GroupBuyActivityInfo:
-            type: object
-            properties:
-                activityId:
-                    type: string
-                activityName:
-                    type: string
-                source:
-                    type: string
-                channel:
-                    type: string
-                goodsId:
-                    type: string
-                groupBuyDiscount:
-                    $ref: '#/components/schemas/GroupBuyDiscountInfo'
-                groupType:
-                    type: integer
-                    format: int32
-                takeLimitCount:
-                    type: integer
-                    format: int32
-                target:
-                    type: integer
-                    format: int32
-                validTime:
-                    type: integer
-                    format: int32
-                status:
-                    type: integer
-                    format: int32
-                startTime:
-                    type: string
-                endTime:
-                    type: string
-                tagId:
-                    type: string
-                tagScope:
-                    type: string
-        GroupBuyDiscountInfo:
-            type: object
-            properties:
-                id:
-                    type: string
-                discountId:
-                    type: integer
-                    format: int32
-                discountName:
-                    type: string
-                discountDesc:
-                    type: string
-                discountType:
-                    type: integer
-                    format: int32
-                marketPlan:
-                    type: string
-                marketExpr:
-                    type: string
-                tagId:
-                    type: string
-                createTime:
-                    type: string
-                updateTime:
-                    type: string
         MarketTrialReply:
             type: object
             properties:
@@ -181,4 +99,4 @@ components:
                 isEnable:
                     type: boolean
 tags:
-    - name: GroupBuyHTTP
+    - name: ActivityHTTP
