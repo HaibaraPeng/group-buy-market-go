@@ -28,24 +28,6 @@ func NewIIndexGroupBuyMarketService(rootNode *node.RootNode) *IIndexGroupBuyMark
 
 // IndexMarketTrial 首页营销试算
 // 对应Java中的indexMarketTrial方法
-func (s *IIndexGroupBuyMarketService) IndexMarketTrial(marketProductEntity *model.MarketProductEntity) (*model.TrialBalanceEntity, error) {
-	// 获取策略处理器
-	strategyHandler := s.strategyFactory.StrategyHandler()
-
-	// 创建动态上下文
-	dynamicContext := &core.DynamicContext{}
-
-	// 应用策略处理器
-	trialBalanceEntity, err := strategyHandler.Apply(marketProductEntity, dynamicContext)
-	if err != nil {
-		return nil, err
-	}
-
-	return trialBalanceEntity, nil
-}
-
-// IndexMarketTrial 首页营销试算
-// 对应Java中的indexMarketTrial方法
 func (s *IIndexGroupBuyMarketService) MarketTrial(ctx context.Context, req *v1.MarketTrialRequest) (*v1.MarketTrialReply, error) {
 	// 获取策略处理器
 	strategyHandler := s.strategyFactory.StrategyHandler()
@@ -68,6 +50,19 @@ func (s *IIndexGroupBuyMarketService) MarketTrial(ctx context.Context, req *v1.M
 	}
 
 	// 转换trialBalanceEntity为MarketTrialReply
+	reply := &v1.MarketTrialReply{
+		TrialResult: &v1.TrialBalanceInfo{
+			GoodsId:        trialBalanceEntity.GoodsId,
+			GoodsName:      trialBalanceEntity.GoodsName,
+			OriginalPrice:  trialBalanceEntity.OriginalPrice,
+			DeductionPrice: trialBalanceEntity.DeductionPrice,
+			TargetCount:    int32(trialBalanceEntity.TargetCount),
+			StartTime:      trialBalanceEntity.StartTime,
+			EndTime:        trialBalanceEntity.EndTime,
+			IsVisible:      trialBalanceEntity.IsVisible,
+			IsEnable:       trialBalanceEntity.IsEnable,
+		},
+	}
 
-	return trialBalanceEntity, nil
+	return reply, nil
 }
