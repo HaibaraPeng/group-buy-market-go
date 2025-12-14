@@ -72,12 +72,10 @@ func main() {
 		log.Fatalf("Failed to initialize server: %v", err)
 	}
 
-	// Register routes
-	srv.RegisterRoutes()
-
+	// Create HTTP server
 	httpSrv := http.NewServer(http.Address(fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)))
 
-	// Convert our existing http.Handler to Kratos transport
+	// Register HTTP handlers using Kratos transport
 	httpSrv.HandlePrefix("/", srv)
 
 	app := newApp(httpSrv)
