@@ -11,7 +11,8 @@ service ActivityHTTP {
   // MarketTrial handles market trial requests
   rpc MarketTrial(MarketTrialRequest) returns (MarketTrialReply){
     option (google.api.http) = {
-      get: "/market/trial"
+      post: "/market/trial"
+      body: "*"
     };
   };
 }
