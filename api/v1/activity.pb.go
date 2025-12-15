@@ -134,278 +134,6 @@ func (x *MarketTrialReply) GetTrialResult() *TrialBalanceInfo {
 	return nil
 }
 
-type GroupBuyActivityInfo struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	ActivityId       int64                  `protobuf:"varint,1,opt,name=activity_id,json=activityId,proto3" json:"activity_id,omitempty"`
-	ActivityName     string                 `protobuf:"bytes,2,opt,name=activity_name,json=activityName,proto3" json:"activity_name,omitempty"`
-	Source           string                 `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
-	Channel          string                 `protobuf:"bytes,4,opt,name=channel,proto3" json:"channel,omitempty"`
-	GoodsId          string                 `protobuf:"bytes,5,opt,name=goods_id,json=goodsId,proto3" json:"goods_id,omitempty"`
-	GroupBuyDiscount *GroupBuyDiscountInfo  `protobuf:"bytes,6,opt,name=group_buy_discount,json=groupBuyDiscount,proto3" json:"group_buy_discount,omitempty"`
-	GroupType        int32                  `protobuf:"varint,7,opt,name=group_type,json=groupType,proto3" json:"group_type,omitempty"`
-	TakeLimitCount   int32                  `protobuf:"varint,8,opt,name=take_limit_count,json=takeLimitCount,proto3" json:"take_limit_count,omitempty"`
-	Target           int32                  `protobuf:"varint,9,opt,name=target,proto3" json:"target,omitempty"`
-	ValidTime        int32                  `protobuf:"varint,10,opt,name=valid_time,json=validTime,proto3" json:"valid_time,omitempty"`
-	Status           int32                  `protobuf:"varint,11,opt,name=status,proto3" json:"status,omitempty"`
-	StartTime        int64                  `protobuf:"varint,12,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime          int64                  `protobuf:"varint,13,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	TagId            string                 `protobuf:"bytes,14,opt,name=tag_id,json=tagId,proto3" json:"tag_id,omitempty"`
-	TagScope         string                 `protobuf:"bytes,15,opt,name=tag_scope,json=tagScope,proto3" json:"tag_scope,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *GroupBuyActivityInfo) Reset() {
-	*x = GroupBuyActivityInfo{}
-	mi := &file_api_v1_activity_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GroupBuyActivityInfo) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GroupBuyActivityInfo) ProtoMessage() {}
-
-func (x *GroupBuyActivityInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1_activity_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GroupBuyActivityInfo.ProtoReflect.Descriptor instead.
-func (*GroupBuyActivityInfo) Descriptor() ([]byte, []int) {
-	return file_api_v1_activity_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *GroupBuyActivityInfo) GetActivityId() int64 {
-	if x != nil {
-		return x.ActivityId
-	}
-	return 0
-}
-
-func (x *GroupBuyActivityInfo) GetActivityName() string {
-	if x != nil {
-		return x.ActivityName
-	}
-	return ""
-}
-
-func (x *GroupBuyActivityInfo) GetSource() string {
-	if x != nil {
-		return x.Source
-	}
-	return ""
-}
-
-func (x *GroupBuyActivityInfo) GetChannel() string {
-	if x != nil {
-		return x.Channel
-	}
-	return ""
-}
-
-func (x *GroupBuyActivityInfo) GetGoodsId() string {
-	if x != nil {
-		return x.GoodsId
-	}
-	return ""
-}
-
-func (x *GroupBuyActivityInfo) GetGroupBuyDiscount() *GroupBuyDiscountInfo {
-	if x != nil {
-		return x.GroupBuyDiscount
-	}
-	return nil
-}
-
-func (x *GroupBuyActivityInfo) GetGroupType() int32 {
-	if x != nil {
-		return x.GroupType
-	}
-	return 0
-}
-
-func (x *GroupBuyActivityInfo) GetTakeLimitCount() int32 {
-	if x != nil {
-		return x.TakeLimitCount
-	}
-	return 0
-}
-
-func (x *GroupBuyActivityInfo) GetTarget() int32 {
-	if x != nil {
-		return x.Target
-	}
-	return 0
-}
-
-func (x *GroupBuyActivityInfo) GetValidTime() int32 {
-	if x != nil {
-		return x.ValidTime
-	}
-	return 0
-}
-
-func (x *GroupBuyActivityInfo) GetStatus() int32 {
-	if x != nil {
-		return x.Status
-	}
-	return 0
-}
-
-func (x *GroupBuyActivityInfo) GetStartTime() int64 {
-	if x != nil {
-		return x.StartTime
-	}
-	return 0
-}
-
-func (x *GroupBuyActivityInfo) GetEndTime() int64 {
-	if x != nil {
-		return x.EndTime
-	}
-	return 0
-}
-
-func (x *GroupBuyActivityInfo) GetTagId() string {
-	if x != nil {
-		return x.TagId
-	}
-	return ""
-}
-
-func (x *GroupBuyActivityInfo) GetTagScope() string {
-	if x != nil {
-		return x.TagScope
-	}
-	return ""
-}
-
-type GroupBuyDiscountInfo struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DiscountId    int32                  `protobuf:"varint,2,opt,name=discount_id,json=discountId,proto3" json:"discount_id,omitempty"`
-	DiscountName  string                 `protobuf:"bytes,3,opt,name=discount_name,json=discountName,proto3" json:"discount_name,omitempty"`
-	DiscountDesc  string                 `protobuf:"bytes,4,opt,name=discount_desc,json=discountDesc,proto3" json:"discount_desc,omitempty"`
-	DiscountType  int32                  `protobuf:"varint,5,opt,name=discount_type,json=discountType,proto3" json:"discount_type,omitempty"`
-	MarketPlan    string                 `protobuf:"bytes,6,opt,name=market_plan,json=marketPlan,proto3" json:"market_plan,omitempty"`
-	MarketExpr    string                 `protobuf:"bytes,7,opt,name=market_expr,json=marketExpr,proto3" json:"market_expr,omitempty"`
-	TagId         string                 `protobuf:"bytes,8,opt,name=tag_id,json=tagId,proto3" json:"tag_id,omitempty"`
-	CreateTime    int64                  `protobuf:"varint,9,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UpdateTime    int64                  `protobuf:"varint,10,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GroupBuyDiscountInfo) Reset() {
-	*x = GroupBuyDiscountInfo{}
-	mi := &file_api_v1_activity_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GroupBuyDiscountInfo) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GroupBuyDiscountInfo) ProtoMessage() {}
-
-func (x *GroupBuyDiscountInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1_activity_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GroupBuyDiscountInfo.ProtoReflect.Descriptor instead.
-func (*GroupBuyDiscountInfo) Descriptor() ([]byte, []int) {
-	return file_api_v1_activity_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *GroupBuyDiscountInfo) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *GroupBuyDiscountInfo) GetDiscountId() int32 {
-	if x != nil {
-		return x.DiscountId
-	}
-	return 0
-}
-
-func (x *GroupBuyDiscountInfo) GetDiscountName() string {
-	if x != nil {
-		return x.DiscountName
-	}
-	return ""
-}
-
-func (x *GroupBuyDiscountInfo) GetDiscountDesc() string {
-	if x != nil {
-		return x.DiscountDesc
-	}
-	return ""
-}
-
-func (x *GroupBuyDiscountInfo) GetDiscountType() int32 {
-	if x != nil {
-		return x.DiscountType
-	}
-	return 0
-}
-
-func (x *GroupBuyDiscountInfo) GetMarketPlan() string {
-	if x != nil {
-		return x.MarketPlan
-	}
-	return ""
-}
-
-func (x *GroupBuyDiscountInfo) GetMarketExpr() string {
-	if x != nil {
-		return x.MarketExpr
-	}
-	return ""
-}
-
-func (x *GroupBuyDiscountInfo) GetTagId() string {
-	if x != nil {
-		return x.TagId
-	}
-	return ""
-}
-
-func (x *GroupBuyDiscountInfo) GetCreateTime() int64 {
-	if x != nil {
-		return x.CreateTime
-	}
-	return 0
-}
-
-func (x *GroupBuyDiscountInfo) GetUpdateTime() int64 {
-	if x != nil {
-		return x.UpdateTime
-	}
-	return 0
-}
-
 type TrialBalanceInfo struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	GoodsId        string                 `protobuf:"bytes,1,opt,name=goods_id,json=goodsId,proto3" json:"goods_id,omitempty"`
@@ -423,7 +151,7 @@ type TrialBalanceInfo struct {
 
 func (x *TrialBalanceInfo) Reset() {
 	*x = TrialBalanceInfo{}
-	mi := &file_api_v1_activity_proto_msgTypes[4]
+	mi := &file_api_v1_activity_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -435,7 +163,7 @@ func (x *TrialBalanceInfo) String() string {
 func (*TrialBalanceInfo) ProtoMessage() {}
 
 func (x *TrialBalanceInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1_activity_proto_msgTypes[4]
+	mi := &file_api_v1_activity_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -448,7 +176,7 @@ func (x *TrialBalanceInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TrialBalanceInfo.ProtoReflect.Descriptor instead.
 func (*TrialBalanceInfo) Descriptor() ([]byte, []int) {
-	return file_api_v1_activity_proto_rawDescGZIP(), []int{4}
+	return file_api_v1_activity_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *TrialBalanceInfo) GetGoodsId() string {
@@ -518,52 +246,14 @@ var File_api_v1_activity_proto protoreflect.FileDescriptor
 
 const file_api_v1_activity_proto_rawDesc = "" +
 	"\n" +
-	"\x15api/v1/activity.proto\x12\bapi.http\x1a\x1cgoogle/api/annotations.proto\"z\n" +
+	"\x15api/v1/activity.proto\x12\x06api.v1\x1a\x1cgoogle/api/annotations.proto\"z\n" +
 	"\x12MarketTrialRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x19\n" +
 	"\bgoods_id\x18\x02 \x01(\tR\agoodsId\x12\x16\n" +
 	"\x06source\x18\x03 \x01(\tR\x06source\x12\x18\n" +
-	"\achannel\x18\x04 \x01(\tR\achannel\"Q\n" +
-	"\x10MarketTrialReply\x12=\n" +
-	"\ftrial_result\x18\x01 \x01(\v2\x1a.api.http.TrialBalanceInfoR\vtrialResult\"\xfd\x03\n" +
-	"\x14GroupBuyActivityInfo\x12\x1f\n" +
-	"\vactivity_id\x18\x01 \x01(\x03R\n" +
-	"activityId\x12#\n" +
-	"\ractivity_name\x18\x02 \x01(\tR\factivityName\x12\x16\n" +
-	"\x06source\x18\x03 \x01(\tR\x06source\x12\x18\n" +
-	"\achannel\x18\x04 \x01(\tR\achannel\x12\x19\n" +
-	"\bgoods_id\x18\x05 \x01(\tR\agoodsId\x12L\n" +
-	"\x12group_buy_discount\x18\x06 \x01(\v2\x1e.api.http.GroupBuyDiscountInfoR\x10groupBuyDiscount\x12\x1d\n" +
-	"\n" +
-	"group_type\x18\a \x01(\x05R\tgroupType\x12(\n" +
-	"\x10take_limit_count\x18\b \x01(\x05R\x0etakeLimitCount\x12\x16\n" +
-	"\x06target\x18\t \x01(\x05R\x06target\x12\x1d\n" +
-	"\n" +
-	"valid_time\x18\n" +
-	" \x01(\x05R\tvalidTime\x12\x16\n" +
-	"\x06status\x18\v \x01(\x05R\x06status\x12\x1d\n" +
-	"\n" +
-	"start_time\x18\f \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\r \x01(\x03R\aendTime\x12\x15\n" +
-	"\x06tag_id\x18\x0e \x01(\tR\x05tagId\x12\x1b\n" +
-	"\ttag_scope\x18\x0f \x01(\tR\btagScope\"\xd1\x02\n" +
-	"\x14GroupBuyDiscountInfo\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vdiscount_id\x18\x02 \x01(\x05R\n" +
-	"discountId\x12#\n" +
-	"\rdiscount_name\x18\x03 \x01(\tR\fdiscountName\x12#\n" +
-	"\rdiscount_desc\x18\x04 \x01(\tR\fdiscountDesc\x12#\n" +
-	"\rdiscount_type\x18\x05 \x01(\x05R\fdiscountType\x12\x1f\n" +
-	"\vmarket_plan\x18\x06 \x01(\tR\n" +
-	"marketPlan\x12\x1f\n" +
-	"\vmarket_expr\x18\a \x01(\tR\n" +
-	"marketExpr\x12\x15\n" +
-	"\x06tag_id\x18\b \x01(\tR\x05tagId\x12\x1f\n" +
-	"\vcreate_time\x18\t \x01(\x03R\n" +
-	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\n" +
-	" \x01(\x03R\n" +
-	"updateTime\"\xb5\x02\n" +
+	"\achannel\x18\x04 \x01(\tR\achannel\"O\n" +
+	"\x10MarketTrialReply\x12;\n" +
+	"\ftrial_result\x18\x01 \x01(\v2\x18.api.v1.TrialBalanceInfoR\vtrialResult\"\xb5\x02\n" +
 	"\x10TrialBalanceInfo\x12\x19\n" +
 	"\bgoods_id\x18\x01 \x01(\tR\agoodsId\x12\x1d\n" +
 	"\n" +
@@ -576,9 +266,9 @@ const file_api_v1_activity_proto_rawDesc = "" +
 	"\bend_time\x18\a \x01(\x03R\aendTime\x12\x1d\n" +
 	"\n" +
 	"is_visible\x18\b \x01(\bR\tisVisible\x12\x1b\n" +
-	"\tis_enable\x18\t \x01(\bR\bisEnable2n\n" +
-	"\fActivityHTTP\x12^\n" +
-	"\vMarketTrial\x12\x1c.api.http.MarketTrialRequest\x1a\x1a.api.http.MarketTrialReply\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/market/trialB\x1fZ\x1dgroup-buy-market-go/api/v1;v1b\x06proto3"
+	"\tis_enable\x18\t \x01(\bR\bisEnable2m\n" +
+	"\fActivityHTTP\x12]\n" +
+	"\vMarketTrial\x12\x1a.api.v1.MarketTrialRequest\x1a\x18.api.v1.MarketTrialReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/market/trialB\x1fZ\x1dgroup-buy-market-go/api/v1;v1b\x06proto3"
 
 var (
 	file_api_v1_activity_proto_rawDescOnce sync.Once
@@ -592,24 +282,21 @@ func file_api_v1_activity_proto_rawDescGZIP() []byte {
 	return file_api_v1_activity_proto_rawDescData
 }
 
-var file_api_v1_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_api_v1_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_api_v1_activity_proto_goTypes = []any{
-	(*MarketTrialRequest)(nil),   // 0: api.http.MarketTrialRequest
-	(*MarketTrialReply)(nil),     // 1: api.http.MarketTrialReply
-	(*GroupBuyActivityInfo)(nil), // 2: api.http.GroupBuyActivityInfo
-	(*GroupBuyDiscountInfo)(nil), // 3: api.http.GroupBuyDiscountInfo
-	(*TrialBalanceInfo)(nil),     // 4: api.http.TrialBalanceInfo
+	(*MarketTrialRequest)(nil), // 0: api.v1.MarketTrialRequest
+	(*MarketTrialReply)(nil),   // 1: api.v1.MarketTrialReply
+	(*TrialBalanceInfo)(nil),   // 2: api.v1.TrialBalanceInfo
 }
 var file_api_v1_activity_proto_depIdxs = []int32{
-	4, // 0: api.http.MarketTrialReply.trial_result:type_name -> api.http.TrialBalanceInfo
-	3, // 1: api.http.GroupBuyActivityInfo.group_buy_discount:type_name -> api.http.GroupBuyDiscountInfo
-	0, // 2: api.http.ActivityHTTP.MarketTrial:input_type -> api.http.MarketTrialRequest
-	1, // 3: api.http.ActivityHTTP.MarketTrial:output_type -> api.http.MarketTrialReply
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	2, // 0: api.v1.MarketTrialReply.trial_result:type_name -> api.v1.TrialBalanceInfo
+	0, // 1: api.v1.ActivityHTTP.MarketTrial:input_type -> api.v1.MarketTrialRequest
+	1, // 2: api.v1.ActivityHTTP.MarketTrial:output_type -> api.v1.MarketTrialReply
+	2, // [2:3] is the sub-list for method output_type
+	1, // [1:2] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_api_v1_activity_proto_init() }
@@ -623,7 +310,7 @@ func file_api_v1_activity_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_v1_activity_proto_rawDesc), len(file_api_v1_activity_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

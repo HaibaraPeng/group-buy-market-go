@@ -8,28 +8,17 @@ info:
     version: 0.0.1
 paths:
     /market/trial:
-        get:
+        post:
             tags:
                 - ActivityHTTP
             description: MarketTrial handles market trial requests
             operationId: ActivityHTTP_MarketTrial
-            parameters:
-                - name: userId
-                  in: query
-                  schema:
-                    type: string
-                - name: goodsId
-                  in: query
-                  schema:
-                    type: string
-                - name: source
-                  in: query
-                  schema:
-                    type: string
-                - name: channel
-                  in: query
-                  schema:
-                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/MarketTrialRequest'
+                required: true
             responses:
                 "200":
                     description: OK
@@ -58,6 +47,17 @@ components:
             properties:
                 trialResult:
                     $ref: '#/components/schemas/TrialBalanceInfo'
+        MarketTrialRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                goodsId:
+                    type: string
+                source:
+                    type: string
+                channel:
+                    type: string
         Status:
             type: object
             properties:

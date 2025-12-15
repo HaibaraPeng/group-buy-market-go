@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ActivityHTTP_MarketTrial_FullMethodName = "/api.http.ActivityHTTP/MarketTrial"
+	ActivityHTTP_MarketTrial_FullMethodName = "/api.v1.ActivityHTTP/MarketTrial"
 )
 
 // ActivityHTTPClient is the client API for ActivityHTTP service.
@@ -114,7 +114,7 @@ func _ActivityHTTP_MarketTrial_Handler(srv interface{}, ctx context.Context, dec
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ActivityHTTP_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.http.ActivityHTTP",
+	ServiceName: "api.v1.ActivityHTTP",
 	HandlerType: (*ActivityHTTPServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
