@@ -1,34 +1,32 @@
 package server
 
 import (
-	"github.com/go-kratos/kratos/v2/transport/http"
 	v1 "group-buy-market-go/api/v1"
+	"group-buy-market-go/internal/conf"
 	"group-buy-market-go/internal/domain/activity/service"
-	"group-buy-market-go/internal/infrastructure/dao"
+
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
-type Server struct {
-	marketService *service.IIndexGroupBuyMarketService
-}
-
-func NewServer(
-	activityRepo dao.GroupBuyActivityDAO,
-	marketService *service.IIndexGroupBuyMarketService,
-) *Server {
-	return &Server{
-		marketService: marketService,
+// NewHTTPServer new an HTTP server.
+func NewHTTPServer(c *conf.Server, marketService *service.IIndexGroupBuyMarketService, logger log.Logger) *http.Server {
+	var opts = []http.ServerOption{
+		http.Middleware(
+			recovery.Recovery(),
+		),
 	}
-}
-
-func (s *Server) RegisterHTTPEndpoints(httpSrv *http.Server) {
-	v1.RegisterActivityHTTPHTTPServer(httpSrv, s.marketService)
-}
-
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.router.ServeHTTP(w, r)
-}
-
-// RegisterRoutes registers all HTTP routes
-func (s *Server) RegisterRoutes() {
-	s.Route("/market/trial", s.groupBuyHandler.MarketTrial)
+	if c.Http.Network != "" {
+		opts = append(opts, http.Network(c.Http.Network))
+	}
+	if c.Http.Addr != "" {
+		opts = append(opts, http.Address(c.Http.Addr))
+	}
+	if c.Http.Timeout != nil {
+		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
+	}
+	srv := http.NewServer(opts...)
+	v1.RegisterActivityHTTPHTTPServer(srv, marketService)
+	return srv
 }

@@ -7,9 +7,11 @@ package main
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
 	"gorm.io/gorm"
 
+	"group-buy-market-go/internal/conf"
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
@@ -18,8 +20,10 @@ import (
 	"group-buy-market-go/internal/server"
 )
 
-func initializeServer(db *gorm.DB, logger log.Logger) (*server.Server, error) {
+// wireApp init kratos application.
+func wireApp(*conf.Server, *gorm.DB, log.Logger) (*http.Server, func(), error) {
 	panic(wire.Build(
+		server.ProviderSet,
 		wire.Bind(new(dao.GroupBuyActivityDAO), new(*dao.MySQLGroupBuyActivityDAO)),
 		wire.Bind(new(dao.GroupBuyDiscountDAO), new(*dao.MySQLGroupBuyDiscountDAO)),
 		wire.Bind(new(dao.SkuDAO), new(*dao.MySQLSkuDAO)),
@@ -36,6 +40,5 @@ func initializeServer(db *gorm.DB, logger log.Logger) (*server.Server, error) {
 		node.NewSwitchNode,
 		node.NewRootNode,
 		service.NewIIndexGroupBuyMarketService,
-		server.NewServer,
 	))
 }
