@@ -9,7 +9,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
-	"gorm.io/gorm"
 
 	"group-buy-market-go/internal/conf"
 	"group-buy-market-go/internal/domain/activity/service"
@@ -21,9 +20,10 @@ import (
 )
 
 // wireApp init kratos application.
-func wireApp(*conf.Server, *gorm.DB, log.Logger) (*http.Server, func(), error) {
+func wireApp(*conf.Server, *conf.Data, log.Logger) (*http.Server, func(), error) {
 	panic(wire.Build(
 		server.ProviderSet,
+		dao.ProviderSet,
 		wire.Bind(new(dao.GroupBuyActivityDAO), new(*dao.MySQLGroupBuyActivityDAO)),
 		wire.Bind(new(dao.GroupBuyDiscountDAO), new(*dao.MySQLGroupBuyDiscountDAO)),
 		wire.Bind(new(dao.SkuDAO), new(*dao.MySQLSkuDAO)),

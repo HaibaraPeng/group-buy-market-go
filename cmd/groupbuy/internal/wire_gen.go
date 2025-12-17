@@ -9,7 +9,6 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"gorm.io/gorm"
 	"group-buy-market-go/internal/conf"
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
@@ -22,8 +21,9 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, db *gorm.DB, logger log.Logger) (*http.Server, func(), error) {
+func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*http.Server, func(), error) {
 	endNode := node.NewEndNode(logger)
+	db := dao.NewDB(data, logger)
 	mySQLGroupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(db)
 	mySQLGroupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(db)
 	mySQLSkuDAO := dao.NewMySQLSkuDAO(db)
