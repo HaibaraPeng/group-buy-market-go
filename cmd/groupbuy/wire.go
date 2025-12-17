@@ -6,8 +6,8 @@
 package main
 
 import (
+	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
 
 	"group-buy-market-go/internal/conf"
@@ -24,12 +24,6 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 	panic(wire.Build(
 		server.ProviderSet,
 		dao.ProviderSet,
-		wire.Bind(new(dao.GroupBuyActivityDAO), new(*dao.MySQLGroupBuyActivityDAO)),
-		wire.Bind(new(dao.GroupBuyDiscountDAO), new(*dao.MySQLGroupBuyDiscountDAO)),
-		wire.Bind(new(dao.SkuDAO), new(*dao.MySQLSkuDAO)),
-		dao.NewMySQLGroupBuyActivityDAO,
-		dao.NewMySQLGroupBuyDiscountDAO,
-		dao.NewMySQLSkuDAO,
 		repository.NewActivityRepository,
 		discount.NewZJCalculateService,
 		discount.NewZKCalculateService,

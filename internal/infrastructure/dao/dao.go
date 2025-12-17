@@ -12,7 +12,12 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewDB)
+var ProviderSet = wire.NewSet(
+	NewDB,
+	NewMySQLGroupBuyActivityDAO,
+	NewMySQLGroupBuyDiscountDAO,
+	NewMySQLSkuDAO,
+)
 
 // NewDB gorm Connecting to a Database
 func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
