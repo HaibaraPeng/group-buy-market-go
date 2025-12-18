@@ -16,7 +16,7 @@ type MySQLSkuDAO struct {
 }
 
 // NewMySQLSkuDAO creates a new MySQL sku DAO
-func NewMySQLSkuDAO(db *gorm.DB) *MySQLSkuDAO {
+func NewMySQLSkuDAO(db *gorm.DB) SkuDAO {
 	return &MySQLSkuDAO{
 		db: db,
 	}

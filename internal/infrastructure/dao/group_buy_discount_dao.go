@@ -21,7 +21,7 @@ type MySQLGroupBuyDiscountDAO struct {
 }
 
 // NewMySQLGroupBuyDiscountDAO creates a new MySQL group buy discount DAO
-func NewMySQLGroupBuyDiscountDAO(db *gorm.DB) *MySQLGroupBuyDiscountDAO {
+func NewMySQLGroupBuyDiscountDAO(db *gorm.DB) GroupBuyDiscountDAO {
 	return &MySQLGroupBuyDiscountDAO{
 		db: db,
 	}
