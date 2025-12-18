@@ -24,10 +24,10 @@ import (
 func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
 	endNode := node.NewEndNode(logger)
 	db := dao.NewDB(data, logger)
-	mySQLGroupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(db)
+	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(db)
 	mySQLGroupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(db)
 	mySQLSkuDAO := dao.NewMySQLSkuDAO(db)
-	activityRepository := repository.NewActivityRepository(mySQLGroupBuyActivityDAO, mySQLGroupBuyDiscountDAO, mySQLSkuDAO)
+	activityRepository := repository.NewActivityRepository(groupBuyActivityDAO, mySQLGroupBuyDiscountDAO, mySQLSkuDAO)
 	zjCalculateService := discount.NewZJCalculateService(logger)
 	zkCalculateService := discount.NewZKCalculateService(logger)
 	mjCalculateService := discount.NewMJCalculateService(logger)

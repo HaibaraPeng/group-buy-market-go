@@ -24,7 +24,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 	panic(wire.Build(
 		server.ProviderSet,
 		dao.ProviderSet,
-		wire.Bind(new(dao.GroupBuyActivityDAO), new(*dao.MySQLGroupBuyActivityDAO)),
+		//wire.Bind(new(dao.GroupBuyActivityDAO), new(*dao.MySQLGroupBuyActivityDAO)),
 		wire.Bind(new(dao.GroupBuyDiscountDAO), new(*dao.MySQLGroupBuyDiscountDAO)),
 		wire.Bind(new(dao.SkuDAO), new(*dao.MySQLSkuDAO)),
 		repository.NewActivityRepository,

@@ -6,6 +6,7 @@ toolchain go1.24.11
 
 require (
 	github.com/go-kratos/kratos/v2 v2.9.2
+	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/wire v0.7.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20251213004720-97cd9d5aeac2
 	google.golang.org/grpc v1.71.0
@@ -20,7 +21,6 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-kratos/aegis v0.2.0 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
-	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
