@@ -1,18 +1,20 @@
+trace:
+  endpoint: http://127.0.0.1:14268/api/traces
 server:
-  port: 8080
-  host: localhost
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 1s
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 1s
 
-database:
-  host: localhost
-  port: 3306
-  username: root
-  password: root
-  dbname: group_buy_market
-
-redis:
-  host: localhost
-  port: 6379
-
-logging:
-  level: info
-  format: json
+data:
+  database:
+    driver: mysql
+    source: root:root@tcp(127.0.0.1:3306)/group_buy_market?charset=utf8mb4&parseTime=True&loc=Local
+  redis:
+    addr: 127.0.0.1
+    port: 6379
+    dial_timeout: 1s
+    read_timeout: 0.4s
+    write_timeout: 0.6s

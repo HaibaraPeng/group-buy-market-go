@@ -14,7 +14,7 @@ type GroupBuyActivityDAO interface {
 	FindByActivityID(ctx context.Context, activityID int64) (*po.GroupBuyActivity, error)
 	QueryGroupBuyActivityList(ctx context.Context) ([]*po.GroupBuyActivity, error)
 	UpdateStatus(ctx context.Context, id int64, status int) error
-	FindValidBySourceAndChannel(ctx context.Context, source string, channel string) (*po.GroupBuyActivity, error)
+	FindValidBySourceAndChannel(source string, channel string) (*po.GroupBuyActivity, error)
 }
 
 // MySQLGroupBuyActivityDAO is a GORM implementation of GroupBuyActivityDAO
@@ -73,7 +73,7 @@ func (r *MySQLGroupBuyActivityDAO) UpdateStatus(ctx context.Context, id int64, s
 }
 
 // FindValidBySourceAndChannel finds the latest valid group buy activity by source and channel
-func (r *MySQLGroupBuyActivityDAO) FindValidBySourceAndChannel(ctx context.Context, source string, channel string) (*po.GroupBuyActivity, error) {
+func (r *MySQLGroupBuyActivityDAO) FindValidBySourceAndChannel(source string, channel string) (*po.GroupBuyActivity, error) {
 	var activity po.GroupBuyActivity
 	err := r.db.Where("source = ? AND channel = ?", source, channel).
 		Order("id DESC").
