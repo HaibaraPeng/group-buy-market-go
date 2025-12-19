@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis/extra/redisotel"
 	"github.com/go-redis/redis/v8"
@@ -26,6 +27,15 @@ func NewRedisClient(conf *conf.Data, logger log.Logger) (*redis.Client, func(), 
 	})
 
 	rdb.AddHook(redisotel.TracingHook{})
+
+	// 测试连接
+	ctx := context.Background()
+	_, err := rdb.Ping(ctx).Result()
+	if err != nil {
+		log.NewHelper(logger).Errorf("failed to connect to redis: %v", err)
+		return nil, nil, err
+	}
+
 	return rdb, func() {
 		log.Info("message", "closing the redis resources")
 		if err := rdb.Close(); err != nil {

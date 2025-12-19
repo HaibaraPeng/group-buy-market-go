@@ -24,11 +24,9 @@ var ProviderSet = wire.NewSet(
 
 // NewDB gorm Connecting to a Database
 func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
-	log := log.NewHelper(log.With(logger, "module", "order-service/data/gorm"))
-
 	db, err := gorm.Open(mysql.Open(conf.Database.Source), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("failed opening connection to mysql: %v", err)
+		log.NewHelper(logger).Fatalf("failed opening connection to mysql: %v", err)
 	}
 	return db
 }
