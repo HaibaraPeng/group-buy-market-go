@@ -1,6 +1,7 @@
 package node
 
 import (
+	"context"
 	"fmt"
 	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
@@ -65,7 +66,7 @@ func NewMarketNode(
 
 // multiThread 异步加载数据
 // 对应Java中的multiThread方法
-func (m *MarketNode) multiThread(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
+func (m *MarketNode) multiThread(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
 	// 异步查询活动配置
 	queryActivityTask := thread.NewQueryGroupBuyActivityDiscountVOThreadTask(
 		requestParameter.Source,
@@ -117,7 +118,7 @@ func (m *MarketNode) multiThread(requestParameter *model.MarketProductEntity, dy
 
 // doApply 业务流程受理
 // 对应Java中的doApply方法
-func (m *MarketNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
+func (m *MarketNode) doApply(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
 	m.log.Infow("拼团商品查询试算服务-MarketNode", "requestParameter", requestParameter)
 
 	groupBuyActivityDiscountVO := dynamicContext.GetGroupBuyActivityDiscountVO()
@@ -146,7 +147,7 @@ func (m *MarketNode) doApply(requestParameter *model.MarketProductEntity, dynami
 	deductionPrice := discountCalculateService.Calculate(requestParameter.UserId, originalPrice, groupBuyDiscount)
 	dynamicContext.SetDeductionPrice(deductionPrice)
 
-	return m.Router(requestParameter, dynamicContext)
+	return m.Router(ctx, requestParameter, dynamicContext)
 }
 
 // getSupportedMarketPlans 获取支持的营销计划类型
@@ -160,7 +161,7 @@ func (m *MarketNode) getSupportedMarketPlans() []model.MarketPlanEnum {
 
 // Get 获取下一个策略处理器
 // 营销节点处理完成后进入结束节点
-func (m *MarketNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
+func (m *MarketNode) Get(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
 	m.log.Info("营销节点处理完成，进入结束节点")
 
 	// 返回结束节点作为下一个处理器

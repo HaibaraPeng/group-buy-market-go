@@ -1,6 +1,7 @@
 package node
 
 import (
+	"context"
 	"errors"
 	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
@@ -33,14 +34,14 @@ func NewRootNode(switchNode *SwitchNode, logger log.Logger) *RootNode {
 }
 
 // multiThread 异步加载数据 - 根节点不需要异步加载
-func (r *RootNode) multiThread(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
+func (r *RootNode) multiThread(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
 	// 根节点不需要异步加载数据
 	return nil
 }
 
 // doApply 业务流程受理
 // 对应Java中的doApply方法
-func (r *RootNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
+func (r *RootNode) doApply(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
 	r.log.Infow("拼团商品查询试算服务-RootNode", "userId", requestParameter.UserId, "requestParameter", requestParameter)
 
 	// 参数判断
@@ -54,12 +55,12 @@ func (r *RootNode) doApply(requestParameter *model.MarketProductEntity, dynamicC
 		return nil, errors.New("非法参数: UserId、GoodsId、Source和Channel不能为空")
 	}
 
-	return r.Router(requestParameter, dynamicContext)
+	return r.Router(ctx, requestParameter, dynamicContext)
 }
 
 // Get 获取下一个策略处理器
 // 根节点之后通常是开关节点，用于判断是否启用营销活动
-func (r *RootNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
+func (r *RootNode) Get(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
 	r.log.Info("根节点处理完成，进入开关节点")
 
 	// 返回开关节点作为下一个处理器

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 )
@@ -12,7 +13,7 @@ type AbstractGroupBuyMarketSupport struct {
 }
 
 // Get 获取待执行策略 - 需要子类实现
-func (s *AbstractGroupBuyMarketSupport) Get(requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity], error) {
+func (s *AbstractGroupBuyMarketSupport) Get(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity], error) {
 	// 子类需要实现此方法
 	var handler tree.StrategyHandler[*model.MarketProductEntity, *DynamicContext, *model.TrialBalanceEntity]
 	return handler, nil

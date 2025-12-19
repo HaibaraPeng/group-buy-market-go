@@ -1,6 +1,7 @@
 package node
 
 import (
+	"context"
 	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
@@ -30,14 +31,14 @@ func NewEndNode(logger log.Logger) *EndNode {
 }
 
 // multiThread 异步加载数据 - 结束节点不需要异步加载
-func (e *EndNode) multiThread(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
+func (e *EndNode) multiThread(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
 	// 结束节点不需要异步加载数据
 	return nil
 }
 
 // doApply 业务流程受理
 // 对应Java中的doApply方法
-func (e *EndNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
+func (e *EndNode) doApply(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
 	e.log.Infow("拼团商品查询试算服务-EndNode", "userId", requestParameter.UserId, "requestParameter", requestParameter)
 
 	groupBuyActivityDiscountVO := dynamicContext.GetGroupBuyActivityDiscountVO()
@@ -68,7 +69,7 @@ func (e *EndNode) doApply(requestParameter *model.MarketProductEntity, dynamicCo
 
 // Get 获取下一个策略处理器（结束节点通常返回nil）
 // 结束节点之后没有其他处理器
-func (e *EndNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
+func (e *EndNode) Get(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
 	e.log.Info("处理流程完全结束")
 
 	// 结束节点没有下一个处理器

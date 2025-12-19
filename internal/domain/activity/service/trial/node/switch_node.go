@@ -1,6 +1,7 @@
 package node
 
 import (
+	"context"
 	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
@@ -32,23 +33,23 @@ func NewSwitchNode(marketNode *MarketNode, logger log.Logger) *SwitchNode {
 }
 
 // multiThread 异步加载数据 - 开关节点不需要异步加载
-func (r *SwitchNode) multiThread(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
+func (r *SwitchNode) multiThread(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) error {
 	// 开关节点不需要异步加载数据
 	return nil
 }
 
 // doApply 业务流程受理
 // 对应Java中的doApply方法
-func (r *SwitchNode) doApply(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
+func (r *SwitchNode) doApply(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
 	r.log.Infow("拼团商品查询试算服务-SwitchNode", "requestParameter", requestParameter)
 
 	// todo xfg 判断营销活动开关是否打开
 
-	return r.Router(requestParameter, dynamicContext)
+	return r.Router(ctx, requestParameter, dynamicContext)
 }
 
 // Get 获取下一个策略处理器
-func (r *SwitchNode) Get(requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
+func (r *SwitchNode) Get(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
 	r.log.Info("开关节点处理完成，进入营销节点")
 
 	// 返回营销节点作为下一个处理器
