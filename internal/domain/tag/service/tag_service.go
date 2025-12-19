@@ -3,21 +3,23 @@ package service
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
-	"group-buy-market-go/internal/domain/tag/model"
+	v1 "group-buy-market-go/api/v1"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 )
 
-// TagService 人群标签服务
+// TagService 标签服务
+// 提供对外的标签服务接口
 type TagService struct {
-	log        *log.Helper
-	repository *repository.TagRepository
+	v1.UnimplementedTagHTTPServer
+	log           *log.Helper
+	tagRepository *repository.TagRepository
 }
 
 // NewTagService 创建标签服务实例
-func NewTagService(logger log.Logger, repo *repository.TagRepository) *TagService {
+func NewTagService(logger log.Logger, tagRepository *repository.TagRepository) *TagService {
 	return &TagService{
-		log:        log.NewHelper(logger),
-		repository: repo,
+		log:           log.NewHelper(logger),
+		tagRepository: tagRepository,
 	}
 }
 
@@ -26,7 +28,7 @@ func (s *TagService) ExecTagBatchJob(ctx context.Context, tagId string, batchId 
 	s.log.Infof("人群标签批次任务 tagId:%s batchId:%s", tagId, batchId)
 
 	// 1. 查询批次任务
-	crowdTagsJobEntity, err := s.repository.QueryCrowdTagsJobEntity(ctx, tagId, batchId)
+	crowdTagsJobEntity, err := s.tagRepository.QueryCrowdTagsJobEntity(ctx, tagId, batchId)
 	if err != nil {
 		s.log.Errorf("查询批次任务失败: %v", err)
 		return err
@@ -46,7 +48,7 @@ func (s *TagService) ExecTagBatchJob(ctx context.Context, tagId string, batchId 
 
 	// 4. 一般人群标签的处理在公司中，会有专门的数据数仓团队通过脚本方式写入到数据库，就不用这样一个个或者批次来写。
 	for _, userId := range userIdList {
-		err := s.repository.AddCrowdTagsUserId(ctx, tagId, userId)
+		err := s.tagRepository.AddCrowdTagsUserId(ctx, tagId, userId)
 		if err != nil {
 			s.log.Errorf("添加用户标签失败 tagId:%s userId:%s error:%v", tagId, userId, err)
 			// 根据业务需求决定是否继续处理其他用户或直接返回错误
@@ -55,7 +57,7 @@ func (s *TagService) ExecTagBatchJob(ctx context.Context, tagId string, batchId 
 	}
 
 	// 5. 更新人群标签统计量
-	err = s.repository.UpdateCrowdTagsStatistics(ctx, tagId, len(userIdList))
+	err = s.tagRepository.UpdateCrowdTagsStatistics(ctx, tagId, len(userIdList))
 	if err != nil {
 		s.log.Errorf("更新人群标签统计量失败: %v", err)
 		return err
