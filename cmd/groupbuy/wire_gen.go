@@ -13,7 +13,9 @@ import (
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
+	service2 "group-buy-market-go/internal/domain/tag/service"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
+	"group-buy-market-go/internal/infrastructure/cache"
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/server"
 )
@@ -36,8 +38,18 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	switchNode := node.NewSwitchNode(marketNode, logger)
 	rootNode := node.NewRootNode(switchNode, logger)
 	iIndexGroupBuyMarketService := service.NewIIndexGroupBuyMarketService(rootNode)
-	httpServer := server.NewHTTPServer(confServer, iIndexGroupBuyMarketService, logger)
+	crowdTagsDAO := dao.NewMySQLCrowdTagsDAO(db)
+	crowdTagsDetailDAO := dao.NewMySQLCrowdTagsDetailDAO(db)
+	crowdTagsJobDAO := dao.NewMySQLCrowdTagsJobDAO(db)
+	client, cleanup, err := cache.NewRedisClient(data, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	tagRepository := repository.NewTagRepository(logger, crowdTagsDAO, crowdTagsDetailDAO, crowdTagsJobDAO, client)
+	tagService := service2.NewTagService(logger, tagRepository)
+	httpServer := server.NewHTTPServer(confServer, iIndexGroupBuyMarketService, tagService, logger)
 	app := newApp(logger, httpServer)
 	return app, func() {
+		cleanup()
 	}, nil
 }

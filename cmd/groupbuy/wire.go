@@ -14,7 +14,7 @@ import (
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
-	"group-buy-market-go/internal/domain/tag/service"
+	tag_service "group-buy-market-go/internal/domain/tag/service"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/cache"
 	"group-buy-market-go/internal/infrastructure/dao"
@@ -29,7 +29,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		cache.ProviderSet,
 		repository.NewActivityRepository,
 		repository.NewTagRepository,
-		service.NewTagService,
+		tag_service.NewTagService,
 		discount.NewZJCalculateService,
 		discount.NewZKCalculateService,
 		discount.NewMJCalculateService,

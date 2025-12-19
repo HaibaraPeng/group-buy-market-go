@@ -24,20 +24,23 @@ func NewTagService(logger log.Logger, tagRepository *repository.TagRepository) *
 }
 
 // ExecTagBatchJob 执行标签批处理任务
-func (s *TagService) ExecTagBatchJob(ctx context.Context, tagId string, batchId string) error {
+func (s *TagService) ExecTagBatchJob(ctx context.Context, req *v1.ExecTagBatchJobRequest) (*v1.ExecTagBatchJobReply, error) {
+	tagId := req.TagId
+	batchId := req.BatchId
+
 	s.log.Infof("人群标签批次任务 tagId:%s batchId:%s", tagId, batchId)
 
 	// 1. 查询批次任务
 	crowdTagsJobEntity, err := s.tagRepository.QueryCrowdTagsJobEntity(ctx, tagId, batchId)
 	if err != nil {
 		s.log.Errorf("查询批次任务失败: %v", err)
-		return err
+		return &v1.ExecTagBatchJobReply{Success: false}, err
 	}
 
 	// 检查任务是否存在
 	if crowdTagsJobEntity == nil {
 		s.log.Warnf("未找到标签批次任务 tagId:%s batchId:%s", tagId, batchId)
-		return nil
+		return &v1.ExecTagBatchJobReply{Success: true}, nil
 	}
 
 	// 2. 采集用户数据 - 这部分需要采集用户的消费类数据，后续有用户发起拼单后再处理。
@@ -60,8 +63,8 @@ func (s *TagService) ExecTagBatchJob(ctx context.Context, tagId string, batchId 
 	err = s.tagRepository.UpdateCrowdTagsStatistics(ctx, tagId, len(userIdList))
 	if err != nil {
 		s.log.Errorf("更新人群标签统计量失败: %v", err)
-		return err
+		return &v1.ExecTagBatchJobReply{Success: false}, err
 	}
 
-	return nil
+	return &v1.ExecTagBatchJobReply{Success: true}, nil
 }
