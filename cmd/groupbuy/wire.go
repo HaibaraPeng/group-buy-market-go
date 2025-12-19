@@ -27,6 +27,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		dao.ProviderSet,
 		cache.ProviderSet,
 		repository.NewActivityRepository,
+		repository.NewTagRepository,
 		discount.NewZJCalculateService,
 		discount.NewZKCalculateService,
 		discount.NewMJCalculateService,
