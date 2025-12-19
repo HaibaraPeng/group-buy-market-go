@@ -17,6 +17,9 @@ var ProviderSet = wire.NewSet(
 	NewMySQLGroupBuyActivityDAO,
 	NewMySQLGroupBuyDiscountDAO,
 	NewMySQLSkuDAO,
+	NewMySQLCrowdTagsDAO,
+	NewMySQLCrowdTagsDetailDAO,
+	NewMySQLCrowdTagsJobDAO,
 )
 
 // NewDB gorm Connecting to a Database
