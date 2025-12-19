@@ -44,7 +44,7 @@ func (s *IIndexGroupBuyMarketService) MarketTrial(ctx context.Context, req *v1.M
 	}
 
 	// 应用策略处理器
-	trialBalanceEntity, err := strategyHandler.Apply(marketProduct, dynamicContext)
+	trialBalanceEntity, err := strategyHandler.Apply(ctx, marketProduct, dynamicContext)
 	if err != nil {
 		return nil, err
 	}
