@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "group-buy-market-go/api/v1;v1";
+
+// GroupBuyService HTTP API
+service TagHTTP {
+  // MarketTrial handles market trial requests
+  rpc ExecTagBatchJob(ExecTagBatchJobRequest) returns (ExecTagBatchJobReply){
+    option (google.api.http) = {
+      post: "/tag/execTagBatchJob"
+      body: "*"
+    };
+  };
+}
+
+message ExecTagBatchJobRequest {
+  string tag_id = 1;
+  string batch_id = 2;
+}
+
+message ExecTagBatchJobReply {
+  bool success = 1;
+}
