@@ -6,9 +6,9 @@ import "google/api/annotations.proto";
 
 option go_package = "group-buy-market-go/api/v1;v1";
 
-// GroupBuyService HTTP API
+// TagService HTTP API
 service TagHTTP {
-  // MarketTrial handles market trial requests
+  // ExecTagBatchJob
   rpc ExecTagBatchJob(ExecTagBatchJobRequest) returns (ExecTagBatchJobReply){
     option (google.api.http) = {
       post: "/tag/execTagBatchJob"

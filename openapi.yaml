@@ -3,8 +3,7 @@
 
 openapi: 3.0.3
 info:
-    title: ActivityHTTP API
-    description: GroupBuyService HTTP API
+    title: ""
     version: 0.0.1
 paths:
     /market/trial:
@@ -32,8 +31,45 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /tag/execTagBatchJob:
+        post:
+            tags:
+                - TagHTTP
+            description: ExecTagBatchJob
+            operationId: TagHTTP_ExecTagBatchJob
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ExecTagBatchJobRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ExecTagBatchJobReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
+        ExecTagBatchJobReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        ExecTagBatchJobRequest:
+            type: object
+            properties:
+                tagId:
+                    type: string
+                batchId:
+                    type: string
         GoogleProtobufAny:
             type: object
             properties:
@@ -100,3 +136,6 @@ components:
                     type: boolean
 tags:
     - name: ActivityHTTP
+      description: GroupBuyService HTTP API
+    - name: TagHTTP
+      description: TagService HTTP API
