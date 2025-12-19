@@ -1,5 +1,7 @@
 package tree
 
+import "context"
+
 // AbstractStrategyRouter 抽象策略路由器
 type AbstractStrategyRouter[T any, D any, R any] struct {
 	defaultStrategyHandler StrategyHandler[T, D, R]
@@ -19,17 +21,17 @@ func (r *AbstractStrategyRouter[T, D, R]) GetDefaultStrategyHandler() StrategyHa
 }
 
 // Router 路由策略
-func (r *AbstractStrategyRouter[T, D, R]) Router(requestParameter T, dynamicContext D) (R, error) {
+func (r *AbstractStrategyRouter[T, D, R]) Router(ctx context.Context, requestParameter T, dynamicContext D) (R, error) {
 	strategyHandler, err := r.Get(requestParameter, dynamicContext)
 	if err != nil {
-		return r.GetDefaultStrategyHandler().Apply(requestParameter, dynamicContext)
+		return r.GetDefaultStrategyHandler().Apply(ctx, requestParameter, dynamicContext)
 	}
 
 	if strategyHandler != nil {
-		return strategyHandler.Apply(requestParameter, dynamicContext)
+		return strategyHandler.Apply(ctx, requestParameter, dynamicContext)
 	}
 
-	return r.GetDefaultStrategyHandler().Apply(requestParameter, dynamicContext)
+	return r.GetDefaultStrategyHandler().Apply(ctx, requestParameter, dynamicContext)
 }
 
 // Get 获取待执行策略 - 需要子类实现
