@@ -11,7 +11,7 @@ import (
 	"github.com/google/wire"
 
 	"group-buy-market-go/internal/conf"
-	"group-buy-market-go/internal/domain/activity/service"
+	activity_service "group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
 	tag_service "group-buy-market-go/internal/domain/tag/service"
@@ -38,7 +38,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		node.NewMarketNode,
 		node.NewSwitchNode,
 		node.NewRootNode,
-		service.NewIIndexGroupBuyMarketService,
+		activity_service.NewIIndexGroupBuyMarketService,
 		newApp,
 	))
 }
