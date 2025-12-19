@@ -15,6 +15,7 @@ import (
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
+	"group-buy-market-go/internal/infrastructure/cache"
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/server"
 )
@@ -24,6 +25,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 	panic(wire.Build(
 		server.ProviderSet,
 		dao.ProviderSet,
+		cache.ProviderSet,
 		repository.NewActivityRepository,
 		discount.NewZJCalculateService,
 		discount.NewZKCalculateService,
