@@ -19,9 +19,9 @@ type Sku struct {
 	// Original price
 	OriginalPrice float64 `json:"original_price" gorm:"column:original_price"`
 	// Creation time
-	CreateTime time.Time `json:"create_time" gorm:"column:create_time"`
+	CreateTime time.Time `json:"create_time" gorm:"column:create_time;default:CURRENT_TIMESTAMP"`
 	// Update time
-	UpdateTime time.Time `json:"update_time" gorm:"column:update_time"`
+	UpdateTime time.Time `json:"update_time" gorm:"column:update_time;default:CURRENT_TIMESTAMP"`
 }
 
 // TableName specifies the table name for Sku

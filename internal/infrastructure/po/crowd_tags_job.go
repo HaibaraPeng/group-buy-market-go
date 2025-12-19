@@ -23,9 +23,9 @@ type CrowdTagsJob struct {
 	// Status; 0 initial, 1 planned (entering execution phase), 2 reset, 3 completed
 	Status int `json:"status" gorm:"column:status"`
 	// Creation time
-	CreateTime time.Time `json:"create_time" gorm:"column:create_time"`
+	CreateTime time.Time `json:"create_time" gorm:"column:create_time;default:CURRENT_TIMESTAMP"`
 	// Update time
-	UpdateTime time.Time `json:"update_time" gorm:"column:update_time"`
+	UpdateTime time.Time `json:"update_time" gorm:"column:update_time;default:CURRENT_TIMESTAMP"`
 }
 
 // TableName specifies the table name for CrowdTagsJob

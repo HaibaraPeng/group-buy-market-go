@@ -13,9 +13,9 @@ type CrowdTagsDetail struct {
 	// User ID
 	UserId string `json:"user_id" gorm:"column:user_id"`
 	// Creation time
-	CreateTime time.Time `json:"create_time" gorm:"column:create_time"`
+	CreateTime time.Time `json:"create_time" gorm:"column:create_time;default:CURRENT_TIMESTAMP"`
 	// Update time
-	UpdateTime time.Time `json:"update_time" gorm:"column:update_time"`
+	UpdateTime time.Time `json:"update_time" gorm:"column:update_time;default:CURRENT_TIMESTAMP"`
 }
 
 // TableName specifies the table name for CrowdTagsDetail
