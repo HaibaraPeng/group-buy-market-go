@@ -4,16 +4,11 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"group-buy-market-go/internal/infrastructure/po"
-	"time"
 )
 
 // GroupBuyActivityDAO defines the interface for group buy activity persistence
 type GroupBuyActivityDAO interface {
-	Save(ctx context.Context, activity *po.GroupBuyActivity) error
-	FindByID(ctx context.Context, id int64) (*po.GroupBuyActivity, error)
-	FindByActivityID(ctx context.Context, activityID int64) (*po.GroupBuyActivity, error)
 	QueryGroupBuyActivityList(ctx context.Context) ([]*po.GroupBuyActivity, error)
-	UpdateStatus(ctx context.Context, id int64, status int) error
 	FindValidBySourceAndChannel(source string, channel string) (*po.GroupBuyActivity, error)
 }
 
@@ -29,47 +24,11 @@ func NewMySQLGroupBuyActivityDAO(db *gorm.DB) GroupBuyActivityDAO {
 	}
 }
 
-// Save saves a group buy activity
-func (r *MySQLGroupBuyActivityDAO) Save(ctx context.Context, activity *po.GroupBuyActivity) error {
-	return r.db.Save(activity).Error
-}
-
-// FindByID finds a group buy activity by ID
-func (r *MySQLGroupBuyActivityDAO) FindByID(ctx context.Context, id int64) (*po.GroupBuyActivity, error) {
-	var activity po.GroupBuyActivity
-	err := r.db.First(&activity, id).Error
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return &activity, nil
-}
-
-// FindByActivityID finds a group buy activity by activity ID
-func (r *MySQLGroupBuyActivityDAO) FindByActivityID(ctx context.Context, activityID int64) (*po.GroupBuyActivity, error) {
-	var activity po.GroupBuyActivity
-	err := r.db.Where("activity_id = ?", activityID).First(&activity).Error
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return &activity, nil
-}
-
 // QueryGroupBuyDiscountList returns all group buy activities
 func (r *MySQLGroupBuyActivityDAO) QueryGroupBuyActivityList(ctx context.Context) ([]*po.GroupBuyActivity, error) {
 	var activities []*po.GroupBuyActivity
 	err := r.db.Find(&activities).Error
 	return activities, err
-}
-
-// UpdateStatus updates the status of a group buy activity
-func (r *MySQLGroupBuyActivityDAO) UpdateStatus(ctx context.Context, id int64, status int) error {
-	return r.db.Model(&po.GroupBuyActivity{}).Where("id = ?", id).Update("status", status).Update("update_time", time.Now()).Error
 }
 
 // FindValidBySourceAndChannel finds the latest valid group buy activity by source and channel
