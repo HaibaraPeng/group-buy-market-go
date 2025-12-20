@@ -20,6 +20,7 @@ type MarketNode struct {
 	core.AbstractGroupBuyMarketSupport
 	activityRepository          *repository.ActivityRepository
 	endNode                     *EndNode
+	errorNode                   *ErrorNode
 	discountCalculateServiceMap map[model.MarketPlanEnum]discount.IDiscountCalculateService
 	zjCalculateService          *discount.ZJCalculateService
 	zkCalculateService          *discount.ZKCalculateService
@@ -31,6 +32,7 @@ type MarketNode struct {
 // NewMarketNode 创建营销节点
 func NewMarketNode(
 	endNode *EndNode,
+	errorNode *ErrorNode,
 	activityRepository *repository.ActivityRepository,
 	zjCalculateService *discount.ZJCalculateService,
 	zkCalculateService *discount.ZKCalculateService,
@@ -41,6 +43,7 @@ func NewMarketNode(
 	marketNode := &MarketNode{
 		activityRepository: activityRepository,
 		endNode:            endNode,
+		errorNode:          errorNode,
 		zjCalculateService: zjCalculateService,
 		zkCalculateService: zkCalculateService,
 		mjCalculateService: mjCalculateService,
@@ -124,17 +127,17 @@ func (m *MarketNode) doApply(ctx context.Context, requestParameter *model.Market
 
 	groupBuyActivityDiscountVO := dynamicContext.GetGroupBuyActivityDiscountVO()
 	if groupBuyActivityDiscountVO == nil {
-		return nil, fmt.Errorf("拼团活动配置为空")
+		return m.Router(ctx, requestParameter, dynamicContext)
 	}
 
 	groupBuyDiscount := groupBuyActivityDiscountVO.GroupBuyDiscount
 	if groupBuyDiscount == nil {
-		return nil, fmt.Errorf("拼团折扣配置为空")
+		return m.Router(ctx, requestParameter, dynamicContext)
 	}
 
 	skuVO := dynamicContext.GetSkuVO()
 	if skuVO == nil {
-		return nil, fmt.Errorf("商品信息为空")
+		return m.Router(ctx, requestParameter, dynamicContext)
 	}
 
 	discountCalculateService, exists := m.discountCalculateServiceMap[groupBuyDiscount.MarketPlan]
@@ -163,6 +166,11 @@ func (m *MarketNode) getSupportedMarketPlans() []model.MarketPlanEnum {
 // Get 获取下一个策略处理器
 // 营销节点处理完成后进入结束节点
 func (m *MarketNode) Get(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (tree.StrategyHandler[*model.MarketProductEntity, *core.DynamicContext, *model.TrialBalanceEntity], error) {
+	// 不存在配置的拼团活动，走异常节点
+	if dynamicContext.GetGroupBuyActivityDiscountVO() == nil || dynamicContext.GetSkuVO() == nil || dynamicContext.GetDeductionPrice() == nil {
+		return m.errorNode, nil
+	}
+
 	m.log.Info("营销节点处理完成，进入结束节点")
 
 	// 返回结束节点作为下一个处理器

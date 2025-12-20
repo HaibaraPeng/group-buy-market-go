@@ -35,6 +35,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		discount.NewMJCalculateService,
 		discount.NewNCalculateService,
 		node.NewEndNode,
+		node.NewErrorNode,
 		node.NewMarketNode,
 		node.NewSwitchNode,
 		node.NewRootNode,
