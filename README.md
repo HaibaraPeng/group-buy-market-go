@@ -33,6 +33,7 @@ Contains enterprise business logic and domain entities:
 - Aggregates
 - Domain Services
 - Repository Interfaces
+- Strategy Pattern Nodes (RootNode, SwitchNode, MarketNode, EndNode, ErrorNode)
 
 ### 2. Application Layer (`internal/application`)
 Contains application-specific business logic:
@@ -86,7 +87,7 @@ This project uses [Google Wire](https://github.com/google/wire) for dependency i
 
 To regenerate Wire injection code:
 ```bash
-wire cmd/groupbuy/internal/wire.go
+wire cmd/groupbuy/wire.go
 ```
 
 ## Configuration
