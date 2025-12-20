@@ -28,9 +28,9 @@ func NewActivityRepository(groupBuyActivityDAO dao.GroupBuyActivityDAO, groupBuy
 }
 
 // QueryGroupBuyActivityDiscountVO queries group buy activity and its associated discount by source and channel
-func (r *ActivityRepository) QueryGroupBuyActivityDiscountVO(source string, channel string) (*model.GroupBuyActivityDiscountVO, error) {
+func (r *ActivityRepository) QueryGroupBuyActivityDiscountVO(ctx context.Context, activityId int64) (*model.GroupBuyActivityDiscountVO, error) {
 	// Query the latest valid activity by source and channel
-	groupBuyActivityRes, err := r.groupBuyActivityDAO.FindValidBySourceAndChannel(source, channel)
+	groupBuyActivityRes, err := r.groupBuyActivityDAO.FindValidByActivityID(ctx, activityId)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (r *ActivityRepository) QueryGroupBuyActivityDiscountVO(source string, chan
 	}
 
 	// Query discount by discount id
-	groupBuyDiscountRes, err := r.groupBuyDiscountDAO.FindByDiscountID(discountID)
+	groupBuyDiscountRes, err := r.groupBuyDiscountDAO.FindByDiscountID(ctx, discountID)
 	if err != nil {
 		return nil, err
 	}
