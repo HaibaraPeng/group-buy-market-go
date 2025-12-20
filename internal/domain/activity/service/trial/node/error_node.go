@@ -47,7 +47,7 @@ func (e *ErrorNode) doApply(ctx context.Context, requestParameter *model.MarketP
 	// 无营销配置
 	if dynamicContext.GetGroupBuyActivityDiscountVO() == nil || dynamicContext.GetSkuVO() == nil {
 		e.log.Infow("商品无拼团营销配置", "goodsId", requestParameter.GoodsId)
-		return nil, fmt.Errorf("E0002: 商品无拼团营销配置")
+		return nil, fmt.Errorf("商品无拼团营销配置")
 	}
 
 	return &model.TrialBalanceEntity{}, nil
