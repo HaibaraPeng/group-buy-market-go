@@ -12,12 +12,6 @@ type GroupBuyActivity struct {
 	ActivityId int64 `json:"activity_id" gorm:"column:activity_id"`
 	// Activity name
 	ActivityName string `json:"activity_name" gorm:"column:activity_name"`
-	// Source
-	Source string `json:"source" gorm:"column:source"`
-	// Channel
-	Channel string `json:"channel" gorm:"column:channel"`
-	// Goods ID
-	GoodsId string `json:"goods_id" gorm:"column:goods_id"`
 	// Discount ID
 	DiscountId string `json:"discount_id" gorm:"column:discount_id"`
 	// Group type (0 auto-group, 1 target-group)
