@@ -71,6 +71,7 @@ func (m *MarketNode) multiThread(ctx context.Context, requestParameter *model.Ma
 	queryActivityTask := thread.NewQueryGroupBuyActivityDiscountVOThreadTask(
 		requestParameter.Source,
 		requestParameter.Channel,
+		requestParameter.GoodsId,
 		m.activityRepository,
 	)
 
@@ -81,7 +82,7 @@ func (m *MarketNode) multiThread(ctx context.Context, requestParameter *model.Ma
 	)
 
 	// 启动异步任务
-	activityChan := queryActivityTask.AsyncCall()
+	activityChan := queryActivityTask.AsyncCall(ctx)
 	skuChan := querySkuTask.AsyncCall()
 
 	// 等待并收集结果
