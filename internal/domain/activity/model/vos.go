@@ -58,3 +58,15 @@ type SkuVO struct {
 	// Original price
 	OriginalPrice float64 `json:"original_price"`
 }
+
+// SCSkuActivityVO represents the SC SKU activity value object
+type SCSkuActivityVO struct {
+	// Channel
+	Source string `json:"source"`
+	// Channel
+	Channel string `json:"channel"`
+	// Activity ID
+	ActivityId int64 `json:"activity_id"`
+	// Goods ID
+	GoodsId string `json:"goods_id"`
+}

@@ -1,24 +1,29 @@
 package repository
 
 import (
+	"context"
+	"strconv"
+
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/infrastructure/dao"
-	"strconv"
+	"group-buy-market-go/internal/infrastructure/po"
 )
 
 type ActivityRepository struct {
 	groupBuyActivityDAO dao.GroupBuyActivityDAO
 	groupBuyDiscountDAO dao.GroupBuyDiscountDAO
 	skuDAO              dao.SkuDAO
+	scSkuActivityDAO    dao.SCSkuActivityDAO
 }
 
 // NewActivityRepository creates a new activity repository
 func NewActivityRepository(groupBuyActivityDAO dao.GroupBuyActivityDAO, groupBuyDiscountDAO dao.GroupBuyDiscountDAO,
-	skuDAO dao.SkuDAO) *ActivityRepository {
+	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO) *ActivityRepository {
 	return &ActivityRepository{
 		groupBuyActivityDAO: groupBuyActivityDAO,
 		groupBuyDiscountDAO: groupBuyDiscountDAO,
 		skuDAO:              skuDAO,
+		scSkuActivityDAO:    scSkuActivityDAO,
 	}
 }
 
@@ -66,9 +71,6 @@ func (r *ActivityRepository) QueryGroupBuyActivityDiscountVO(source string, chan
 	vo := &model.GroupBuyActivityDiscountVO{
 		ActivityId:       groupBuyActivityRes.ActivityId,
 		ActivityName:     groupBuyActivityRes.ActivityName,
-		Source:           groupBuyActivityRes.Source,
-		Channel:          groupBuyActivityRes.Channel,
-		GoodsId:          groupBuyActivityRes.GoodsId,
 		GroupBuyDiscount: groupBuyDiscount,
 		GroupType:        groupBuyActivityRes.GroupType,
 		TakeLimitCount:   groupBuyActivityRes.TakeLimitCount,
@@ -105,4 +107,35 @@ func (r *ActivityRepository) QuerySkuByGoodsId(goodsId string) (*model.SkuVO, er
 	}
 
 	return skuVO, nil
+}
+
+// QuerySCSkuActivityBySCGoodsId queries sc sku activity by source, channel and goods id
+func (r *ActivityRepository) QuerySCSkuActivityBySCGoodsId(ctx context.Context, source string, channel string, goodsId string) (*model.SCSkuActivityVO, error) {
+	// Create SCSkuActivity PO with given parameters
+	scSkuActivityReq := &po.SCSkuActivity{
+		Source:  source,
+		Channel: channel,
+		GoodsId: goodsId,
+	}
+
+	// Query sc sku activity by source, channel and goods id
+	scSkuActivity, err := r.scSkuActivityDAO.QuerySCSkuActivityBySCGoodsId(ctx, scSkuActivityReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// If no sc sku activity found, return nil
+	if scSkuActivity == nil {
+		return nil, nil
+	}
+
+	// Build and return the SCSkuActivityVO
+	scSkuActivityVO := &model.SCSkuActivityVO{
+		Source:     scSkuActivity.Source,
+		Channel:    scSkuActivity.Channel,
+		ActivityId: scSkuActivity.ActivityId,
+		GoodsId:    scSkuActivity.GoodsId,
+	}
+
+	return scSkuActivityVO, nil
 }
