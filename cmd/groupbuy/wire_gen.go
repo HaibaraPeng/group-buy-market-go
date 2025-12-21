@@ -31,7 +31,11 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	groupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(db)
 	skuDAO := dao.NewMySQLSkuDAO(db)
 	scSkuActivityDAO := dao.NewMySQLSCSkuActivityDAO(db)
-	activityRepository := repository.NewActivityRepository(groupBuyActivityDAO, groupBuyDiscountDAO, skuDAO, scSkuActivityDAO)
+	client, cleanup, err := cache.NewRedisClient(data, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	activityRepository := repository.NewActivityRepository(groupBuyActivityDAO, groupBuyDiscountDAO, skuDAO, scSkuActivityDAO, client)
 	zjCalculateService := discount.NewZJCalculateService(logger)
 	zkCalculateService := discount.NewZKCalculateService(logger)
 	mjCalculateService := discount.NewMJCalculateService(logger)
@@ -43,10 +47,6 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	crowdTagsDAO := dao.NewMySQLCrowdTagsDAO(db)
 	crowdTagsDetailDAO := dao.NewMySQLCrowdTagsDetailDAO(db)
 	crowdTagsJobDAO := dao.NewMySQLCrowdTagsJobDAO(db)
-	client, cleanup, err := cache.NewRedisClient(data, logger)
-	if err != nil {
-		return nil, nil, err
-	}
 	tagRepository := repository.NewTagRepository(logger, crowdTagsDAO, crowdTagsDetailDAO, crowdTagsJobDAO, client)
 	tagService := service2.NewTagService(logger, tagRepository)
 	httpServer := server.NewHTTPServer(confServer, iIndexGroupBuyMarketService, tagService, logger)
