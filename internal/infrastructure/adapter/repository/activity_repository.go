@@ -4,6 +4,8 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/go-redis/redis/v8"
+	"group-buy-market-go/internal/common/utils"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/infrastructure/po"
@@ -14,16 +16,18 @@ type ActivityRepository struct {
 	groupBuyDiscountDAO dao.GroupBuyDiscountDAO
 	skuDAO              dao.SkuDAO
 	scSkuActivityDAO    dao.SCSkuActivityDAO
+	redisClient         *redis.Client
 }
 
 // NewActivityRepository creates a new activity repository
 func NewActivityRepository(groupBuyActivityDAO dao.GroupBuyActivityDAO, groupBuyDiscountDAO dao.GroupBuyDiscountDAO,
-	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO) *ActivityRepository {
+	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO, redisClient *redis.Client) *ActivityRepository {
 	return &ActivityRepository{
 		groupBuyActivityDAO: groupBuyActivityDAO,
 		groupBuyDiscountDAO: groupBuyDiscountDAO,
 		skuDAO:              skuDAO,
 		scSkuActivityDAO:    scSkuActivityDAO,
+		redisClient:         redisClient,
 	}
 }
 
@@ -138,4 +142,31 @@ func (r *ActivityRepository) QuerySCSkuActivityBySCGoodsId(ctx context.Context, 
 	}
 
 	return scSkuActivityVO, nil
+}
+
+// IsTagCrowdRange checks if user is in the tag crowd range
+func (r *ActivityRepository) IsTagCrowdRange(ctx context.Context, tagId string, userId string) (bool, error) {
+	// Check if bitset exists for tagId
+	exists, err := r.redisClient.Exists(ctx, tagId).Result()
+	if err != nil {
+		return false, err
+	}
+
+	// If bitset doesn't exist, return true
+	if exists == 0 {
+		return true, nil
+	}
+
+	// Calculate user index (simplified - in real implementation this would be more complex)
+	// This is a placeholder implementation - you'll need to adjust based on your actual userId to index mapping
+	userIndex := utils.GetIndexFromUserId(userId)
+
+	// Get bit value at user index
+	bitValue, err := r.redisClient.GetBit(ctx, tagId, userIndex).Result()
+	if err != nil {
+		return false, err
+	}
+
+	// Return true if bit is set (user is in the crowd)
+	return bitValue == 1, nil
 }

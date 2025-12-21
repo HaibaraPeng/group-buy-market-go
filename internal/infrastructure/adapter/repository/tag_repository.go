@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis/v8"
+	"group-buy-market-go/internal/common/utils"
 	"group-buy-market-go/internal/domain/tag/model"
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/infrastructure/po"
@@ -75,7 +76,7 @@ func (r *TagRepository) AddCrowdTagsUserId(ctx context.Context, tagId string, us
 
 	// Implement Redis operations
 	// Get index from user ID (simple hash in this case)
-	index := r.getIndexFromUserId(userId)
+	index := utils.GetIndexFromUserId(userId)
 
 	// Set bit in Redis bitmap
 	bitKey := "tag:" + tagId
@@ -87,16 +88,6 @@ func (r *TagRepository) AddCrowdTagsUserId(ctx context.Context, tagId string, us
 	}
 
 	return nil
-}
-
-// getIndexFromUserId generates an index from user ID
-// This is a simple implementation - in production you might want to use a more sophisticated hashing
-func (r *TagRepository) getIndexFromUserId(userId string) int64 {
-	var hash int64
-	for _, char := range userId {
-		hash = (hash*31 + int64(char)) & 0x7FFFFFFF // Keep it positive
-	}
-	return hash
 }
 
 // UpdateCrowdTagsStatistics updates crowd tags statistics
