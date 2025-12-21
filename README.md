@@ -10,30 +10,48 @@ This project follows a DDD-based layered architecture:
 ├── api/                   # API definition files (protobuf, swagger, etc.)
 ├── cmd/                   # Application entry points
 │   └── groupbuy/          # Main application
-│       └── main.go        # Entry point
-│       └── main_kratos.go # Kratos framework entry point
+│       ├── main.go        # Entry point
+│       ├── wire.go        # Wire dependency injection definitions
+│       └── wire_gen.go    # Auto-generated Wire code
+├── common/                # Common utilities and design patterns
+│   └── design/tree/       # Strategy tree pattern implementation
 ├── configs/               # Configuration files
 ├── docs/                  # Documentation
 ├── internal/              # Private application code
-│   ├── application/       # Application services
+│   ├── conf/              # Configuration protobuf definitions
 │   ├── domain/            # Domain layer (entities, value objects, aggregates, domain services)
+│   │   ├── activity/      # Activity domain
+│   │   │   ├── model/     # Domain models and value objects
+│   │   │   └── service/   # Domain services
+│   │   │       ├── discount/  # Discount calculation services
+│   │   │       └── trial/     # Trial calculation services
+│   │   │           ├── core/      # Core trial components
+│   │   │           ├── factory/   # Strategy factory
+│   │   │           ├── node/      # Strategy tree nodes
+│   │   │           └── thread/    # Thread tasks
+│   │   └── tag/           # Tag domain
+│   │       ├── model/     # Tag models
+│   │       └── service/   # Tag services
 │   ├── infrastructure/    # Infrastructure layer (database, external services)
-│   └── interfaces/        # Interfaces layer (HTTP, gRPC handlers)
-│       ├── http/          # HTTP handlers and server
-│       └── grpc/          # gRPC handlers and server
-└── pkg/                   # Shared/cross-project code (if any)
+│   │   ├── adapter/       # Adapters for external services
+│   │   │   └── repository/    # Repository implementations
+│   │   ├── cache/         # Cache implementations
+│   │   ├── dao/           # Data Access Objects
+│   │   └── po/            # Persistent Objects (data models)
+│   └── server/            # Server initialization
+└── third_party/           # Third-party proto files
 ```
 
 ## Layers Overview
 
 ### 1. Domain Layer (`internal/domain`)
 Contains enterprise business logic and domain entities:
-- Entities: Product, User, Order
-- Value Objects
+- Entities: MarketProductEntity, TrialBalanceEntity
+- Value Objects: GroupBuyActivityDiscountVO, SkuVO, SCSkuActivityVO
 - Aggregates
-- Domain Services
+- Domain Services: Discount calculation services, Trial calculation services
 - Repository Interfaces
-- Strategy Pattern Nodes (RootNode, SwitchNode, MarketNode, EndNode, ErrorNode)
+- Strategy Pattern Nodes (RootNode, SwitchNode, TagNode, MarketNode, EndNode, ErrorNode)
 
 ### 2. Application Layer (`internal/application`)
 Contains application-specific business logic:
@@ -43,21 +61,40 @@ Contains application-specific business logic:
 
 ### 3. Infrastructure Layer (`internal/infrastructure`)
 Contains technology-specific implementations:
-- Database implementations
+- Database implementations (DAOs)
 - External service clients
-- Message queues
-- File systems
+- Repository implementations
+- Cache implementations (Redis)
 
 ### 4. Interfaces Layer (`internal/interfaces`)
 Contains adapters that convert external requests into internal formats:
 - HTTP handlers
 - gRPC services
-- CLI commands
+
+## Key Components
+
+### Strategy Tree Pattern
+The project implements a strategy tree pattern for handling group buying calculations:
+- **RootNode**: Entry point of the strategy tree
+- **SwitchNode**: Determines if marketing activities are enabled
+- **TagNode**: Checks if user belongs to target audience
+- **MarketNode**: Calculates marketing discounts
+- **EndNode**: Finalizes the calculation and returns results
+- **ErrorNode**: Handles error cases
+
+### Discount Calculation Services
+Various discount calculation algorithms:
+- **ZJCalculateService**: Direct reduction calculation
+- **ZKCalculateService**: Discount calculation
+- **MJCalculateService**: Full reduction calculation
+- **NCalculateService**: N yuan purchase calculation
 
 ## Getting Started
 
 ### Prerequisites
 - Go 1.16 or higher
+- Redis (for caching and bitmap operations)
+- MySQL (for data persistence)
 
 ### Installation
 ```bash
@@ -68,18 +105,12 @@ go mod tidy
 ```bash
 # Run with standard HTTP server
 go run cmd/groupbuy/main.go
-
-# Run with Kratos framework
-go run cmd/groupbuy/main_kratos.go
 ```
 
 ### Building the Application
 ```bash
 # Standard build
 go build -o bin/groupbuy cmd/groupbuy/main.go
-
-# Kratos build
-go build -o bin/groupbuy_kratos cmd/groupbuy/main_kratos.go
 ```
 
 ## Dependency Injection
@@ -87,11 +118,16 @@ This project uses [Google Wire](https://github.com/google/wire) for dependency i
 
 To regenerate Wire injection code:
 ```bash
-wire cmd/groupbuy/wire.go
+# Install wire if not already installed
+go install github.com/google/wire/cmd/wire@latest
+
+# Generate dependency injection code
+cd cmd/groupbuy
+go generate
 ```
 
 ## Configuration
-Configuration files are located in the `configs/` directory.
+Configuration files are located in the `configs/` directory. The project uses protobuf for configuration definitions.
 
 ## Testing
 ```bash
