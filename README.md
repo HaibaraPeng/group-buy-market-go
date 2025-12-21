@@ -30,15 +30,15 @@ This project follows a DDD-based layered architecture:
 │   │   │           ├── node/      # Strategy tree nodes
 │   │   │           └── thread/    # Thread tasks
 │   │   └── tag/           # Tag domain
-│   │       ├── model/     # Tag models
-│   │       └── service/   # Tag services
+│   │       └── model/     # Tag models
 │   ├── infrastructure/    # Infrastructure layer (database, external services)
 │   │   ├── adapter/       # Adapters for external services
 │   │   │   └── repository/    # Repository implementations
 │   │   ├── cache/         # Cache implementations
 │   │   ├── dao/           # Data Access Objects
 │   │   └── po/            # Persistent Objects (data models)
-│   └── server/            # Server initialization
+│   ├── server/            # Server initialization
+│   └── service/           # Service layer (application services)
 └── third_party/           # Third-party proto files
 ```
 
@@ -53,11 +53,13 @@ Contains enterprise business logic and domain entities:
 - Repository Interfaces
 - Strategy Pattern Nodes (RootNode, SwitchNode, TagNode, MarketNode, EndNode, ErrorNode)
 
-### 2. Application Layer (`internal/application`)
+### 2. Application Layer (`internal/service`)
 Contains application-specific business logic:
 - Use cases
-- DTOs (Data Transfer Objects)
-- Orchestration of domain objects
+- Service implementations:
+  - ActivityService (marketing trial service)
+  - TagService (tag batch job service)
+  - DccService (dynamic configuration service)
 
 ### 3. Infrastructure Layer (`internal/infrastructure`)
 Contains technology-specific implementations:
@@ -66,10 +68,10 @@ Contains technology-specific implementations:
 - Repository implementations
 - Cache implementations (Redis)
 
-### 4. Interfaces Layer (`internal/interfaces`)
+### 4. Interfaces Layer (`internal/server`)
 Contains adapters that convert external requests into internal formats:
-- HTTP handlers
-- gRPC services
+- HTTP server initialization
+- Service registration
 
 ## Key Components
 
