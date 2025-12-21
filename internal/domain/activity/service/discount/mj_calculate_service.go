@@ -1,7 +1,7 @@
 package discount
 
 import (
-	"group-buy-market-go/common/consts"
+	"group-buy-market-go/internal/common/consts"
 	"group-buy-market-go/internal/domain/activity/model"
 	"math/big"
 	"strings"
