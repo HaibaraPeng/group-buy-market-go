@@ -14,6 +14,10 @@ type DynamicContext struct {
 	SkuVO *model.SkuVO `json:"-"` // 不序列化到JSON
 	// 折扣价格
 	DeductionPrice *big.Float `json:"-"` // 不序列化到JSON
+	// 是否可见
+	Visible bool `json:"-"`
+	// 是否可用
+	Enable bool `json:"-"`
 }
 
 // SetGroupBuyActivityDiscountVO 设置拼团活动营销配置值对象
@@ -44,4 +48,24 @@ func (d *DynamicContext) SetDeductionPrice(price *big.Float) {
 // GetDeductionPrice 获取折扣价格
 func (d *DynamicContext) GetDeductionPrice() *big.Float {
 	return d.DeductionPrice
+}
+
+// SetVisible 设置是否可见
+func (d *DynamicContext) SetVisible(visible bool) {
+	d.Visible = visible
+}
+
+// IsVisible 获取是否可见
+func (d *DynamicContext) IsVisible() bool {
+	return d.Visible
+}
+
+// SetEnable 设置是否可用
+func (d *DynamicContext) SetEnable(enable bool) {
+	d.Enable = enable
+}
+
+// IsEnable 获取是否可用
+func (d *DynamicContext) IsEnable() bool {
+	return d.Enable
 }

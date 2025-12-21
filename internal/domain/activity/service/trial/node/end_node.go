@@ -60,8 +60,8 @@ func (e *EndNode) doApply(ctx context.Context, requestParameter *model.MarketPro
 		TargetCount:    groupBuyActivityDiscountVO.Target,
 		StartTime:      groupBuyActivityDiscountVO.StartTime.Unix(),
 		EndTime:        groupBuyActivityDiscountVO.EndTime.Unix(),
-		IsVisible:      false,
-		IsEnable:       false,
+		IsVisible:      dynamicContext.IsVisible(),
+		IsEnable:       dynamicContext.IsEnable(),
 	}
 
 	return result, nil
