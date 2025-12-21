@@ -19,7 +19,7 @@ import (
 type MarketNode struct {
 	core.AbstractGroupBuyMarketSupport
 	activityRepository          *repository.ActivityRepository
-	endNode                     *EndNode
+	tagNode                     *TagNode
 	errorNode                   *ErrorNode
 	discountCalculateServiceMap map[model.MarketPlanEnum]discount.IDiscountCalculateService
 	zjCalculateService          *discount.ZJCalculateService
@@ -31,7 +31,7 @@ type MarketNode struct {
 
 // NewMarketNode 创建营销节点
 func NewMarketNode(
-	endNode *EndNode,
+	tagNode *TagNode,
 	errorNode *ErrorNode,
 	activityRepository *repository.ActivityRepository,
 	zjCalculateService *discount.ZJCalculateService,
@@ -42,7 +42,7 @@ func NewMarketNode(
 ) *MarketNode {
 	marketNode := &MarketNode{
 		activityRepository: activityRepository,
-		endNode:            endNode,
+		tagNode:            tagNode,
 		errorNode:          errorNode,
 		zjCalculateService: zjCalculateService,
 		zkCalculateService: zkCalculateService,
@@ -174,7 +174,7 @@ func (m *MarketNode) Get(ctx context.Context, requestParameter *model.MarketProd
 	m.log.Info("营销节点处理完成，进入结束节点")
 
 	// 返回结束节点作为下一个处理器
-	return m.endNode, nil
+	return m.tagNode, nil
 }
 
 // 确保 MarketNode 实现了 StrategyHandler 接口

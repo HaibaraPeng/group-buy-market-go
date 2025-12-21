@@ -24,8 +24,6 @@ import (
 
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	endNode := node.NewEndNode(logger)
-	errorNode := node.NewErrorNode(logger)
 	db := dao.NewDB(data, logger)
 	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(db)
 	groupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(db)
@@ -36,11 +34,14 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 		return nil, nil, err
 	}
 	activityRepository := repository.NewActivityRepository(groupBuyActivityDAO, groupBuyDiscountDAO, skuDAO, scSkuActivityDAO, client)
+	endNode := node.NewEndNode(logger)
+	tagNode := node.NewTagNode(activityRepository, endNode, logger)
+	errorNode := node.NewErrorNode(logger)
 	zjCalculateService := discount.NewZJCalculateService(logger)
 	zkCalculateService := discount.NewZKCalculateService(logger)
 	mjCalculateService := discount.NewMJCalculateService(logger)
 	nCalculateService := discount.NewNCalculateService(logger)
-	marketNode := node.NewMarketNode(endNode, errorNode, activityRepository, zjCalculateService, zkCalculateService, mjCalculateService, nCalculateService, logger)
+	marketNode := node.NewMarketNode(tagNode, errorNode, activityRepository, zjCalculateService, zkCalculateService, mjCalculateService, nCalculateService, logger)
 	switchNode := node.NewSwitchNode(marketNode, logger)
 	rootNode := node.NewRootNode(switchNode, logger)
 	iIndexGroupBuyMarketService := service.NewIIndexGroupBuyMarketService(rootNode)
