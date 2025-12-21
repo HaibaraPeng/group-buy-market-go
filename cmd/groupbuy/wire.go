@@ -29,7 +29,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		dao.ProviderSet,
 		cache.ProviderSet,
 		dcc.ProviderSet,
-		repository.NewActivityRepository, // 确保注入DCC服务到ActivityRepository
+		repository.NewActivityRepository,
 		repository.NewTagRepository,
 		tag_service.NewTagService,
 		discount.NewZJCalculateService,

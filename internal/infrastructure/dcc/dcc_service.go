@@ -1,41 +1,128 @@
 package dcc
 
 import (
+	"context"
 	"fmt"
 	"hash/fnv"
-	"os"
 	"strconv"
 	"strings"
+
+	"github.com/go-redis/redis/v8"
+	"group-buy-market-go/internal/common/consts"
 )
 
 // DCCService 动态配置中心服务
 type DCCService struct {
-	downgradeSwitch string
-	cutRange        string
+	redisClient *redis.Client
+	configMap   map[string]*ConfigValue
+}
+
+// ConfigValue 配置值包装器
+type ConfigValue struct {
+	key   string
+	value string
 }
 
 // NewDCCService 创建DCC服务实例
-func NewDCCService() *DCCService {
-	// 从环境变量读取配置，如果不存在则使用默认值
-	downgradeSwitch := getEnvWithDefault("DOWNGRADE_SWITCH", "0")
-	cutRange := getEnvWithDefault("CUT_RANGE", "100")
-
-	return &DCCService{
-		downgradeSwitch: downgradeSwitch,
-		cutRange:        cutRange,
+func NewDCCService(redisClient *redis.Client) *DCCService {
+	dcc := &DCCService{
+		redisClient: redisClient,
+		configMap:   make(map[string]*ConfigValue),
 	}
+
+	// 初始化默认配置
+	dcc.initDefaultConfigs()
+
+	// 启动监听
+	go dcc.listenForConfigChanges(context.Background())
+
+	return dcc
+}
+
+// initDefaultConfigs 初始化默认配置
+func (d *DCCService) initDefaultConfigs() {
+	d.initConfigValue("downgradeSwitch", "0")
+	d.initConfigValue("cutRange", "100")
+}
+
+// initConfigValue 初始化配置值
+func (d *DCCService) initConfigValue(key, defaultValue string) {
+	configKey := "group_buy_market_dcc_" + key
+	// 检查Redis中是否存在该键值
+	ctx := context.Background()
+	value, err := d.redisClient.Get(ctx, configKey).Result()
+	if err != nil || value == "" {
+		// 如果检查出现错误或者不存在该键，设置为默认值，使用默认值
+		d.configMap[key] = &ConfigValue{
+			key:   configKey,
+			value: defaultValue,
+		}
+		return
+	} else {
+		// 如果Redis中存在该键，获取其值
+		value, err = d.redisClient.Get(ctx, configKey).Result()
+		if err != nil {
+			value = defaultValue
+		}
+	}
+
+	d.configMap[key] = &ConfigValue{
+		key:   configKey,
+		value: value,
+	}
+}
+
+// listenForConfigChanges 监听配置变化
+func (d *DCCService) listenForConfigChanges(ctx context.Context) {
+	pubsub := d.redisClient.Subscribe(ctx, "group_buy_market_dcc")
+	defer pubsub.Close()
+
+	ch := pubsub.Channel()
+	for msg := range ch {
+		d.handleConfigChange(msg.Payload)
+	}
+}
+
+// handleConfigChange 处理配置变化
+func (d *DCCService) handleConfigChange(payload string) {
+	parts := strings.Split(payload, consts.SPLIT)
+	if len(parts) != 2 {
+		return
+	}
+
+	attribute := parts[0]
+	value := parts[1]
+	configKey := "group_buy_market_dcc_" + attribute
+
+	// 更新Redis中的值
+	ctx := context.Background()
+	d.redisClient.Set(ctx, configKey, value, 0)
+
+	// 更新内存中的值
+	if config, exists := d.configMap[attribute]; exists {
+		config.value = value
+	}
+}
+
+// GetValue 获取配置值
+func (d *DCCService) GetValue(key string) string {
+	if config, exists := d.configMap[key]; exists {
+		return config.value
+	}
+	return ""
 }
 
 // IsDowngradeSwitch 判断是否开启降级开关
 func (d *DCCService) IsDowngradeSwitch() bool {
-	return d.downgradeSwitch == "1"
+	return d.GetValue("downgradeSwitch") == "1"
 }
 
 // IsCutRange 判断用户是否在切量范围内
 func (d *DCCService) IsCutRange(userId string) (bool, error) {
-	cutRange, err := strconv.Atoi(d.cutRange)
+	cutRangeStr := d.GetValue("cutRange")
+	cutRange, err := strconv.Atoi(cutRangeStr)
 	if err != nil {
-		return false, fmt.Errorf("invalid cut range value: %s", d.cutRange)
+		return false, fmt.Errorf("invalid cut range value: %s", cutRangeStr)
 	}
 
 	// 计算用户ID的哈希值
@@ -53,29 +140,4 @@ func (d *DCCService) IsCutRange(userId string) (bool, error) {
 
 	// 判断是否在切量范围内
 	return lastTwoDigits <= cutRange, nil
-}
-
-// getEnvWithDefault 获取环境变量，如果不存在则返回默认值
-func getEnvWithDefault(key, defaultValue string) string {
-	value := os.Getenv(key)
-	if value == "" {
-		// 尝试使用带前缀的环境变量名
-		prefixedKey := "GROUPBUY_" + key
-		value = os.Getenv(prefixedKey)
-	}
-
-	if value == "" {
-		return defaultValue
-	}
-	return value
-}
-
-// UpdateConfig 更新配置值
-func (d *DCCService) UpdateConfig(key, value string) {
-	switch strings.ToLower(key) {
-	case "downgradeswitch":
-		d.downgradeSwitch = value
-	case "cutrange":
-		d.cutRange = value
-	}
 }

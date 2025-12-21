@@ -34,7 +34,7 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	if err != nil {
 		return nil, nil, err
 	}
-	dccService := dcc.NewDCCService()
+	dccService := dcc.NewDCCService(client)
 	activityRepository := repository.NewActivityRepository(groupBuyActivityDAO, groupBuyDiscountDAO, skuDAO, scSkuActivityDAO, client, dccService)
 	endNode := node.NewEndNode(logger)
 	tagNode := node.NewTagNode(activityRepository, endNode, logger)
