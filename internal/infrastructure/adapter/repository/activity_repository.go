@@ -18,19 +18,19 @@ type ActivityRepository struct {
 	skuDAO              dao.SkuDAO
 	scSkuActivityDAO    dao.SCSkuActivityDAO
 	redisClient         *redis.Client
-	dccService          *dcc.DCCService // 添加DCC服务
+	dcc                 *dcc.DCC // 添加DCC
 }
 
 // NewActivityRepository creates a new activity repository
 func NewActivityRepository(groupBuyActivityDAO dao.GroupBuyActivityDAO, groupBuyDiscountDAO dao.GroupBuyDiscountDAO,
-	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO, redisClient *redis.Client, dccService *dcc.DCCService) *ActivityRepository { // 添加dccService参数
+	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO, redisClient *redis.Client, dcc *dcc.DCC) *ActivityRepository { // 添加dcc参数
 	return &ActivityRepository{
 		groupBuyActivityDAO: groupBuyActivityDAO,
 		groupBuyDiscountDAO: groupBuyDiscountDAO,
 		skuDAO:              skuDAO,
 		scSkuActivityDAO:    scSkuActivityDAO,
 		redisClient:         redisClient,
-		dccService:          dccService, // 初始化DCC服务
+		dcc:                 dcc, // 初始化DCC服务
 	}
 }
 
@@ -176,10 +176,10 @@ func (r *ActivityRepository) IsTagCrowdRange(ctx context.Context, tagId string, 
 
 // DowngradeSwitch 判断是否开启降级开关
 func (r *ActivityRepository) DowngradeSwitch() bool {
-	return r.dccService.IsDowngradeSwitch()
+	return r.dcc.IsDowngradeSwitch()
 }
 
 // CutRange 判断用户是否在切量范围内
 func (r *ActivityRepository) CutRange(userId string) (bool, error) {
-	return r.dccService.IsCutRange(userId)
+	return r.dcc.IsCutRange(userId)
 }

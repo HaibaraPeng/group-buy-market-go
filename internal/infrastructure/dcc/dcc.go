@@ -11,8 +11,8 @@ import (
 	"group-buy-market-go/internal/common/consts"
 )
 
-// DCCService 动态配置中心服务
-type DCCService struct {
+// DCC 动态配置中心服务
+type DCC struct {
 	redisClient *redis.Client
 	configMap   map[string]*ConfigValue
 }
@@ -23,9 +23,9 @@ type ConfigValue struct {
 	value string
 }
 
-// NewDCCService 创建DCC服务实例
-func NewDCCService(redisClient *redis.Client) *DCCService {
-	dcc := &DCCService{
+// NewDCC 创建DCC服务实例
+func NewDCC(redisClient *redis.Client) *DCC {
+	dcc := &DCC{
 		redisClient: redisClient,
 		configMap:   make(map[string]*ConfigValue),
 	}
@@ -40,13 +40,13 @@ func NewDCCService(redisClient *redis.Client) *DCCService {
 }
 
 // initDefaultConfigs 初始化默认配置
-func (d *DCCService) initDefaultConfigs() {
+func (d *DCC) initDefaultConfigs() {
 	d.initConfigValue("downgradeSwitch", "0")
 	d.initConfigValue("cutRange", "100")
 }
 
 // initConfigValue 初始化配置值
-func (d *DCCService) initConfigValue(key, defaultValue string) {
+func (d *DCC) initConfigValue(key, defaultValue string) {
 	configKey := "group_buy_market_dcc_" + key
 	// 检查Redis中是否存在该键值
 	ctx := context.Background()
@@ -73,7 +73,7 @@ func (d *DCCService) initConfigValue(key, defaultValue string) {
 }
 
 // listenForConfigChanges 监听配置变化
-func (d *DCCService) listenForConfigChanges(ctx context.Context) {
+func (d *DCC) listenForConfigChanges(ctx context.Context) {
 	pubsub := d.redisClient.Subscribe(ctx, "group_buy_market_dcc")
 	defer pubsub.Close()
 
@@ -84,7 +84,7 @@ func (d *DCCService) listenForConfigChanges(ctx context.Context) {
 }
 
 // handleConfigChange 处理配置变化
-func (d *DCCService) handleConfigChange(payload string) {
+func (d *DCC) handleConfigChange(payload string) {
 	parts := strings.Split(payload, consts.SPLIT)
 	if len(parts) != 2 {
 		return
@@ -105,7 +105,7 @@ func (d *DCCService) handleConfigChange(payload string) {
 }
 
 // GetValue 获取配置值
-func (d *DCCService) GetValue(key string) string {
+func (d *DCC) GetValue(key string) string {
 	if config, exists := d.configMap[key]; exists {
 		return config.value
 	}
@@ -113,12 +113,12 @@ func (d *DCCService) GetValue(key string) string {
 }
 
 // IsDowngradeSwitch 判断是否开启降级开关
-func (d *DCCService) IsDowngradeSwitch() bool {
+func (d *DCC) IsDowngradeSwitch() bool {
 	return d.GetValue("downgradeSwitch") == "1"
 }
 
 // IsCutRange 判断用户是否在切量范围内
-func (d *DCCService) IsCutRange(userId string) (bool, error) {
+func (d *DCC) IsCutRange(userId string) (bool, error) {
 	cutRangeStr := d.GetValue("cutRange")
 	cutRange, err := strconv.Atoi(cutRangeStr)
 	if err != nil {
