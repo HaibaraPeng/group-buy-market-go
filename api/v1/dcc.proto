@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "group-buy-market-go/api/v1;v1";
+
+// DccService HTTP API
+service DccHTTP {
+  // UpdateConfig
+  rpc UpdateConfig(UpdateConfigRequest) returns (UpdateConfigReply){
+    option (google.api.http) = {
+      post: "/dcc/updateConfig"
+      body: "*"
+    };
+  };
+}
+
+message UpdateConfigRequest {
+  string key = 1;
+  string value = 2;
+}
+
+message UpdateConfigReply {
+  bool success = 1;
+}
