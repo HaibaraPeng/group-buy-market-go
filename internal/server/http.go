@@ -4,7 +4,6 @@ import (
 	v1 "group-buy-market-go/api/v1"
 	"group-buy-market-go/internal/conf"
 	activity_service "group-buy-market-go/internal/domain/activity/service"
-	tag_service "group-buy-market-go/internal/domain/tag/service"
 	"group-buy-market-go/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -13,7 +12,7 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, marketService *activity_service.IIndexGroupBuyMarketService, tagService *tag_service.TagService, dccService *service.DccService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, marketService *activity_service.IIndexGroupBuyMarketService, tagService *service.TagService, dccService *service.DccService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),

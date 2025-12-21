@@ -13,13 +13,12 @@ import (
 	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
-	service2 "group-buy-market-go/internal/domain/tag/service"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/cache"
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/infrastructure/dcc"
 	"group-buy-market-go/internal/server"
-	service3 "group-buy-market-go/internal/service"
+	service2 "group-buy-market-go/internal/service"
 )
 
 // Injectors from wire.go:
@@ -53,7 +52,7 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	crowdTagsJobDAO := dao.NewMySQLCrowdTagsJobDAO(db)
 	tagRepository := repository.NewTagRepository(logger, crowdTagsDAO, crowdTagsDetailDAO, crowdTagsJobDAO, client)
 	tagService := service2.NewTagService(logger, tagRepository)
-	dccService := service3.NewDccService(logger, dccDCC)
+	dccService := service2.NewDccService(logger, dccDCC)
 	httpServer := server.NewHTTPServer(confServer, iIndexGroupBuyMarketService, tagService, dccService, logger)
 	app := newApp(logger, httpServer)
 	return app, func() {
