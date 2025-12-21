@@ -18,6 +18,7 @@ import (
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/cache"
 	"group-buy-market-go/internal/infrastructure/dao"
+	"group-buy-market-go/internal/infrastructure/dcc"
 	"group-buy-market-go/internal/server"
 )
 
@@ -27,6 +28,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		server.ProviderSet,
 		dao.ProviderSet,
 		cache.ProviderSet,
+		dcc.ProviderSet, // 添加DCC ProviderSet
 		repository.NewActivityRepository,
 		repository.NewTagRepository,
 		tag_service.NewTagService,
@@ -39,7 +41,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		node.NewMarketNode,
 		node.NewSwitchNode,
 		node.NewRootNode,
-		node.NewTagNode, // 添加 TagNode
+		node.NewTagNode,
 		activity_service.NewIIndexGroupBuyMarketService,
 		newApp,
 	))
