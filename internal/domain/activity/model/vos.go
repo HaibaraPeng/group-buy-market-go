@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"group-buy-market-go/internal/common/consts"
+	"strings"
+	"time"
+)
 
 // DiscountTypeEnum 折扣类型枚举
 type DiscountTypeEnum byte
@@ -19,6 +23,36 @@ const (
 	MJ MarketPlanEnum = "MJ" // 满减
 	N  MarketPlanEnum = "N"  // N元购
 )
+
+// TagScopeEnumVO 标签范围枚举
+type TagScopeEnumVO struct {
+	allow  bool
+	refuse bool
+	desc   string
+}
+
+var (
+	// VISIBLE 可见性枚举 - 是否可看见拼团
+	VISIBLE = &TagScopeEnumVO{allow: true, refuse: false, desc: "是否可看见拼团"}
+
+	// ENABLE 可用性枚举 - 是否可参与拼团
+	ENABLE = &TagScopeEnumVO{allow: true, refuse: false, desc: "是否可参与拼团"}
+)
+
+// Allow 获取允许状态
+func (t *TagScopeEnumVO) Allow() bool {
+	return t.allow
+}
+
+// Refuse 获取拒绝状态
+func (t *TagScopeEnumVO) Refuse() bool {
+	return t.refuse
+}
+
+// Desc 获取描述
+func (t *TagScopeEnumVO) Desc() string {
+	return t.desc
+}
 
 // GroupBuyDiscountVO represents the discount part of GroupBuyActivityDiscountVO
 type GroupBuyDiscountVO struct {
@@ -47,6 +81,36 @@ type GroupBuyActivityDiscountVO struct {
 	EndTime          time.Time           `json:"end_time"`
 	TagId            string              `json:"tag_id"`
 	TagScope         string              `json:"tag_scope"`
+}
+
+// IsVisible 可见限制
+// 只要存在这样一个值，那么首次获得的默认值就是 false
+func (g *GroupBuyActivityDiscountVO) IsVisible() bool {
+	if g.TagScope == "" {
+		return VISIBLE.Allow()
+	}
+
+	split := strings.Split(g.TagScope, consts.SPLIT)
+	if len(split) > 0 && split[0] == "1" {
+		return VISIBLE.Refuse()
+	}
+
+	return VISIBLE.Allow()
+}
+
+// IsEnable 参与限制
+// 只要存在这样一个值，那么首次获得的默认值就是 false
+func (g *GroupBuyActivityDiscountVO) IsEnable() bool {
+	if g.TagScope == "" {
+		return ENABLE.Allow()
+	}
+
+	split := strings.Split(g.TagScope, consts.SPLIT)
+	if len(split) == 2 && split[1] == "2" {
+		return ENABLE.Refuse()
+	}
+
+	return ENABLE.Allow()
 }
 
 // SkuVO represents the SKU value object
