@@ -39,6 +39,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		node.NewMarketNode,
 		node.NewSwitchNode,
 		node.NewRootNode,
+		node.NewTagNode, // 添加 TagNode
 		activity_service.NewIIndexGroupBuyMarketService,
 		newApp,
 	))
