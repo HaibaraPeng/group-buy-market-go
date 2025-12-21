@@ -10,7 +10,6 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"group-buy-market-go/internal/conf"
-	"group-buy-market-go/internal/domain/activity/service"
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
@@ -18,7 +17,7 @@ import (
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/infrastructure/dcc"
 	"group-buy-market-go/internal/server"
-	service2 "group-buy-market-go/internal/service"
+	"group-buy-market-go/internal/service"
 )
 
 // Injectors from wire.go:
@@ -46,14 +45,14 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	marketNode := node.NewMarketNode(tagNode, errorNode, activityRepository, zjCalculateService, zkCalculateService, mjCalculateService, nCalculateService, logger)
 	switchNode := node.NewSwitchNode(activityRepository, marketNode, logger)
 	rootNode := node.NewRootNode(switchNode, logger)
-	iIndexGroupBuyMarketService := service.NewIIndexGroupBuyMarketService(rootNode)
+	activityService := service.NewActivityService(rootNode)
 	crowdTagsDAO := dao.NewMySQLCrowdTagsDAO(db)
 	crowdTagsDetailDAO := dao.NewMySQLCrowdTagsDetailDAO(db)
 	crowdTagsJobDAO := dao.NewMySQLCrowdTagsJobDAO(db)
 	tagRepository := repository.NewTagRepository(logger, crowdTagsDAO, crowdTagsDetailDAO, crowdTagsJobDAO, client)
-	tagService := service2.NewTagService(logger, tagRepository)
-	dccService := service2.NewDccService(logger, dccDCC)
-	httpServer := server.NewHTTPServer(confServer, iIndexGroupBuyMarketService, tagService, dccService, logger)
+	tagService := service.NewTagService(logger, tagRepository)
+	dccService := service.NewDccService(logger, dccDCC)
+	httpServer := server.NewHTTPServer(confServer, activityService, tagService, dccService, logger)
 	app := newApp(logger, httpServer)
 	return app, func() {
 		cleanup()

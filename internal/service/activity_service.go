@@ -9,26 +9,26 @@ import (
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
 )
 
-// IIndexGroupBuyMarketService 拼团营销服务
+// ActivityService 拼团营销服务
 // 提供对外的营销试算服务接口
-type IIndexGroupBuyMarketService struct {
+type ActivityService struct {
 	v1.UnimplementedActivityHTTPServer
 	strategyFactory *factory.DefaultActivityStrategyFactory
 }
 
-// NewIIndexGroupBuyMarketService 创建拼团营销服务实例
-func NewIIndexGroupBuyMarketService(rootNode *node.RootNode) *IIndexGroupBuyMarketService {
+// NewActivityService 创建拼团营销服务实例
+func NewActivityService(rootNode *node.RootNode) *ActivityService {
 	// 构建策略树：根节点 -> 开关节点 -> 营销节点 -> 结束节点
 	strategyFactory := factory.NewDefaultActivityStrategyFactory(rootNode)
 
-	return &IIndexGroupBuyMarketService{
+	return &ActivityService{
 		strategyFactory: strategyFactory,
 	}
 }
 
 // IndexMarketTrial 首页营销试算
 // 对应Java中的indexMarketTrial方法
-func (s *IIndexGroupBuyMarketService) MarketTrial(ctx context.Context, req *v1.MarketTrialRequest) (*v1.MarketTrialReply, error) {
+func (s *ActivityService) MarketTrial(ctx context.Context, req *v1.MarketTrialRequest) (*v1.MarketTrialReply, error) {
 	// 获取策略处理器
 	strategyHandler := s.strategyFactory.StrategyHandler()
 
