@@ -104,6 +104,12 @@ func (d *DCC) handleConfigChange(payload string) {
 	}
 }
 
+// PublishConfigChange 发布配置变更消息
+func (d *DCC) PublishConfigChange(ctx context.Context, key, value string) error {
+	message := key + consts.SPLIT + value
+	return d.redisClient.Publish(ctx, "group_buy_market_dcc", message).Err()
+}
+
 // GetValue 获取配置值
 func (d *DCC) GetValue(key string) string {
 	if config, exists := d.configMap[key]; exists {
