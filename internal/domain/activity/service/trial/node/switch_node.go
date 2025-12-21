@@ -2,9 +2,11 @@ package node
 
 import (
 	"context"
+	"fmt"
 	"group-buy-market-go/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
+	"group-buy-market-go/internal/infrastructure/adapter/repository"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -13,15 +15,17 @@ import (
 // 用于判断营销活动是否开启
 type SwitchNode struct {
 	core.AbstractGroupBuyMarketSupport
-	marketNode *MarketNode
-	log        *log.Helper
+	activityRepository *repository.ActivityRepository
+	marketNode         *MarketNode
+	log                *log.Helper
 }
 
 // NewSwitchNode 创建开关节点
-func NewSwitchNode(marketNode *MarketNode, logger log.Logger) *SwitchNode {
+func NewSwitchNode(activityRepository *repository.ActivityRepository, marketNode *MarketNode, logger log.Logger) *SwitchNode {
 	switchNode := &SwitchNode{
-		marketNode: marketNode,
-		log:        log.NewHelper(logger),
+		activityRepository: activityRepository,
+		marketNode:         marketNode,
+		log:                log.NewHelper(logger),
 	}
 
 	// 设置自定义方法实现
@@ -41,9 +45,29 @@ func (r *SwitchNode) multiThread(ctx context.Context, requestParameter *model.Ma
 // doApply 业务流程受理
 // 对应Java中的doApply方法
 func (r *SwitchNode) doApply(ctx context.Context, requestParameter *model.MarketProductEntity, dynamicContext *core.DynamicContext) (*model.TrialBalanceEntity, error) {
-	r.log.Infow("拼团商品查询试算服务-SwitchNode", "requestParameter", requestParameter)
+	r.log.Infow("拼团商品查询试算服务-SwitchNode", "userId", requestParameter.UserId, "requestParameter", requestParameter)
 
-	// todo xfg 判断营销活动开关是否打开
+	// 根据用户ID切量
+	userId := requestParameter.UserId
+
+	// 判断是否降级
+	if r.activityRepository.DowngradeSwitch() {
+		r.log.Infof("拼团活动降级拦截 %s", userId)
+		return nil, fmt.Errorf("拼团活动降级拦截: %s", userId)
+	}
+
+	// 切量范围判断
+	inCutRange, err := r.activityRepository.CutRange(userId)
+	if err != nil {
+		r.log.Errorf("判断切量范围时出错: %v", err)
+		// 出错时默认继续处理
+		inCutRange = true
+	}
+
+	if !inCutRange {
+		r.log.Infof("拼团活动切量拦截 %s", userId)
+		return nil, fmt.Errorf("拼团活动切量拦截: %s", userId)
+	}
 
 	return r.Router(ctx, requestParameter, dynamicContext)
 }

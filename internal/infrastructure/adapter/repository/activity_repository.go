@@ -8,6 +8,7 @@ import (
 	"group-buy-market-go/internal/common/utils"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/infrastructure/dao"
+	"group-buy-market-go/internal/infrastructure/dcc" // 添加dcc包
 	"group-buy-market-go/internal/infrastructure/po"
 )
 
@@ -17,17 +18,19 @@ type ActivityRepository struct {
 	skuDAO              dao.SkuDAO
 	scSkuActivityDAO    dao.SCSkuActivityDAO
 	redisClient         *redis.Client
+	dccService          *dcc.DCCService // 添加DCC服务
 }
 
 // NewActivityRepository creates a new activity repository
 func NewActivityRepository(groupBuyActivityDAO dao.GroupBuyActivityDAO, groupBuyDiscountDAO dao.GroupBuyDiscountDAO,
-	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO, redisClient *redis.Client) *ActivityRepository {
+	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO, redisClient *redis.Client, dccService *dcc.DCCService) *ActivityRepository { // 添加dccService参数
 	return &ActivityRepository{
 		groupBuyActivityDAO: groupBuyActivityDAO,
 		groupBuyDiscountDAO: groupBuyDiscountDAO,
 		skuDAO:              skuDAO,
 		scSkuActivityDAO:    scSkuActivityDAO,
 		redisClient:         redisClient,
+		dccService:          dccService, // 初始化DCC服务
 	}
 }
 
@@ -169,4 +172,14 @@ func (r *ActivityRepository) IsTagCrowdRange(ctx context.Context, tagId string, 
 
 	// Return true if bit is set (user is in the crowd)
 	return bitValue == 1, nil
+}
+
+// DowngradeSwitch 判断是否开启降级开关
+func (r *ActivityRepository) DowngradeSwitch() bool {
+	return r.dccService.IsDowngradeSwitch()
+}
+
+// CutRange 判断用户是否在切量范围内
+func (r *ActivityRepository) CutRange(userId string) (bool, error) {
+	return r.dccService.IsCutRange(userId)
 }

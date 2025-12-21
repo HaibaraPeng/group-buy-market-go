@@ -17,6 +17,7 @@ import (
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/cache"
 	"group-buy-market-go/internal/infrastructure/dao"
+	"group-buy-market-go/internal/infrastructure/dcc"
 	"group-buy-market-go/internal/server"
 )
 
@@ -33,7 +34,8 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	if err != nil {
 		return nil, nil, err
 	}
-	activityRepository := repository.NewActivityRepository(groupBuyActivityDAO, groupBuyDiscountDAO, skuDAO, scSkuActivityDAO, client)
+	dccService := dcc.NewDCCService()
+	activityRepository := repository.NewActivityRepository(groupBuyActivityDAO, groupBuyDiscountDAO, skuDAO, scSkuActivityDAO, client, dccService)
 	endNode := node.NewEndNode(logger)
 	tagNode := node.NewTagNode(activityRepository, endNode, logger)
 	errorNode := node.NewErrorNode(logger)
@@ -42,7 +44,7 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	mjCalculateService := discount.NewMJCalculateService(logger)
 	nCalculateService := discount.NewNCalculateService(logger)
 	marketNode := node.NewMarketNode(tagNode, errorNode, activityRepository, zjCalculateService, zkCalculateService, mjCalculateService, nCalculateService, logger)
-	switchNode := node.NewSwitchNode(marketNode, logger)
+	switchNode := node.NewSwitchNode(activityRepository, marketNode, logger)
 	rootNode := node.NewRootNode(switchNode, logger)
 	iIndexGroupBuyMarketService := service.NewIIndexGroupBuyMarketService(rootNode)
 	crowdTagsDAO := dao.NewMySQLCrowdTagsDAO(db)
