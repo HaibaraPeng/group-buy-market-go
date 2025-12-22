@@ -19,11 +19,12 @@ type UserEntity struct {
 
 // PayActivityEntity 支付活动实体
 type PayActivityEntity struct {
-	TeamId      string    `json:"teamId"`
-	ActivityId  int64     `json:"activityId"`
-	TargetCount int       `json:"targetCount"`
-	StartTime   time.Time `json:"startTime"`
-	EndTime     time.Time `json:"endTime"`
+	TeamId       string    `json:"teamId"`
+	ActivityId   int64     `json:"activityId"`
+	ActivityName string    `json:"activityName"`
+	TargetCount  int       `json:"targetCount"`
+	StartTime    time.Time `json:"startTime"`
+	EndTime      time.Time `json:"endTime"`
 }
 
 // PayDiscountEntity 支付折扣实体
@@ -31,6 +32,7 @@ type PayDiscountEntity struct {
 	Source         string  `json:"source"`
 	Channel        string  `json:"channel"`
 	GoodsId        string  `json:"goodsId"`
+	GoodsName      string  `json:"goodsName"`
 	OriginalPrice  float64 `json:"originalPrice"`
 	DeductionPrice float64 `json:"deductionPrice"`
 	OutTradeNo     string  `json:"outTradeNo"`

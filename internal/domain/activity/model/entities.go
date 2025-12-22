@@ -3,6 +3,8 @@ package model
 // MarketProductEntity 营销商品实体
 // 表示参与营销活动的商品信息
 type MarketProductEntity struct {
+	// 活动ID
+	ActivityId int64 `json:"activityId"`
 	// 用户ID
 	UserId string `json:"userId"`
 	// 商品ID
@@ -33,4 +35,6 @@ type TrialBalanceEntity struct {
 	IsVisible bool `json:"isVisible"`
 	// 是否可参与进团
 	IsEnable bool `json:"isEnable"`
+	// 拼团活动营销配置值对象
+	GroupBuyActivityDiscountVO GroupBuyActivityDiscountVO `json:"groupBuyActivityDiscountVO"`
 }
