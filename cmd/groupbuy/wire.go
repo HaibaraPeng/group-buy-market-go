@@ -30,6 +30,7 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		dcc.ProviderSet,
 		repository.NewActivityRepository,
 		repository.NewTagRepository,
+		repository.NewTradeRepository,
 		service.NewTagService,
 		service.NewDccService,
 		service.NewActivityService,
