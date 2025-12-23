@@ -7,7 +7,7 @@ A distributed group buying marketplace built with Go, following Domain-Driven De
 This project follows a DDD-based layered architecture:
 
 ```
-├── api/                   # API definition files (protobuf, swagger, etc.)
+├── api/                   # API definition files (protobuf)
 ├── cmd/                   # Application entry points
 │   └── groupbuy/          # Main application
 │       ├── main.go        # Entry point
@@ -16,8 +16,10 @@ This project follows a DDD-based layered architecture:
 ├── common/                # Common utilities and design patterns
 │   └── design/tree/       # Strategy tree pattern implementation
 ├── configs/               # Configuration files
-├── docs/                  # Documentation
 ├── internal/              # Private application code
+│   ├── common/            # Common utilities and constants
+│   │   ├── consts/        # Constants
+│   │   └── utils/         # Utility functions
 │   ├── conf/              # Configuration protobuf definitions
 │   ├── domain/            # Domain layer (entities, value objects, aggregates, domain services)
 │   │   ├── activity/      # Activity domain
@@ -29,17 +31,22 @@ This project follows a DDD-based layered architecture:
 │   │   │           ├── factory/   # Strategy factory
 │   │   │           ├── node/      # Strategy tree nodes
 │   │   │           └── thread/    # Thread tasks
-│   │   └── tag/           # Tag domain
-│   │       └── model/     # Tag models
+│   │   ├── tag/           # Tag domain
+│   │   │   └── model/     # Tag models
+│   │   └── trade/         # Trade domain
+│   │       ├── biz/       # Trade business logic
+│   │       └── model/     # Trade models
 │   ├── infrastructure/    # Infrastructure layer (database, external services)
 │   │   ├── adapter/       # Adapters for external services
 │   │   │   └── repository/    # Repository implementations
 │   │   ├── cache/         # Cache implementations
 │   │   ├── dao/           # Data Access Objects
+│   │   ├── dcc/           # Dynamic configuration client
 │   │   └── po/            # Persistent Objects (data models)
 │   ├── server/            # Server initialization
 │   └── service/           # Service layer (application services)
-└── third_party/           # Third-party proto files
+├── third_party/           # Third-party proto files
+└── README.md              # This file
 ```
 
 ## Layers Overview
@@ -60,6 +67,7 @@ Contains application-specific business logic:
   - ActivityService (marketing trial service)
   - TagService (tag batch job service)
   - DccService (dynamic configuration service)
+  - TradeService (trade order service)
 
 ### 3. Infrastructure Layer (`internal/infrastructure`)
 Contains technology-specific implementations:
@@ -94,7 +102,7 @@ Various discount calculation algorithms:
 ## Getting Started
 
 ### Prerequisites
-- Go 1.16 or higher
+- Go 1.16 or higher (recommended: Go 1.23.12)
 - Redis (for caching and bitmap operations)
 - MySQL (for data persistence)
 
@@ -125,7 +133,7 @@ go install github.com/google/wire/cmd/wire@latest
 
 # Generate dependency injection code
 cd cmd/groupbuy
-go generate
+wire
 ```
 
 ## Configuration
@@ -135,3 +143,10 @@ Configuration files are located in the `configs/` directory. The project uses pr
 ```bash
 go test ./...
 ```
+
+## API Documentation
+API endpoints are defined in the `api/` directory using Protocol Buffers. The service definitions include HTTP bindings for RESTful access to gRPC services. The main services are:
+- ActivityService: For group buying activity management
+- TagService: For user targeting and segmentation
+- TradeService: For order processing and management
+- DccService: For dynamic configuration management
