@@ -62,7 +62,6 @@ func (r *TradeRepository) LockMarketPayOrder(ctx context.Context, groupBuyOrderA
 	teamId := payActivityEntity.TeamId
 	if teamId == "" {
 		// Generate random team ID
-		rand.Seed(time.Now().UnixNano())
 		teamId = generateRandomNumericString(8)
 
 		// Build group buy order

@@ -53,15 +53,16 @@ func (e *EndNode) doApply(ctx context.Context, requestParameter *model.MarketPro
 
 	// 返回结果
 	result := &model.TrialBalanceEntity{
-		GoodsId:        skuVO.GoodsId,
-		GoodsName:      skuVO.GoodsName,
-		OriginalPrice:  skuVO.OriginalPrice,
-		DeductionPrice: deductionPriceValue,
-		TargetCount:    groupBuyActivityDiscountVO.Target,
-		StartTime:      groupBuyActivityDiscountVO.StartTime.Unix(),
-		EndTime:        groupBuyActivityDiscountVO.EndTime.Unix(),
-		IsVisible:      dynamicContext.IsVisible(),
-		IsEnable:       dynamicContext.IsEnable(),
+		GoodsId:                    skuVO.GoodsId,
+		GoodsName:                  skuVO.GoodsName,
+		OriginalPrice:              skuVO.OriginalPrice,
+		DeductionPrice:             deductionPriceValue,
+		TargetCount:                groupBuyActivityDiscountVO.Target,
+		StartTime:                  groupBuyActivityDiscountVO.StartTime.Unix(),
+		EndTime:                    groupBuyActivityDiscountVO.EndTime.Unix(),
+		IsVisible:                  dynamicContext.IsVisible(),
+		IsEnable:                   dynamicContext.IsEnable(),
+		GroupBuyActivityDiscountVO: *dynamicContext.GetGroupBuyActivityDiscountVO(),
 	}
 
 	return result, nil
