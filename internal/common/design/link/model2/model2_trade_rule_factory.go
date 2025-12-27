@@ -23,25 +23,25 @@ func NewModel2TradeRuleFactory() *Model2TradeRuleFactory {
 	return &Model2TradeRuleFactory{}
 }
 
-// Demo01 创建第一个责任链实例，包含RuleLogic201和RuleLogic202
+// Demo01 创建第一个责任链实例，包含Model2RuleLogic1和Model2RuleLogic2
 func (rf *Model2TradeRuleFactory) Demo01() *BusinessLinkedList[string, *DynamicContext, *XxxResponse] {
-	ruleLogic201 := NewRuleLogic201()
-	ruleLogic202 := NewRuleLogic202()
+	model2RuleLogic1 := NewModel2RuleLogic1()
+	model2RuleLogic2 := NewModel2RuleLogic2()
 
 	linkArmory := NewLinkArmory("demo01",
-		ILogicHandler[string, *DynamicContext, *XxxResponse](ruleLogic201),
-		ILogicHandler[string, *DynamicContext, *XxxResponse](ruleLogic202),
+		ILogicHandler[string, *DynamicContext, *XxxResponse](model2RuleLogic1),
+		ILogicHandler[string, *DynamicContext, *XxxResponse](model2RuleLogic2),
 	)
 
 	return linkArmory.GetLogicLink()
 }
 
-// Demo02 创建第二个责任链实例，只包含RuleLogic202
+// Demo02 创建第二个责任链实例，只包含Model2RuleLogic2
 func (rf *Model2TradeRuleFactory) Demo02() *BusinessLinkedList[string, *DynamicContext, *XxxResponse] {
-	ruleLogic202 := NewRuleLogic202()
+	model2RuleLogic2 := NewModel2RuleLogic2()
 
 	linkArmory := NewLinkArmory("demo02",
-		ILogicHandler[string, *DynamicContext, *XxxResponse](ruleLogic202),
+		ILogicHandler[string, *DynamicContext, *XxxResponse](model2RuleLogic2),
 	)
 
 	return linkArmory.GetLogicLink()
