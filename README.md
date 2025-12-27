@@ -13,8 +13,11 @@ This project follows a DDD-based layered architecture:
 │       ├── main.go        # Entry point
 │       ├── wire.go        # Wire dependency injection definitions
 │       └── wire_gen.go    # Auto-generated Wire code
-├── common/                # Common utilities and design patterns
-│   └── design/tree/       # Strategy tree pattern implementation
+├── common/                # Common utilities
+├── internal/
+│   └── common/
+│       └── design/
+│           └── tree/      # Strategy tree pattern implementation
 ├── configs/               # Configuration files
 ├── internal/              # Private application code
 │   ├── common/            # Common utilities and constants
