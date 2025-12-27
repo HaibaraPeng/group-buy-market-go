@@ -1,7 +1,7 @@
 package factory
 
 import (
-	"group-buy-market-go/common/design/tree"
+	"group-buy-market-go/internal/common/design/tree"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
 )
