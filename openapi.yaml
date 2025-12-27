@@ -6,6 +6,31 @@ info:
     title: ""
     version: 0.0.1
 paths:
+    /dcc/updateConfig:
+        post:
+            tags:
+                - DccHTTP
+            description: UpdateConfig
+            operationId: DccHTTP_UpdateConfig
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateConfigRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateConfigReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /market/trial:
         post:
             tags:
@@ -56,6 +81,31 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /trade/lockMarketPayOrder:
+        post:
+            tags:
+                - TradeHTTP
+            description: QueryNoPayMarketPayOrderByOutTradeNo 查询未支付的营销订单
+            operationId: TradeHTTP_LockMarketPayOrder
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LockMarketPayOrderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LockMarketPayOrderReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
         ExecTagBatchJobReply:
@@ -78,6 +128,34 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        LockMarketPayOrderReply:
+            type: object
+            properties:
+                orderId:
+                    type: string
+                deductionPrice:
+                    type: number
+                    format: double
+                tradeOrderStatus:
+                    type: integer
+                    format: int32
+        LockMarketPayOrderRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                teamId:
+                    type: string
+                activityId:
+                    type: string
+                goodsId:
+                    type: string
+                source:
+                    type: string
+                channel:
+                    type: string
+                outTradeNo:
+                    type: string
         MarketTrialReply:
             type: object
             properties:
@@ -134,8 +212,24 @@ components:
                     type: boolean
                 isEnable:
                     type: boolean
+        UpdateConfigReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        UpdateConfigRequest:
+            type: object
+            properties:
+                key:
+                    type: string
+                value:
+                    type: string
 tags:
     - name: ActivityHTTP
       description: GroupBuyService HTTP API
+    - name: DccHTTP
+      description: DccService HTTP API
     - name: TagHTTP
       description: TagService HTTP API
+    - name: TradeHTTP
+      description: TradeService HTTP API
