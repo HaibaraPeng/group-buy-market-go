@@ -11,14 +11,14 @@ func NewRuleLogic201() *RuleLogic201 {
 }
 
 // Apply 是RuleLogic201的业务逻辑实现
-func (rl *RuleLogic201) Apply(requestParameter string, dynamicContext *Rule02TradeRuleFactoryDynamicContext) (*XxxResponse, error) {
+func (rl *RuleLogic201) Apply(requestParameter string, dynamicContext *DynamicContext) (*XxxResponse, error) {
 	log.Println("link model02 RuleLogic201")
 
 	return rl.Next(requestParameter, dynamicContext)
 }
 
 // Next 是RuleLogic201的下一个处理逻辑
-func (rl *RuleLogic201) Next(requestParameter string, dynamicContext *Rule02TradeRuleFactoryDynamicContext) (*XxxResponse, error) {
+func (rl *RuleLogic201) Next(requestParameter string, dynamicContext *DynamicContext) (*XxxResponse, error) {
 	// 在实际实现中，这里可能会有具体的业务逻辑
 	// 目前返回零值作为占位符
 	var zero *XxxResponse

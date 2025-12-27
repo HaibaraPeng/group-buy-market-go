@@ -9,7 +9,7 @@ func TestModel2TradeRuleFactory(t *testing.T) {
 
 	// 准备测试数据
 	requestParam := "test request"
-	dynamicContext := &Rule02TradeRuleFactoryDynamicContext{Age: "25"}
+	dynamicContext := &DynamicContext{Age: "25"}
 
 	// 测试Demo01 - 包含RuleLogic201和RuleLogic202的责任链
 	businessLinkedList := factory.Demo01()
