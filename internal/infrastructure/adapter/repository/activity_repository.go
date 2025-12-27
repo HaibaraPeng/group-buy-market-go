@@ -2,8 +2,6 @@ package repository
 
 import (
 	"context"
-	"strconv"
-
 	"github.com/go-redis/redis/v8"
 	"group-buy-market-go/internal/common/utils"
 	"group-buy-market-go/internal/domain/activity/model"
@@ -34,9 +32,9 @@ func NewActivityRepository(groupBuyActivityDAO dao.GroupBuyActivityDAO, groupBuy
 	}
 }
 
-// QueryGroupBuyActivityDiscountVO queries group buy activity and its associated discount by source and channel
+// QueryGroupBuyActivityDiscountVO queries group buy activity and its associated discount by activity id
 func (r *ActivityRepository) QueryGroupBuyActivityDiscountVO(ctx context.Context, activityId int64) (*model.GroupBuyActivityDiscountVO, error) {
-	// Query the latest valid activity by source and channel
+	// Query the activity by activity id
 	groupBuyActivityRes, err := r.groupBuyActivityDAO.FindValidByActivityID(ctx, activityId)
 	if err != nil {
 		return nil, err
@@ -47,14 +45,11 @@ func (r *ActivityRepository) QueryGroupBuyActivityDiscountVO(ctx context.Context
 		return nil, nil
 	}
 
-	// Convert discount ID from string to int
-	discountID, err := strconv.Atoi(groupBuyActivityRes.DiscountId)
-	if err != nil {
-		return nil, err
-	}
+	// Get discount ID from activity
+	discountId := groupBuyActivityRes.DiscountId
 
-	// Query discount by discount id
-	groupBuyDiscountRes, err := r.groupBuyDiscountDAO.FindByDiscountID(ctx, strconv.Itoa(discountID))
+	// Query discount by discount id using the method that matches Java implementation
+	groupBuyDiscountRes, err := r.groupBuyDiscountDAO.QueryGroupBuyActivityDiscountByDiscountId(ctx, discountId)
 	if err != nil {
 		return nil, err
 	}
