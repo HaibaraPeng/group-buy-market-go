@@ -1,7 +1,6 @@
 package model1
 
 import (
-	"context"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -25,9 +24,8 @@ func NewModel1RuleLogic2(logger log.Logger) *Model1RuleLogic2 {
 }
 
 // doApply 实现具体的业务逻辑
-func (r *Model1RuleLogic2) doApply(ctx context.Context, requestParameter string, dynamicContext *DynamicContext) (string, error) {
-	r.log.Info("link model01 RuleLogic2")
+func (r *Model1RuleLogic2) doApply(requestParameter string, dynamicContext *DynamicContext) (string, error) {
+	r.log.Info("link model01 RuleLogic102")
 
-	// 调用下一个节点
-	return r.NextLink(requestParameter, dynamicContext)
+	return "link model01 单实例链", nil
 }
