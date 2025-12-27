@@ -54,7 +54,7 @@ func (r *ActivityRepository) QueryGroupBuyActivityDiscountVO(ctx context.Context
 	}
 
 	// Query discount by discount id
-	groupBuyDiscountRes, err := r.groupBuyDiscountDAO.FindByDiscountID(ctx, discountID)
+	groupBuyDiscountRes, err := r.groupBuyDiscountDAO.FindByDiscountID(ctx, strconv.Itoa(discountID))
 	if err != nil {
 		return nil, err
 	}
