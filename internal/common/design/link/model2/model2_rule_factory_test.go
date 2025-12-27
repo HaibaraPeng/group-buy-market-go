@@ -5,7 +5,7 @@ import (
 )
 
 func TestModel2TradeRuleFactory(t *testing.T) {
-	factory := NewRule02TradeRuleFactory()
+	factory := NewModel2TradeRuleFactory()
 
 	// 准备测试数据
 	requestParam := "test request"

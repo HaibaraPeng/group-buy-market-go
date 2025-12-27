@@ -18,8 +18,8 @@ func (dc *DynamicContext) SetAge(age string) {
 // Model2TradeRuleFactory 是对应Java版本Model2TradeRuleFactory类的Go实现
 type Model2TradeRuleFactory struct{}
 
-// NewRule02TradeRuleFactory 创建一个新的工厂实例
-func NewRule02TradeRuleFactory() *Model2TradeRuleFactory {
+// NewModel2TradeRuleFactory 创建一个新的工厂实例
+func NewModel2TradeRuleFactory() *Model2TradeRuleFactory {
 	return &Model2TradeRuleFactory{}
 }
 
