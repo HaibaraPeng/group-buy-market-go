@@ -13,6 +13,7 @@ import (
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
 	"group-buy-market-go/internal/domain/trade/biz"
+	"group-buy-market-go/internal/domain/trade/biz/filter"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/cache"
 	"group-buy-market-go/internal/infrastructure/dao"
@@ -56,7 +57,10 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	groupBuyOrderDAO := dao.NewMySQLGroupBuyOrderDAO(db)
 	groupBuyOrderListDAO := dao.NewMySQLGroupBuyOrderListDAO(db)
 	tradeRepository := repository.NewTradeRepository(groupBuyOrderDAO, groupBuyOrderListDAO, groupBuyActivityDAO)
-	tradeOrder := biz.NewTradeOrder(tradeRepository, logger)
+	activityUsabilityRuleFilter := filter.NewActivityUsabilityRuleFilter(tradeRepository)
+	userTakeLimitRuleFilter := filter.NewUserTakeLimitRuleFilter(tradeRepository)
+	tradeRuleFilterFactory := filter.NewTradeRuleFilterFactory(activityUsabilityRuleFilter, userTakeLimitRuleFilter)
+	tradeOrder := biz.NewTradeOrder(tradeRepository, tradeRuleFilterFactory, logger)
 	tradeService := service.NewTradeService(logger, tradeOrder, rootNode)
 	httpServer := server.NewHTTPServer(confServer, activityService, tagService, dccService, tradeService, logger)
 	app := newApp(logger, httpServer)
