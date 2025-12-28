@@ -2,6 +2,7 @@ package discount
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"math/big"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -16,12 +17,13 @@ type ZKCalculateService struct {
 var _ IDiscountCalculateService = (*ZKCalculateService)(nil)
 
 // NewZKCalculateService 创建折扣优惠计算服务实例
-func NewZKCalculateService(logger log.Logger) *ZKCalculateService {
+func NewZKCalculateService(logger log.Logger, activityRepository *repository.ActivityRepository) *ZKCalculateService {
 	service := &ZKCalculateService{
 		AbstractDiscountCalculateService: &AbstractDiscountCalculateService{},
 	}
 	service.SetDoCalculateFunc(service.doCalculate)
 	service.SetLogger(logger)
+	service.SetActivityRepository(activityRepository) // 设置ActivityRepository依赖
 	return service
 }
 

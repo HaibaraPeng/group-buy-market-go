@@ -3,6 +3,7 @@ package discount
 import (
 	"group-buy-market-go/internal/common/consts"
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"math/big"
 	"strings"
 
@@ -18,12 +19,13 @@ type MJCalculateService struct {
 var _ IDiscountCalculateService = (*MJCalculateService)(nil)
 
 // NewMJCalculateService 创建满减优惠计算服务实例
-func NewMJCalculateService(logger log.Logger) *MJCalculateService {
+func NewMJCalculateService(logger log.Logger, activityRepository *repository.ActivityRepository) *MJCalculateService {
 	service := &MJCalculateService{
 		AbstractDiscountCalculateService: &AbstractDiscountCalculateService{},
 	}
 	service.SetDoCalculateFunc(service.doCalculate)
 	service.SetLogger(logger)
+	service.SetActivityRepository(activityRepository) // 设置ActivityRepository依赖
 	return service
 }
 

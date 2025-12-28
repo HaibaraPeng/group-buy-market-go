@@ -2,6 +2,7 @@ package discount
 
 import (
 	"group-buy-market-go/internal/domain/activity/model"
+	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"math/big"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -16,12 +17,13 @@ type NCalculateService struct {
 var _ IDiscountCalculateService = (*NCalculateService)(nil)
 
 // NewNCalculateService 创建N元购优惠计算服务实例
-func NewNCalculateService(logger log.Logger) *NCalculateService {
+func NewNCalculateService(logger log.Logger, activityRepository *repository.ActivityRepository) *NCalculateService {
 	service := &NCalculateService{
 		AbstractDiscountCalculateService: &AbstractDiscountCalculateService{},
 	}
 	service.SetDoCalculateFunc(service.doCalculate)
 	service.SetLogger(logger)
+	service.SetActivityRepository(activityRepository) // 设置ActivityRepository依赖
 	return service
 }
 
