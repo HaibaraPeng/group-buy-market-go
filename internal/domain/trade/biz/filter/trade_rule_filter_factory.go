@@ -2,7 +2,6 @@ package filter
 
 import (
 	"context"
-	"github.com/google/wire"
 	"group-buy-market-go/internal/common/design/link/model2"
 	"group-buy-market-go/internal/domain/trade/model"
 )
@@ -47,10 +46,3 @@ func (f *TradeRuleFilterFactory) Execute(ctx context.Context, command *model.Tra
 	businessLinkedList := f.TradeRuleFilter()
 	return businessLinkedList.Apply(ctx, command, dynamicContext)
 }
-
-// ProviderSet for wire
-var ProviderSet = wire.NewSet(
-	NewTradeRuleFilterFactory,
-	NewActivityUsabilityRuleFilter,
-	NewUserTakeLimitRuleFilter,
-)
