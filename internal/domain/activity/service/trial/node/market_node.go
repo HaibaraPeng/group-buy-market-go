@@ -146,10 +146,16 @@ func (m *MarketNode) doApply(ctx context.Context, requestParameter *model.Market
 		return nil, fmt.Errorf("不支持的折扣类型: %s", groupBuyDiscount.MarketPlan)
 	}
 
-	// 折扣价格
+	// 支付价格 - 通过折扣计算服务计算得出
 	originalPrice := big.NewFloat(skuVO.OriginalPrice)
-	deductionPrice := discountCalculateService.Calculate(requestParameter.UserId, originalPrice, groupBuyDiscount)
+	payPrice := discountCalculateService.Calculate(requestParameter.UserId, originalPrice, groupBuyDiscount)
+
+	// 折扣价格 - 原价减去支付价格
+	deductionPrice := new(big.Float).Sub(originalPrice, payPrice)
+
+	// 设置折扣价格和支付价格
 	dynamicContext.SetDeductionPrice(deductionPrice)
+	dynamicContext.SetPayPrice(payPrice)
 
 	return m.Router(ctx, requestParameter, dynamicContext)
 }

@@ -25,6 +25,8 @@ type TrialBalanceEntity struct {
 	OriginalPrice float64 `json:"originalPrice"`
 	// 折扣价格
 	DeductionPrice float64 `json:"deductionPrice"`
+	// 支付价格
+	PayPrice float64 `json:"payPrice"`
 	// 拼团目标数量
 	TargetCount int `json:"targetCount"`
 	// 拼团开始时间

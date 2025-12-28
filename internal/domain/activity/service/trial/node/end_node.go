@@ -44,11 +44,18 @@ func (e *EndNode) doApply(ctx context.Context, requestParameter *model.MarketPro
 	groupBuyActivityDiscountVO := dynamicContext.GetGroupBuyActivityDiscountVO()
 	skuVO := dynamicContext.GetSkuVO()
 	deductionPrice := dynamicContext.GetDeductionPrice()
+	payPrice := dynamicContext.GetPayPrice()
 
 	// 如果没有计算出折扣价格，默认为0
 	deductionPriceValue := 0.0
 	if deductionPrice != nil {
 		deductionPriceValue, _ = deductionPrice.Float64()
+	}
+
+	// 如果没有计算出支付价格，默认为0
+	payPriceValue := 0.0
+	if payPrice != nil {
+		payPriceValue, _ = payPrice.Float64()
 	}
 
 	// 返回结果
@@ -57,6 +64,7 @@ func (e *EndNode) doApply(ctx context.Context, requestParameter *model.MarketPro
 		GoodsName:                  skuVO.GoodsName,
 		OriginalPrice:              skuVO.OriginalPrice,
 		DeductionPrice:             deductionPriceValue,
+		PayPrice:                   payPriceValue,
 		TargetCount:                groupBuyActivityDiscountVO.Target,
 		StartTime:                  groupBuyActivityDiscountVO.StartTime.Unix(),
 		EndTime:                    groupBuyActivityDiscountVO.EndTime.Unix(),
