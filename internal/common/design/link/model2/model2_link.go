@@ -1,5 +1,6 @@
 package model2
 
+import "context"
 import "fmt"
 
 // ILink 定义了链表接口，对应Java版本的ILink接口
@@ -14,8 +15,8 @@ type ILink[T any] interface {
 
 // ILogicHandler 定义了责任链节点的接口
 type ILogicHandler[T any, D any, R any] interface {
-	Next(T, D) (R, error)
-	Apply(T, D) (R, error)
+	Next(context.Context, T, D) (R, error)
+	Apply(context.Context, T, D) (R, error)
 }
 
 // Node 表示链表中的节点

@@ -1,6 +1,7 @@
 package model2
 
 import (
+	"context"
 	"testing"
 )
 
@@ -13,7 +14,7 @@ func TestModel2TradeRuleFactory(t *testing.T) {
 
 	// 测试Demo01 - 包含Model2RuleLogic1和Model2RuleLogic2的责任链
 	businessLinkedList := factory.Demo01()
-	result, err := businessLinkedList.Apply(requestParam, dynamicContext)
+	result, err := businessLinkedList.Apply(context.Background(), requestParam, dynamicContext)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
@@ -27,7 +28,7 @@ func TestModel2TradeRuleFactory(t *testing.T) {
 
 	// 测试Demo02 - 只包含Model2RuleLogic2的责任链
 	businessLinkedList2 := factory.Demo02()
-	result2, err := businessLinkedList2.Apply(requestParam, dynamicContext)
+	result2, err := businessLinkedList2.Apply(context.Background(), requestParam, dynamicContext)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}

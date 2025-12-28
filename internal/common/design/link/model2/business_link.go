@@ -1,5 +1,7 @@
 package model2
 
+import "context"
+
 // BusinessLinkedList 是一个用于处理责任链逻辑的链表实现，对应Java版本的BusinessLinkedList类
 type BusinessLinkedList[T any, D any, R any] struct {
 	*LinkedList[ILogicHandler[T, D, R]] // 继承自LinkedList，存储ILogicHandler类型的元素
@@ -13,12 +15,12 @@ func NewBusinessLinkedList[T any, D any, R any](name string) *BusinessLinkedList
 }
 
 // Apply 按顺序执行链表中的每个处理器，直到返回非空结果
-func (bll *BusinessLinkedList[T, D, R]) Apply(requestParameter T, dynamicContext D) (R, error) {
+func (bll *BusinessLinkedList[T, D, R]) Apply(ctx context.Context, requestParameter T, dynamicContext D) (R, error) {
 	current := bll.First
 
 	for current != nil {
 		handler := current.Item
-		result, err := handler.Apply(requestParameter, dynamicContext)
+		result, err := handler.Apply(ctx, requestParameter, dynamicContext)
 		if err != nil {
 			var zero R
 			return zero, err
@@ -41,12 +43,12 @@ func isZeroValue[T any](v T) bool {
 }
 
 // Next 是另一种执行方式，与Apply类似但调用Next方法
-func (bll *BusinessLinkedList[T, D, R]) Next(requestParameter T, dynamicContext D) (R, error) {
+func (bll *BusinessLinkedList[T, D, R]) Next(ctx context.Context, requestParameter T, dynamicContext D) (R, error) {
 	current := bll.First
 
 	for current != nil {
 		handler := current.Item
-		result, err := handler.Next(requestParameter, dynamicContext)
+		result, err := handler.Next(ctx, requestParameter, dynamicContext)
 		if err != nil {
 			var zero R
 			return zero, err
