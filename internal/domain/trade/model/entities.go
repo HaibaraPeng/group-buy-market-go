@@ -37,3 +37,31 @@ type PayDiscountEntity struct {
 	DeductionPrice float64 `json:"deductionPrice"`
 	OutTradeNo     string  `json:"outTradeNo"`
 }
+
+// GroupBuyActivityEntity 拼团活动实体对象
+type GroupBuyActivityEntity struct {
+	// 活动ID
+	ActivityId int64 `json:"activityId"`
+	// 活动名称
+	ActivityName string `json:"activityName"`
+	// 折扣ID
+	DiscountId string `json:"discountId"`
+	// 拼团方式（0自动成团、1达成目标拼团）
+	GroupType int `json:"groupType"`
+	// 拼团次数限制
+	TakeLimitCount int `json:"takeLimitCount"`
+	// 拼团目标
+	Target int `json:"target"`
+	// 拼团时长（分钟）
+	ValidTime int `json:"validTime"`
+	// 活动状态（0创建、1生效、2过期、3废弃）
+	Status ActivityStatusEnumVO `json:"status"`
+	// 活动开始时间
+	StartTime time.Time `json:"startTime"`
+	// 活动结束时间
+	EndTime time.Time `json:"endTime"`
+	// 人群标签规则标识
+	TagId string `json:"tagId"`
+	// 人群标签规则范围
+	TagScope string `json:"tagScope"`
+}
