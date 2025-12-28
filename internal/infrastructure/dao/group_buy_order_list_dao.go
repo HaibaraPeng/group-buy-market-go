@@ -11,6 +11,7 @@ import (
 type GroupBuyOrderListDAO interface {
 	Insert(ctx context.Context, groupBuyOrderList *po.GroupBuyOrderList) error
 	QueryGroupBuyOrderRecordByOutTradeNo(ctx context.Context, req *po.GroupBuyOrderList) (*po.GroupBuyOrderList, error)
+	QueryOrderCountByActivityId(ctx context.Context, req *po.GroupBuyOrderList) (int, error) // 添加查询活动订单数的方法
 }
 
 // MySQLGroupBuyOrderListDAO is a GORM implementation of GroupBuyOrderListDAO
@@ -46,4 +47,16 @@ func (r *MySQLGroupBuyOrderListDAO) QueryGroupBuyOrderRecordByOutTradeNo(ctx con
 		return nil, err
 	}
 	return &groupBuyOrderList, nil
+}
+
+// QueryOrderCountByActivityId queries order count by activity ID and user ID
+func (r *MySQLGroupBuyOrderListDAO) QueryOrderCountByActivityId(ctx context.Context, req *po.GroupBuyOrderList) (int, error) {
+	var count int64
+	err := r.db.WithContext(ctx).Model(&po.GroupBuyOrderList{}).
+		Where("activity_id = ? AND user_id = ?", req.ActivityId, req.UserId).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return int(count), nil
 }

@@ -34,6 +34,8 @@ type GroupBuyOrderList struct {
 	Status int `json:"status" gorm:"column:status"`
 	// External trade number - ensures external call uniqueness
 	OutTradeNo string `json:"out_trade_no" gorm:"column:out_trade_no"`
+	// 唯一业务ID
+	BizId string `json:"biz_id" gorm:"column:biz_id"`
 	// Creation time
 	CreateTime time.Time `json:"create_time" gorm:"column:create_time;default:CURRENT_TIMESTAMP"`
 	// Update time

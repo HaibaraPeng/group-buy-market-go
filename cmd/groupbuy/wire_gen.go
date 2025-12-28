@@ -55,7 +55,7 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	dccService := service.NewDccService(logger, dccDCC)
 	groupBuyOrderDAO := dao.NewMySQLGroupBuyOrderDAO(db)
 	groupBuyOrderListDAO := dao.NewMySQLGroupBuyOrderListDAO(db)
-	tradeRepository := repository.NewTradeRepository(groupBuyOrderDAO, groupBuyOrderListDAO)
+	tradeRepository := repository.NewTradeRepository(groupBuyOrderDAO, groupBuyOrderListDAO, groupBuyActivityDAO)
 	tradeOrder := biz.NewTradeOrder(tradeRepository, logger)
 	tradeService := service.NewTradeService(logger, tradeOrder, rootNode)
 	httpServer := server.NewHTTPServer(confServer, activityService, tagService, dccService, tradeService, logger)
