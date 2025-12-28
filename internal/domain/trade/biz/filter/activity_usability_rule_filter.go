@@ -24,14 +24,12 @@ func NewActivityUsabilityRuleFilter(tradeRepository *repository.TradeRepository)
 }
 
 // Next 实现责任链处理器接口
-func (f *ActivityUsabilityRuleFilter) Next(command *model.TradeRuleCommandEntity, dynamicContext *TradeRuleFilterFactoryDynamicContext) (*model.TradeRuleFilterBackEntity, error) {
-	ctx := context.Background() // 在实际应用中，可能需要传递适当的上下文
+func (f *ActivityUsabilityRuleFilter) Next(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *TradeRuleFilterFactoryDynamicContext) (*model.TradeRuleFilterBackEntity, error) {
 	return f.filter(ctx, command, dynamicContext)
 }
 
 // Apply 实现责任链处理器接口
-func (f *ActivityUsabilityRuleFilter) Apply(command *model.TradeRuleCommandEntity, dynamicContext *TradeRuleFilterFactoryDynamicContext) (*model.TradeRuleFilterBackEntity, error) {
-	ctx := context.Background() // 在实际应用中，可能需要传递适当的上下文
+func (f *ActivityUsabilityRuleFilter) Apply(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *TradeRuleFilterFactoryDynamicContext) (*model.TradeRuleFilterBackEntity, error) {
 	return f.filter(ctx, command, dynamicContext)
 }
 
