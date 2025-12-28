@@ -65,3 +65,17 @@ type GroupBuyActivityEntity struct {
 	// 人群标签规则范围
 	TagScope string `json:"tagScope"`
 }
+
+// TradeRuleCommandEntity 拼团交易命令实体
+type TradeRuleCommandEntity struct {
+	// 用户ID
+	UserId string `json:"userId"`
+	// 活动ID
+	ActivityId int64 `json:"activityId"`
+}
+
+// TradeRuleFilterBackEntity 拼团交易，过滤反馈实体
+type TradeRuleFilterBackEntity struct {
+	// 用户参与活动的订单量
+	UserTakeOrderCount int `json:"userTakeOrderCount"`
+}
