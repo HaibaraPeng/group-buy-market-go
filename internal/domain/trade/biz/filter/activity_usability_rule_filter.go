@@ -14,7 +14,7 @@ type ActivityUsabilityRuleFilter struct {
 }
 
 // Ensure ActivityUsabilityRuleFilter implements model2.ILogicHandler
-var _ model2.ILogicHandler[*model.TradeRuleCommandEntity, *TradeRuleFilterFactoryDynamicContext, *model.TradeRuleFilterBackEntity] = (*ActivityUsabilityRuleFilter)(nil)
+var _ model2.ILogicHandler[*model.TradeRuleCommandEntity, *DynamicContext, *model.TradeRuleFilterBackEntity] = (*ActivityUsabilityRuleFilter)(nil)
 
 // NewActivityUsabilityRuleFilter 创建活动可用性规则过滤器
 func NewActivityUsabilityRuleFilter(tradeRepository *repository.TradeRepository) *ActivityUsabilityRuleFilter {
@@ -24,17 +24,17 @@ func NewActivityUsabilityRuleFilter(tradeRepository *repository.TradeRepository)
 }
 
 // Next 实现责任链处理器接口
-func (f *ActivityUsabilityRuleFilter) Next(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *TradeRuleFilterFactoryDynamicContext) (*model.TradeRuleFilterBackEntity, error) {
+func (f *ActivityUsabilityRuleFilter) Next(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *DynamicContext) (*model.TradeRuleFilterBackEntity, error) {
 	return f.filter(ctx, command, dynamicContext)
 }
 
 // Apply 实现责任链处理器接口
-func (f *ActivityUsabilityRuleFilter) Apply(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *TradeRuleFilterFactoryDynamicContext) (*model.TradeRuleFilterBackEntity, error) {
+func (f *ActivityUsabilityRuleFilter) Apply(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *DynamicContext) (*model.TradeRuleFilterBackEntity, error) {
 	return f.filter(ctx, command, dynamicContext)
 }
 
 // filter 是实际的过滤逻辑
-func (f *ActivityUsabilityRuleFilter) filter(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *TradeRuleFilterFactoryDynamicContext) (*model.TradeRuleFilterBackEntity, error) {
+func (f *ActivityUsabilityRuleFilter) filter(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *DynamicContext) (*model.TradeRuleFilterBackEntity, error) {
 	// 获取活动信息
 	activity, err := f.tradeRepository.QueryGroupBuyActivityEntityByActivityId(ctx, command.ActivityId)
 	if err != nil {

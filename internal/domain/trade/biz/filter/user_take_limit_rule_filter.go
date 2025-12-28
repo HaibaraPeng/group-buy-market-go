@@ -15,7 +15,7 @@ type UserTakeLimitRuleFilter struct {
 }
 
 // Ensure UserTakeLimitRuleFilter implements model2.ILogicHandler
-var _ model2.ILogicHandler[*model.TradeRuleCommandEntity, *TradeRuleFilterFactoryDynamicContext, *model.TradeRuleFilterBackEntity] = (*UserTakeLimitRuleFilter)(nil)
+var _ model2.ILogicHandler[*model.TradeRuleCommandEntity, *DynamicContext, *model.TradeRuleFilterBackEntity] = (*UserTakeLimitRuleFilter)(nil)
 
 // NewUserTakeLimitRuleFilter 创建用户参与限制规则过滤器
 func NewUserTakeLimitRuleFilter(tradeRepository *repository.TradeRepository) *UserTakeLimitRuleFilter {
@@ -25,17 +25,17 @@ func NewUserTakeLimitRuleFilter(tradeRepository *repository.TradeRepository) *Us
 }
 
 // Next 实现责任链处理器接口
-func (f *UserTakeLimitRuleFilter) Next(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *TradeRuleFilterFactoryDynamicContext) (*model.TradeRuleFilterBackEntity, error) {
+func (f *UserTakeLimitRuleFilter) Next(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *DynamicContext) (*model.TradeRuleFilterBackEntity, error) {
 	return f.filter(ctx, command, dynamicContext)
 }
 
 // Apply 实现责任链处理器接口
-func (f *UserTakeLimitRuleFilter) Apply(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *TradeRuleFilterFactoryDynamicContext) (*model.TradeRuleFilterBackEntity, error) {
+func (f *UserTakeLimitRuleFilter) Apply(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *DynamicContext) (*model.TradeRuleFilterBackEntity, error) {
 	return f.filter(ctx, command, dynamicContext)
 }
 
 // filter 是实际的过滤逻辑
-func (f *UserTakeLimitRuleFilter) filter(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *TradeRuleFilterFactoryDynamicContext) (*model.TradeRuleFilterBackEntity, error) {
+func (f *UserTakeLimitRuleFilter) filter(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *DynamicContext) (*model.TradeRuleFilterBackEntity, error) {
 	// 查询用户参与活动的订单量
 	userTakeOrderCount, err := f.tradeRepository.QueryOrderCountByActivityId(ctx, command.ActivityId, command.UserId)
 	if err != nil {
