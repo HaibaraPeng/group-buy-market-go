@@ -98,6 +98,11 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 		return nil, fmt.Errorf("营销优惠试算失败: %w", err)
 	}
 
+	// 人群限定检查
+	if !trialBalanceEntity.IsVisible || !trialBalanceEntity.IsEnable {
+		return nil, fmt.Errorf("人群限定检查失败")
+	}
+
 	groupBuyActivityDiscountVO := trialBalanceEntity.GroupBuyActivityDiscountVO
 
 	// 锁单

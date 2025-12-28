@@ -2,6 +2,7 @@ package filter
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/log"
 	"group-buy-market-go/internal/common/design/link/model2"
 	"group-buy-market-go/internal/domain/trade/model"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
@@ -10,6 +11,7 @@ import (
 
 // ActivityUsabilityRuleFilter 活动可用性规则过滤器
 type ActivityUsabilityRuleFilter struct {
+	log             *log.Helper
 	tradeRepository *repository.TradeRepository
 }
 
@@ -17,8 +19,9 @@ type ActivityUsabilityRuleFilter struct {
 var _ model2.ILogicHandler[*model.TradeRuleCommandEntity, *DynamicContext, *model.TradeRuleFilterBackEntity] = (*ActivityUsabilityRuleFilter)(nil)
 
 // NewActivityUsabilityRuleFilter 创建活动可用性规则过滤器
-func NewActivityUsabilityRuleFilter(tradeRepository *repository.TradeRepository) *ActivityUsabilityRuleFilter {
+func NewActivityUsabilityRuleFilter(logger log.Logger, tradeRepository *repository.TradeRepository) *ActivityUsabilityRuleFilter {
 	return &ActivityUsabilityRuleFilter{
+		log:             log.NewHelper(logger),
 		tradeRepository: tradeRepository,
 	}
 }

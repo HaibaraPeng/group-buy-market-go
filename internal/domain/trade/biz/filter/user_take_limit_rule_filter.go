@@ -2,6 +2,7 @@ package filter
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/log"
 	"group-buy-market-go/internal/common/consts"
 	"group-buy-market-go/internal/common/design/link/model2"
 	"group-buy-market-go/internal/common/exception"
@@ -11,6 +12,7 @@ import (
 
 // UserTakeLimitRuleFilter 用户参与限制规则过滤器
 type UserTakeLimitRuleFilter struct {
+	log             *log.Helper
 	tradeRepository *repository.TradeRepository
 }
 
@@ -18,8 +20,9 @@ type UserTakeLimitRuleFilter struct {
 var _ model2.ILogicHandler[*model.TradeRuleCommandEntity, *DynamicContext, *model.TradeRuleFilterBackEntity] = (*UserTakeLimitRuleFilter)(nil)
 
 // NewUserTakeLimitRuleFilter 创建用户参与限制规则过滤器
-func NewUserTakeLimitRuleFilter(tradeRepository *repository.TradeRepository) *UserTakeLimitRuleFilter {
+func NewUserTakeLimitRuleFilter(logger log.Logger, tradeRepository *repository.TradeRepository) *UserTakeLimitRuleFilter {
 	return &UserTakeLimitRuleFilter{
+		log:             log.NewHelper(logger),
 		tradeRepository: tradeRepository,
 	}
 }
