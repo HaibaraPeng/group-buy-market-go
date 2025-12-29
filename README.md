@@ -102,6 +102,12 @@ Various discount calculation algorithms:
 - **MJCalculateService**: Full reduction calculation
 - **NCalculateService**: N yuan purchase calculation
 
+### Responsibility Chain Pattern Filters
+The project implements responsibility chain pattern filters for trade rule validation:
+- **ActivityUsabilityRuleFilter**: Validates activity availability (status and time range)
+- **UserTakeLimitRuleFilter**: Checks user participation limits
+- **TradeRuleFilterFactory**: Assembles the filter chain
+
 ## Getting Started
 
 ### Prerequisites
