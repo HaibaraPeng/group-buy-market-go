@@ -30,16 +30,11 @@ func NewActivityUsabilityRuleFilter(logger log.Logger, tradeRepository *reposito
 
 // Next 实现责任链处理器接口
 func (f *ActivityUsabilityRuleFilter) Next(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *DynamicContext) (*model.TradeRuleFilterBackEntity, error) {
-	return f.filter(ctx, command, dynamicContext)
+	return nil, nil
 }
 
 // Apply 实现责任链处理器接口
 func (f *ActivityUsabilityRuleFilter) Apply(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *DynamicContext) (*model.TradeRuleFilterBackEntity, error) {
-	return f.filter(ctx, command, dynamicContext)
-}
-
-// filter 是实际的过滤逻辑
-func (f *ActivityUsabilityRuleFilter) filter(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *DynamicContext) (*model.TradeRuleFilterBackEntity, error) {
 	f.log.Infow("交易规则过滤-活动的可用性校验", "userId", command.UserId, "activityId", command.ActivityId)
 
 	// 获取活动信息
