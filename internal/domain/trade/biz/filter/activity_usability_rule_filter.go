@@ -3,7 +3,9 @@ package filter
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	"group-buy-market-go/internal/common/consts"
 	"group-buy-market-go/internal/common/design/link/model2"
+	"group-buy-market-go/internal/common/exception"
 	"group-buy-market-go/internal/domain/trade/model"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"time"
@@ -38,6 +40,8 @@ func (f *ActivityUsabilityRuleFilter) Apply(ctx context.Context, command *model.
 
 // filter 是实际的过滤逻辑
 func (f *ActivityUsabilityRuleFilter) filter(ctx context.Context, command *model.TradeRuleCommandEntity, dynamicContext *DynamicContext) (*model.TradeRuleFilterBackEntity, error) {
+	f.log.Infow("交易规则过滤-活动的可用性校验", "userId", command.UserId, "activityId", command.ActivityId)
+
 	// 获取活动信息
 	activity, err := f.tradeRepository.QueryGroupBuyActivityEntityByActivityId(ctx, command.ActivityId)
 	if err != nil {
@@ -51,26 +55,22 @@ func (f *ActivityUsabilityRuleFilter) filter(ctx context.Context, command *model
 		}, nil
 	}
 
-	// 检验活动状态 - 可以抛业务异常或把code写入到动态上下文中
+	// 校验；活动状态 - 可以抛业务异常code，或者把code写入到动态上下文dynamicContext中，最后获取。
 	if activity.Status != model.ACTIVITY_ACTIVE {
-		// 活动非生效状态
-		return &model.TradeRuleFilterBackEntity{
-			UserTakeOrderCount: 0,
-		}, nil
+		f.log.Infow("活动的可用性校验，非生效状态", "activityId", command.ActivityId)
+		return nil, exception.NewAppException(consts.E0101)
 	}
 
 	// 检验活动时间
 	currentTime := time.Now()
 	if currentTime.Before(activity.StartTime) || currentTime.After(activity.EndTime) {
-		// 活动不在可参与时间范围内
-		return &model.TradeRuleFilterBackEntity{
-			UserTakeOrderCount: 0,
-		}, nil
+		f.log.Infow("活动的可用性校验，非可参与时间范围", "activityId", command.ActivityId)
+		return nil, exception.NewAppException(consts.E0102)
 	}
 
 	// 写入动态上下文
 	dynamicContext.GroupBuyActivity = activity
 
 	// 走到下一个责任链节点
-	return nil, nil
+	return f.Next(ctx, command, dynamicContext)
 }
