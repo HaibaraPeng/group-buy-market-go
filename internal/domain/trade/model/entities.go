@@ -4,6 +4,8 @@ import "time"
 
 // MarketPayOrderEntity 拼团，预购订单营销实体对象
 type MarketPayOrderEntity struct {
+	// 团队ID
+	TeamId string `json:"teamId"`
 	// 预购订单ID
 	OrderId string `json:"orderId"`
 	// 折扣金额
@@ -78,4 +80,39 @@ type TradeRuleCommandEntity struct {
 type TradeRuleFilterBackEntity struct {
 	// 用户参与活动的订单量
 	UserTakeOrderCount int `json:"userTakeOrderCount"`
+}
+
+// GroupBuyTeamEntity 拼团团队实体
+type GroupBuyTeamEntity struct {
+	// 团队ID
+	TeamId string `json:"teamId"`
+	// 活动ID
+	ActivityId int64 `json:"activityId"`
+	// 目标数量
+	TargetCount int `json:"targetCount"`
+	// 完成数量
+	CompleteCount int `json:"completeCount"`
+	// 锁定数量
+	LockCount int `json:"lockCount"`
+	// 状态
+	Status GroupBuyOrderEnumVO `json:"status"`
+}
+
+// TradePaySuccessEntity 交易支付成功实体
+type TradePaySuccessEntity struct {
+	// 渠道
+	Source string `json:"source"`
+	// 来源
+	Channel string `json:"channel"`
+	// 用户ID
+	UserId string `json:"userId"`
+	// 外部交易号
+	OutTradeNo string `json:"outTradeNo"`
+}
+
+// GroupBuyTeamSettlementAggregate 拼团团队结算聚合根
+type GroupBuyTeamSettlementAggregate struct {
+	UserEntity            *UserEntity            `json:"userEntity"`
+	GroupBuyTeamEntity    *GroupBuyTeamEntity    `json:"groupBuyTeamEntity"`
+	TradePaySuccessEntity *TradePaySuccessEntity `json:"tradePaySuccessEntity"`
 }
