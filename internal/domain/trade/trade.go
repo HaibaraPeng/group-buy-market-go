@@ -8,7 +8,7 @@ import (
 
 // ProviderSet for wire
 var ProviderSet = wire.NewSet(
-	lock.NewTradeOrder,
+	lock.NewTradeLockOrder,
 	filter.NewActivityUsabilityRuleFilter,
 	filter.NewUserTakeLimitRuleFilter,
 	filter.NewTradeRuleFilterFactory,

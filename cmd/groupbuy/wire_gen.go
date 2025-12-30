@@ -60,8 +60,8 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	activityUsabilityRuleFilter := filter.NewActivityUsabilityRuleFilter(logger, tradeRepository)
 	userTakeLimitRuleFilter := filter.NewUserTakeLimitRuleFilter(logger, tradeRepository)
 	tradeRuleFilterFactory := filter.NewTradeRuleFilterFactory(activityUsabilityRuleFilter, userTakeLimitRuleFilter)
-	tradeOrder := lock.NewTradeOrder(tradeRepository, tradeRuleFilterFactory, logger)
-	tradeService := service.NewTradeService(logger, tradeOrder, rootNode)
+	tradeLockOrder := lock.NewTradeLockOrder(tradeRepository, tradeRuleFilterFactory, logger)
+	tradeService := service.NewTradeService(logger, tradeLockOrder, rootNode)
 	httpServer := server.NewHTTPServer(confServer, activityService, tagService, dccService, tradeService, logger)
 	app := newApp(logger, httpServer)
 	return app, func() {

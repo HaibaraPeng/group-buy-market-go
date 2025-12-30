@@ -19,17 +19,17 @@ import (
 type TradeService struct {
 	v1.UnimplementedTradeHTTPServer
 	log             *log.Helper
-	tradeOrder      *lock.TradeOrder
+	tradeLockOrder  *lock.TradeLockOrder
 	strategyFactory *factory.DefaultActivityStrategyFactory
 }
 
 // NewTradeService 创建交易服务实例
-func NewTradeService(logger log.Logger, tradeOrder *lock.TradeOrder, rootNode *node.RootNode) *TradeService {
+func NewTradeService(logger log.Logger, tradeLockOrder *lock.TradeLockOrder, rootNode *node.RootNode) *TradeService {
 	// 构建策略树：根节点 -> 开关节点 -> 营销节点 -> 结束节点
 	strategyFactory := factory.NewDefaultActivityStrategyFactory(rootNode)
 	return &TradeService{
 		log:             log.NewHelper(logger),
-		tradeOrder:      tradeOrder,
+		tradeLockOrder:  tradeLockOrder,
 		strategyFactory: strategyFactory,
 	}
 }
@@ -53,7 +53,7 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 	}
 
 	// 查询 outTradeNo 是否已经存在交易记录
-	marketPayOrderEntity, err := s.tradeOrder.QueryNoPayMarketPayOrderByOutTradeNo(ctx, userId, outTradeNo)
+	marketPayOrderEntity, err := s.tradeLockOrder.QueryNoPayMarketPayOrderByOutTradeNo(ctx, userId, outTradeNo)
 	if err != nil {
 		return nil, fmt.Errorf("查询未支付营销订单失败: %w", err)
 	}
@@ -70,7 +70,7 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 
 	// 判断拼团锁单是否完成了目标
 	if teamId != "" {
-		groupBuyProgressVO, err := s.tradeOrder.QueryGroupBuyProgress(ctx, teamId)
+		groupBuyProgressVO, err := s.tradeLockOrder.QueryGroupBuyProgress(ctx, teamId)
 		if err != nil {
 			return nil, fmt.Errorf("查询拼团进度失败: %w", err)
 		}
@@ -106,7 +106,7 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 	groupBuyActivityDiscountVO := trialBalanceEntity.GroupBuyActivityDiscountVO
 
 	// 锁单
-	marketPayOrderEntity, err = s.tradeOrder.LockMarketPayOrder(ctx,
+	marketPayOrderEntity, err = s.tradeLockOrder.LockMarketPayOrder(ctx,
 		&trade_model.UserEntity{UserId: userId},
 		&trade_model.PayActivityEntity{
 			TeamId:       teamId,
