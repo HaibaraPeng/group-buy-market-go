@@ -46,16 +46,15 @@ func (s *TagService) ExecTagBatchJob(ctx context.Context, req *v1.ExecTagBatchJo
 	// 2. 采集用户数据 - 这部分需要采集用户的消费类数据，后续有用户发起拼单后再处理。
 
 	// 3. 数据写入记录
-	// 模拟用户列表
-	userIdList := []string{"xiaofuge", "liergou"}
+	// 模拟用户列表，与Java版本保持一致
+	userIdList := []string{"xiaofuge", "liergou", "xfg01", "xfg02", "xfg03", "xfg04", "xfg05", "xfg06", "xfg07", "xfg08", "xfg09"}
 
 	// 4. 一般人群标签的处理在公司中，会有专门的数据数仓团队通过脚本方式写入到数据库，就不用这样一个个或者批次来写。
 	for _, userId := range userIdList {
 		err := s.tagRepository.AddCrowdTagsUserId(ctx, tagId, userId)
 		if err != nil {
 			s.log.Errorf("添加用户标签失败 tagId:%s userId:%s error:%v", tagId, userId, err)
-			// 根据业务需求决定是否继续处理其他用户或直接返回错误
-			// 这里我们记录错误但继续处理其他用户
+			// 在Java版本中没有处理错误的逻辑，这里保持Go版本的错误处理
 		}
 	}
 
