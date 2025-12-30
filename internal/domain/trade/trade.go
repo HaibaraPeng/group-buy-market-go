@@ -3,7 +3,7 @@ package trade
 import (
 	"github.com/google/wire"
 	"group-buy-market-go/internal/domain/trade/biz"
-	"group-buy-market-go/internal/domain/trade/biz/filter"
+	"group-buy-market-go/internal/domain/trade/biz/lock/filter"
 )
 
 // ProviderSet for wire
