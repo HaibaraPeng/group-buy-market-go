@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
+	"group-buy-market-go/internal/domain/trade/biz/lock"
 
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "group-buy-market-go/api/v1"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/domain/activity/service/trial/core"
 	"group-buy-market-go/internal/domain/activity/service/trial/factory"
-	"group-buy-market-go/internal/domain/trade/biz"
 	trade_model "group-buy-market-go/internal/domain/trade/model"
 )
 
@@ -19,12 +19,12 @@ import (
 type TradeService struct {
 	v1.UnimplementedTradeHTTPServer
 	log             *log.Helper
-	tradeOrder      *biz.TradeOrder
+	tradeOrder      *lock.TradeOrder
 	strategyFactory *factory.DefaultActivityStrategyFactory
 }
 
 // NewTradeService 创建交易服务实例
-func NewTradeService(logger log.Logger, tradeOrder *biz.TradeOrder, rootNode *node.RootNode) *TradeService {
+func NewTradeService(logger log.Logger, tradeOrder *lock.TradeOrder, rootNode *node.RootNode) *TradeService {
 	// 构建策略树：根节点 -> 开关节点 -> 营销节点 -> 结束节点
 	strategyFactory := factory.NewDefaultActivityStrategyFactory(rootNode)
 	return &TradeService{

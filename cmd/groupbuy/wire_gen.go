@@ -12,7 +12,7 @@ import (
 	"group-buy-market-go/internal/conf"
 	"group-buy-market-go/internal/domain/activity/service/discount"
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
-	"group-buy-market-go/internal/domain/trade/biz"
+	"group-buy-market-go/internal/domain/trade/biz/lock"
 	"group-buy-market-go/internal/domain/trade/biz/lock/filter"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/cache"
@@ -60,7 +60,7 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	activityUsabilityRuleFilter := filter.NewActivityUsabilityRuleFilter(logger, tradeRepository)
 	userTakeLimitRuleFilter := filter.NewUserTakeLimitRuleFilter(logger, tradeRepository)
 	tradeRuleFilterFactory := filter.NewTradeRuleFilterFactory(activityUsabilityRuleFilter, userTakeLimitRuleFilter)
-	tradeOrder := biz.NewTradeOrder(tradeRepository, tradeRuleFilterFactory, logger)
+	tradeOrder := lock.NewTradeOrder(tradeRepository, tradeRuleFilterFactory, logger)
 	tradeService := service.NewTradeService(logger, tradeOrder, rootNode)
 	httpServer := server.NewHTTPServer(confServer, activityService, tagService, dccService, tradeService, logger)
 	app := newApp(logger, httpServer)
