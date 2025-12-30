@@ -116,3 +116,13 @@ type GroupBuyTeamSettlementAggregate struct {
 	GroupBuyTeamEntity    *GroupBuyTeamEntity    `json:"groupBuyTeamEntity"`
 	TradePaySuccessEntity *TradePaySuccessEntity `json:"tradePaySuccessEntity"`
 }
+
+// TradePaySettlementEntity 交易支付结算实体
+type TradePaySettlementEntity struct {
+	Source     string `json:"source"`
+	Channel    string `json:"channel"`
+	UserId     string `json:"userId"`
+	TeamId     string `json:"teamId"`
+	ActivityId int64  `json:"activityId"`
+	OutTradeNo string `json:"outTradeNo"`
+}
