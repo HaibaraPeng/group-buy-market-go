@@ -13,6 +13,9 @@ type GroupBuyOrderDAO interface {
 	UpdateAddLockCount(ctx context.Context, teamId string) (int64, error)
 	UpdateSubtractionLockCount(ctx context.Context, teamId string) (int64, error)
 	QueryGroupBuyProgress(ctx context.Context, teamId string) (*po.GroupBuyOrder, error)
+	QueryGroupBuyTeamByTeamId(ctx context.Context, teamId string) (*po.GroupBuyOrder, error)
+	UpdateAddCompleteCount(ctx context.Context, teamId string) (int64, error)
+	UpdateOrderStatus2COMPLETE(ctx context.Context, teamId string) (int64, error)
 }
 
 // MySQLGroupBuyOrderDAO is a GORM implementation of GroupBuyOrderDAO
@@ -70,4 +73,41 @@ func (r *MySQLGroupBuyOrderDAO) QueryGroupBuyProgress(ctx context.Context, teamI
 		return nil, err
 	}
 	return &groupBuyOrder, nil
+}
+
+// QueryGroupBuyTeamByTeamId queries the team information by teamId
+func (r *MySQLGroupBuyOrderDAO) QueryGroupBuyTeamByTeamId(ctx context.Context, teamId string) (*po.GroupBuyOrder, error) {
+	var groupBuyOrder po.GroupBuyOrder
+	err := r.db.WithContext(ctx).Select("team_id, activity_id, target_count, complete_count, lock_count, status").
+		Where("team_id = ?", teamId).
+		First(&groupBuyOrder).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &groupBuyOrder, nil
+}
+
+// UpdateAddCompleteCount increases the complete count for a group buy order
+func (r *MySQLGroupBuyOrderDAO) UpdateAddCompleteCount(ctx context.Context, teamId string) (int64, error) {
+	result := r.db.WithContext(ctx).Model(&po.GroupBuyOrder{}).
+		Where("team_id = ? AND complete_count < target_count", teamId).
+		Updates(map[string]interface{}{
+			"complete_count": gorm.Expr("complete_count + 1"),
+			"update_time":    time.Now(),
+		})
+	return result.RowsAffected, result.Error
+}
+
+// UpdateOrderStatus2COMPLETE updates the order status to COMPLETE
+func (r *MySQLGroupBuyOrderDAO) UpdateOrderStatus2COMPLETE(ctx context.Context, teamId string) (int64, error) {
+	result := r.db.WithContext(ctx).Model(&po.GroupBuyOrder{}).
+		Where("team_id = ? AND status = 0", teamId).
+		Updates(map[string]interface{}{
+			"status":      1, // 状态1表示已完成
+			"update_time": time.Now(),
+		})
+	return result.RowsAffected, result.Error
 }
