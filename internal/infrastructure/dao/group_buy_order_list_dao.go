@@ -11,7 +11,9 @@ import (
 type GroupBuyOrderListDAO interface {
 	Insert(ctx context.Context, groupBuyOrderList *po.GroupBuyOrderList) error
 	QueryGroupBuyOrderRecordByOutTradeNo(ctx context.Context, req *po.GroupBuyOrderList) (*po.GroupBuyOrderList, error)
-	QueryOrderCountByActivityId(ctx context.Context, req *po.GroupBuyOrderList) (int, error) // 添加查询活动订单数的方法
+	QueryOrderCountByActivityId(ctx context.Context, req *po.GroupBuyOrderList) (int, error)
+	UpdateOrderStatus2COMPLETE(ctx context.Context, req *po.GroupBuyOrderList) (int64, error)
+	QueryGroupBuyCompleteOrderOutTradeNoListByTeamId(ctx context.Context, teamId string) ([]string, error)
 }
 
 // MySQLGroupBuyOrderListDAO is a GORM implementation of GroupBuyOrderListDAO
@@ -59,4 +61,28 @@ func (r *MySQLGroupBuyOrderListDAO) QueryOrderCountByActivityId(ctx context.Cont
 		return 0, err
 	}
 	return int(count), nil
+}
+
+// UpdateOrderStatus2COMPLETE updates the order status to COMPLETE
+func (r *MySQLGroupBuyOrderListDAO) UpdateOrderStatus2COMPLETE(ctx context.Context, req *po.GroupBuyOrderList) (int64, error) {
+	result := r.db.WithContext(ctx).Model(&po.GroupBuyOrderList{}).
+		Where("out_trade_no = ? AND user_id = ?", req.OutTradeNo, req.UserId).
+		Updates(map[string]interface{}{
+			"status":      1, // 状态1表示已完成
+			"update_time": time.Now(),
+		})
+	return result.RowsAffected, result.Error
+}
+
+// QueryGroupBuyCompleteOrderOutTradeNoListByTeamId queries the list of completed order transaction numbers by team ID
+func (r *MySQLGroupBuyOrderListDAO) QueryGroupBuyCompleteOrderOutTradeNoListByTeamId(ctx context.Context, teamId string) ([]string, error) {
+	var outTradeNos []string
+	err := r.db.WithContext(ctx).Model(&po.GroupBuyOrderList{}).
+		Select("out_trade_no").
+		Where("team_id = ? AND status = 1", teamId).
+		Scan(&outTradeNos).Error
+	if err != nil {
+		return nil, err
+	}
+	return outTradeNos, nil
 }
