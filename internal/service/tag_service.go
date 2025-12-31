@@ -28,7 +28,7 @@ func (s *TagService) ExecTagBatchJob(ctx context.Context, req *v1.ExecTagBatchJo
 	tagId := req.TagId
 	batchId := req.BatchId
 
-	s.log.Infof("人群标签批次任务 tagId:%s batchId:%s", tagId, batchId)
+	s.log.WithContext(ctx).Infof("人群标签批次任务 tagId:%s batchId:%s", tagId, batchId)
 
 	// 1. 查询批次任务
 	crowdTagsJobEntity, err := s.tagRepository.QueryCrowdTagsJobEntity(ctx, tagId, batchId)

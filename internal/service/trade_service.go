@@ -60,7 +60,7 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 
 	// 如果已存在订单记录，直接返回
 	if marketPayOrderEntity != nil {
-		s.log.Infof("交易锁单记录(存在):%s marketPayOrderEntity:%+v", userId, marketPayOrderEntity)
+		s.log.WithContext(ctx).Infof("交易锁单记录(存在):%s marketPayOrderEntity:%+v", userId, marketPayOrderEntity)
 		return &v1.LockMarketPayOrderReply{
 			OrderId:          marketPayOrderEntity.OrderId,
 			DeductionPrice:   marketPayOrderEntity.DeductionPrice,
@@ -76,7 +76,7 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 		}
 
 		if groupBuyProgressVO != nil && groupBuyProgressVO.TargetCount == groupBuyProgressVO.LockCount {
-			s.log.Infof("交易锁单拦截-拼单目标已达成:%s %s", userId, teamId)
+			s.log.WithContext(ctx).Infof("交易锁单拦截-拼单目标已达成:%s %s", userId, teamId)
 			return nil, fmt.Errorf("拼单目标已达成")
 		}
 	}
@@ -129,7 +129,7 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 		return nil, fmt.Errorf("锁单失败: %w", err)
 	}
 
-	s.log.Infof("交易锁单记录(新):%s marketPayOrderEntity:%+v", userId, marketPayOrderEntity)
+	s.log.WithContext(ctx).Infof("交易锁单记录(新):%s marketPayOrderEntity:%+v", userId, marketPayOrderEntity)
 
 	// 返回结果
 	return &v1.LockMarketPayOrderReply{

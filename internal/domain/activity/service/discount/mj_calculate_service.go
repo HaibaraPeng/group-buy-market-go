@@ -1,6 +1,7 @@
 package discount
 
 import (
+	"context"
 	"group-buy-market-go/internal/common/consts"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
@@ -30,8 +31,8 @@ func NewMJCalculateService(logger log.Logger, activityRepository *repository.Act
 }
 
 // doCalculate 实现满减优惠计算逻辑
-func (s *MJCalculateService) doCalculate(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
-	s.log.Infof("优惠策略折扣计算: %v", groupBuyDiscount.DiscountType)
+func (s *MJCalculateService) doCalculate(ctx context.Context, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
+	s.log.WithContext(ctx).Infof("优惠策略折扣计算: %v", groupBuyDiscount.DiscountType)
 
 	// 折扣表达式 - 100,10 满100减10元
 	marketExpr := groupBuyDiscount.MarketExpr

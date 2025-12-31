@@ -148,7 +148,7 @@ func (m *MarketNode) doApply(ctx context.Context, requestParameter *model.Market
 
 	// 支付价格 - 通过折扣计算服务计算得出
 	originalPrice := big.NewFloat(skuVO.OriginalPrice)
-	payPrice := discountCalculateService.Calculate(requestParameter.UserId, originalPrice, groupBuyDiscount)
+	payPrice := discountCalculateService.Calculate(ctx, requestParameter.UserId, originalPrice, groupBuyDiscount)
 
 	// 折扣价格 - 原价减去支付价格
 	deductionPrice := new(big.Float).Sub(originalPrice, payPrice)

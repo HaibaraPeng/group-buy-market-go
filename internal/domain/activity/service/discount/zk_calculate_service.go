@@ -1,6 +1,7 @@
 package discount
 
 import (
+	"context"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"math/big"
@@ -28,8 +29,8 @@ func NewZKCalculateService(logger log.Logger, activityRepository *repository.Act
 }
 
 // doCalculate 实现折扣优惠计算逻辑
-func (s *ZKCalculateService) doCalculate(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
-	s.log.Infof("优惠策略折扣计算: %v", groupBuyDiscount.DiscountType)
+func (s *ZKCalculateService) doCalculate(ctx context.Context, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
+	s.log.WithContext(ctx).Infof("优惠策略折扣计算: %v", groupBuyDiscount.DiscountType)
 
 	// 折扣表达式 - 折扣百分比
 	marketExpr := groupBuyDiscount.MarketExpr

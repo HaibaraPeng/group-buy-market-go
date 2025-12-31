@@ -1,6 +1,7 @@
 package discount
 
 import (
+	"context"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"math/big"
@@ -28,8 +29,8 @@ func NewNCalculateService(logger log.Logger, activityRepository *repository.Acti
 }
 
 // doCalculate 实现N元购优惠计算逻辑
-func (s *NCalculateService) doCalculate(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
-	s.log.Infof("优惠策略折扣计算: %v", groupBuyDiscount.DiscountType)
+func (s *NCalculateService) doCalculate(ctx context.Context, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
+	s.log.WithContext(ctx).Infof("优惠策略折扣计算: %v", groupBuyDiscount.DiscountType)
 
 	// 折扣表达式 - 直接为优惠后的金额
 	marketExpr := groupBuyDiscount.MarketExpr

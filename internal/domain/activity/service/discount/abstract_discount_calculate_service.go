@@ -11,7 +11,7 @@ import (
 
 // AbstractDiscountCalculateService 折扣计算服务抽象基类
 type AbstractDiscountCalculateService struct {
-	doCalculateFunc    func(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float
+	doCalculateFunc    func(ctx context.Context, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float
 	log                *log.Helper
 	activityRepository *repository.ActivityRepository // 添加ActivityRepository依赖
 }
@@ -20,7 +20,7 @@ type AbstractDiscountCalculateService struct {
 var _ IDiscountCalculateService = (*AbstractDiscountCalculateService)(nil)
 
 // SetDoCalculateFunc 设置具体的折扣计算实现函数
-func (s *AbstractDiscountCalculateService) SetDoCalculateFunc(f func(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float) {
+func (s *AbstractDiscountCalculateService) SetDoCalculateFunc(f func(ctx context.Context, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float) {
 	s.doCalculateFunc = f
 }
 
@@ -35,7 +35,7 @@ func (s *AbstractDiscountCalculateService) SetActivityRepository(activityReposit
 }
 
 // Calculate 折扣计算
-func (s *AbstractDiscountCalculateService) Calculate(userId string, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
+func (s *AbstractDiscountCalculateService) Calculate(ctx context.Context, userId string, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
 	// 1. 人群标签过滤
 	if groupBuyDiscount.DiscountType == model.TagDiscount { // TAG 类型
 		isCrowdRange := s.filterTagId(userId, groupBuyDiscount.TagId)
@@ -45,7 +45,7 @@ func (s *AbstractDiscountCalculateService) Calculate(userId string, originalPric
 	}
 
 	// 2. 折扣优惠计算
-	return s.doCalculate(originalPrice, groupBuyDiscount)
+	return s.doCalculate(ctx, originalPrice, groupBuyDiscount)
 }
 
 // filterTagId 人群过滤 - 限定人群优惠
@@ -65,9 +65,9 @@ func (s *AbstractDiscountCalculateService) filterTagId(userId string, tagId stri
 }
 
 // doCalculate 抽象方法，由子类实现具体的折扣计算逻辑
-func (s *AbstractDiscountCalculateService) doCalculate(originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
+func (s *AbstractDiscountCalculateService) doCalculate(ctx context.Context, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
 	if s.doCalculateFunc != nil {
-		return s.doCalculateFunc(originalPrice, groupBuyDiscount)
+		return s.doCalculateFunc(ctx, originalPrice, groupBuyDiscount)
 	}
 	// 默认实现
 	return nil

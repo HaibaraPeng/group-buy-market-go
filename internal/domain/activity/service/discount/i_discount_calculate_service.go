@@ -1,6 +1,7 @@
 package discount
 
 import (
+	"context"
 	"group-buy-market-go/internal/domain/activity/model"
 	"math/big"
 )
@@ -16,5 +17,5 @@ type IDiscountCalculateService interface {
 	//
 	// 返回值:
 	//   商品优惠价格
-	Calculate(userId string, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float
+	Calculate(ctx context.Context, userId string, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float
 }

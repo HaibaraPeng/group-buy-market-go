@@ -25,7 +25,7 @@ func NewDccService(logger log.Logger, dcc *dcc.DCC) *DccService {
 
 // UpdateConfig 更新配置
 func (s *DccService) UpdateConfig(ctx context.Context, req *v1.UpdateConfigRequest) (*v1.UpdateConfigReply, error) {
-	s.log.Infof("DCC 动态配置值变更 key:%s value:%s", req.Key, req.Value)
+	s.log.WithContext(ctx).Infof("DCC 动态配置值变更 key:%s value:%s", req.Key, req.Value)
 
 	// 发布配置变更消息到Redis
 	err := s.dcc.PublishConfigChange(ctx, req.Key, req.Value)
