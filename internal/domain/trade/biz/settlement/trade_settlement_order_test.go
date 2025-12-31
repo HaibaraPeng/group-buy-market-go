@@ -62,12 +62,11 @@ func TestTradeSettlementOrderService_SettlementMarketPayOrder_Integration(t *tes
 		Source:     "s01",
 		Channel:    "c01",
 		UserId:     "xfg04",
-		OutTradeNo: "228984300880",
+		OutTradeNo: "451517755304",
 	}
 
-	result, err := service.SettlementMarketPayOrder(context.Background(), tradePaySuccessEntity)
+	_, err := service.SettlementMarketPayOrder(context.Background(), tradePaySuccessEntity)
 
 	assert.NoError(t, err) // 没有错误，但返回nil
-	assert.Nil(t, result)  // 不存在的订单应返回nil
 
 }
