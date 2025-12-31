@@ -38,7 +38,7 @@ func (s *NCalculateService) doCalculate(ctx context.Context, originalPrice *big.
 	// n元购
 	nPrice, _, err := big.ParseFloat(marketExpr, 10, 64, big.ToZero)
 	if err != nil {
-		s.log.Errorf("解析N元购价格失败: %v", err)
+		s.log.WithContext(ctx).Errorf("解析N元购价格失败: %v", err)
 		return originalPrice
 	}
 

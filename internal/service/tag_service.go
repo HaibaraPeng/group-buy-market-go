@@ -33,7 +33,7 @@ func (s *TagService) ExecTagBatchJob(ctx context.Context, req *v1.ExecTagBatchJo
 	// 1. 查询批次任务
 	crowdTagsJobEntity, err := s.tagRepository.QueryCrowdTagsJobEntity(ctx, tagId, batchId)
 	if err != nil {
-		s.log.Errorf("查询批次任务失败: %v", err)
+		s.log.WithContext(ctx).Errorf("查询批次任务失败: %v", err)
 		return &v1.ExecTagBatchJobReply{Success: false}, err
 	}
 
@@ -53,7 +53,7 @@ func (s *TagService) ExecTagBatchJob(ctx context.Context, req *v1.ExecTagBatchJo
 	for _, userId := range userIdList {
 		err := s.tagRepository.AddCrowdTagsUserId(ctx, tagId, userId)
 		if err != nil {
-			s.log.Errorf("添加用户标签失败 tagId:%s userId:%s error:%v", tagId, userId, err)
+			s.log.WithContext(ctx).Errorf("添加用户标签失败 tagId:%s userId:%s error:%v", tagId, userId, err)
 			// 在Java版本中没有处理错误的逻辑，这里保持Go版本的错误处理
 		}
 	}
@@ -61,7 +61,7 @@ func (s *TagService) ExecTagBatchJob(ctx context.Context, req *v1.ExecTagBatchJo
 	// 5. 更新人群标签统计量
 	err = s.tagRepository.UpdateCrowdTagsStatistics(ctx, tagId, len(userIdList))
 	if err != nil {
-		s.log.Errorf("更新人群标签统计量失败: %v", err)
+		s.log.WithContext(ctx).Errorf("更新人群标签统计量失败: %v", err)
 		return &v1.ExecTagBatchJobReply{Success: false}, err
 	}
 

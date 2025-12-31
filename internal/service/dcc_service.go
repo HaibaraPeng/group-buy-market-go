@@ -30,7 +30,7 @@ func (s *DccService) UpdateConfig(ctx context.Context, req *v1.UpdateConfigReque
 	// 发布配置变更消息到Redis
 	err := s.dcc.PublishConfigChange(ctx, req.Key, req.Value)
 	if err != nil {
-		s.log.Errorf("DCC 动态配置值变更失败 key:%s value:%s err:%v", req.Key, req.Value, err)
+		s.log.WithContext(ctx).Errorf("DCC 动态配置值变更失败 key:%s value:%s err:%v", req.Key, req.Value, err)
 		return &v1.UpdateConfigReply{Success: false}, nil
 	}
 

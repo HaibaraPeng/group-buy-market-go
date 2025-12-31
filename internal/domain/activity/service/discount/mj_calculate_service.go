@@ -48,13 +48,13 @@ func (s *MJCalculateService) doCalculate(ctx context.Context, originalPrice *big
 
 	x, _, err1 := big.ParseFloat(xStr, 10, 64, big.ToZero)
 	if err1 != nil {
-		s.log.Errorf("解析满减条件失败: %v", err1)
+		s.log.WithContext(ctx).Errorf("解析满减条件失败: %v", err1)
 		return originalPrice
 	}
 
 	y, _, err2 := big.ParseFloat(yStr, 10, 64, big.ToZero)
 	if err2 != nil {
-		s.log.Errorf("解析减免金额失败: %v", err2)
+		s.log.WithContext(ctx).Errorf("解析减免金额失败: %v", err2)
 		return originalPrice
 	}
 

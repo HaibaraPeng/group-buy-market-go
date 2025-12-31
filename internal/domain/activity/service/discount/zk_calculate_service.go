@@ -38,7 +38,7 @@ func (s *ZKCalculateService) doCalculate(ctx context.Context, originalPrice *big
 	// 折扣价格
 	discountRate, _, err := big.ParseFloat(marketExpr, 10, 64, big.ToZero)
 	if err != nil {
-		s.log.Errorf("解析折扣率失败: %v", err)
+		s.log.WithContext(ctx).Errorf("解析折扣率失败: %v", err)
 		return originalPrice
 	}
 
