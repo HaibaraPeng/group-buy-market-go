@@ -38,7 +38,7 @@ func (s *AbstractDiscountCalculateService) SetActivityRepository(activityReposit
 func (s *AbstractDiscountCalculateService) Calculate(ctx context.Context, userId string, originalPrice *big.Float, groupBuyDiscount *model.GroupBuyDiscountVO) *big.Float {
 	// 1. 人群标签过滤
 	if groupBuyDiscount.DiscountType == model.TagDiscount { // TAG 类型
-		isCrowdRange := s.filterTagId(userId, groupBuyDiscount.TagId)
+		isCrowdRange := s.filterTagId(ctx, userId, groupBuyDiscount.TagId)
 		if !isCrowdRange {
 			return originalPrice
 		}
@@ -49,13 +49,13 @@ func (s *AbstractDiscountCalculateService) Calculate(ctx context.Context, userId
 }
 
 // filterTagId 人群过滤 - 限定人群优惠
-func (s *AbstractDiscountCalculateService) filterTagId(userId string, tagId string) bool {
+func (s *AbstractDiscountCalculateService) filterTagId(ctx context.Context, userId string, tagId string) bool {
 	// 调用仓储服务的IsTagCrowdRange方法
 	if s.activityRepository != nil {
 		result, err := s.activityRepository.IsTagCrowdRange(context.Background(), tagId, userId)
 		if err != nil {
 			// 如果出现错误，默认返回true，避免影响业务
-			s.log.Errorw("调用IsTagCrowdRange方法出错", "error", err, "userId", userId, "tagId", tagId)
+			s.log.WithContext(ctx).Errorf("调用IsTagCrowdRange方法出错: %v, userId: %s, tagId: %s", err, userId, tagId)
 			return true
 		}
 		return result
