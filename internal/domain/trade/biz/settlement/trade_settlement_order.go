@@ -2,7 +2,7 @@ package settlement
 
 import (
 	"context"
-	"log"
+	"github.com/go-kratos/kratos/v2/log"
 
 	"group-buy-market-go/internal/domain/trade/model"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
@@ -10,19 +10,21 @@ import (
 
 // TradeSettlementOrderService 拼团交易结算服务
 type TradeSettlementOrderService struct {
+	log        *log.Helper
 	repository *repository.TradeRepository
 }
 
 // NewTradeSettlementOrderService 创建拼团交易结算服务实例
-func NewTradeSettlementOrderService(repository *repository.TradeRepository) *TradeSettlementOrderService {
+func NewTradeSettlementOrderService(logger log.Logger, repository *repository.TradeRepository) *TradeSettlementOrderService {
 	return &TradeSettlementOrderService{
+		log:        log.NewHelper(logger),
 		repository: repository,
 	}
 }
 
 // SettlementMarketPayOrder 拼团交易结算
 func (s *TradeSettlementOrderService) SettlementMarketPayOrder(ctx context.Context, tradePaySuccessEntity *model.TradePaySuccessEntity) (*model.TradePaySettlementEntity, error) {
-	log.Printf("拼团交易-支付订单结算: userId=%s outTradeNo=%s", tradePaySuccessEntity.UserId, tradePaySuccessEntity.OutTradeNo)
+	s.log.WithContext(ctx).Infof("拼团交易-支付订单结算: userId=%s outTradeNo=%s", tradePaySuccessEntity.UserId, tradePaySuccessEntity.OutTradeNo)
 
 	// 1. 查询拼团信息
 	marketPayOrderEntity, err := s.repository.QueryMarketPayOrderEntityByOutTradeNo(ctx, tradePaySuccessEntity.UserId, tradePaySuccessEntity.OutTradeNo)
@@ -30,7 +32,7 @@ func (s *TradeSettlementOrderService) SettlementMarketPayOrder(ctx context.Conte
 		return nil, err
 	}
 	if marketPayOrderEntity == nil {
-		log.Printf("不存在的外部交易单号或用户已退单，不需要做支付订单结算: userId=%s outTradeNo=%s", tradePaySuccessEntity.UserId, tradePaySuccessEntity.OutTradeNo)
+		s.log.WithContext(ctx).Infof("不存在的外部交易单号或用户已退单，不需要做支付订单结算: userId=%s outTradeNo=%s", tradePaySuccessEntity.UserId, tradePaySuccessEntity.OutTradeNo)
 		return nil, nil
 	}
 

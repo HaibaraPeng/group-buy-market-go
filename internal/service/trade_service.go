@@ -45,7 +45,7 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 	outTradeNo := req.OutTradeNo
 	teamId := req.TeamId
 
-	s.log.Infof("营销交易锁单:%s LockMarketPayOrderRequest:%+v", userId, req)
+	s.log.WithContext(ctx).Infof("营销交易锁单:%s LockMarketPayOrderRequest:%+v", userId, req)
 
 	// 检查必要参数
 	if userId == "" || source == "" || channel == "" || goodsId == "" || activityId == 0 {
