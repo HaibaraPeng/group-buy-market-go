@@ -11,14 +11,11 @@ import (
 	"github.com/google/wire"
 	"group-buy-market-go/internal/domain/activity/service/trial"
 	"group-buy-market-go/internal/domain/trade"
+	"group-buy-market-go/internal/infrastructure"
 	"group-buy-market-go/internal/service"
 
 	"group-buy-market-go/internal/conf"
 	"group-buy-market-go/internal/domain/activity/service/discount"
-	"group-buy-market-go/internal/infrastructure/adapter/repository"
-	"group-buy-market-go/internal/infrastructure/cache"
-	"group-buy-market-go/internal/infrastructure/dao"
-	"group-buy-market-go/internal/infrastructure/dcc"
 	"group-buy-market-go/internal/server"
 )
 
@@ -26,10 +23,7 @@ import (
 func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
 	panic(wire.Build(
 		server.ProviderSet,
-		dao.ProviderSet,
-		cache.ProviderSet,
-		dcc.ProviderSet,
-		repository.ProviderSet,
+		infrastructure.ProviderSet,
 		trade.ProviderSet,
 		service.ProviderSet,
 		discount.ProviderSet,
