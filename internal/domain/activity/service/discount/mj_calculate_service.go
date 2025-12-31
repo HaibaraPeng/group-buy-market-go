@@ -39,7 +39,7 @@ func (s *MJCalculateService) doCalculate(ctx context.Context, originalPrice *big
 	parts := strings.Split(marketExpr, consts.SPLIT)
 
 	if len(parts) < 2 {
-		s.log.Warnf("无效的满减表达式: %s", marketExpr)
+		s.log.WithContext(ctx).Warnf("无效的满减表达式: %s", marketExpr)
 		return originalPrice
 	}
 

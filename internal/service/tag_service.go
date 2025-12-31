@@ -39,7 +39,7 @@ func (s *TagService) ExecTagBatchJob(ctx context.Context, req *v1.ExecTagBatchJo
 
 	// 检查任务是否存在
 	if crowdTagsJobEntity == nil {
-		s.log.Warnf("未找到标签批次任务 tagId:%s batchId:%s", tagId, batchId)
+		s.log.WithContext(ctx).Warnf("未找到标签批次任务 tagId:%s batchId:%s", tagId, batchId)
 		return &v1.ExecTagBatchJobReply{Success: true}, nil
 	}
 
