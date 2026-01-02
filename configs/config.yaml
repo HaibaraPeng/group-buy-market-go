@@ -11,7 +11,7 @@ server:
 data:
   database:
     driver: mysql
-    source: root:root@tcp(127.0.0.1:3406)/group_buy_market?charset=utf8mb4&parseTime=True&loc=Local
+    source: root:root@tcp(127.0.0.1:3306)/group_buy_market?charset=utf8mb4&parseTime=True&loc=Local
   redis:
     addr: 127.0.0.1:6379
     dial_timeout: 1s
