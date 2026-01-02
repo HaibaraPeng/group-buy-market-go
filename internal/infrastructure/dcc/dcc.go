@@ -3,18 +3,18 @@ package dcc
 import (
 	"context"
 	"fmt"
-	"group-buy-market-go/internal/infrastructure"
 	"hash/fnv"
 	"strconv"
 	"strings"
 
+	"github.com/go-redis/redis/v8"
 	"group-buy-market-go/internal/common/consts"
 )
 
 // DCC 动态配置中心服务
 type DCC struct {
-	data      infrastructure.Data
-	configMap map[string]*ConfigValue
+	redisClient *redis.Client
+	configMap   map[string]*ConfigValue
 }
 
 // ConfigValue 配置值包装器
@@ -24,10 +24,10 @@ type ConfigValue struct {
 }
 
 // NewDCC 创建DCC服务实例
-func NewDCC(data infrastructure.Data) *DCC {
+func NewDCC(redisClient *redis.Client) *DCC {
 	dcc := &DCC{
-		data:      data,
-		configMap: make(map[string]*ConfigValue),
+		redisClient: redisClient,
+		configMap:   make(map[string]*ConfigValue),
 	}
 
 	// 初始化默认配置
@@ -50,7 +50,7 @@ func (d *DCC) initConfigValue(key, defaultValue string) {
 	configKey := "group_buy_market_dcc_" + key
 	// 检查Redis中是否存在该键值
 	ctx := context.Background()
-	value, err := d.data.Rdb.Get(ctx, configKey).Result()
+	value, err := d.redisClient.Get(ctx, configKey).Result()
 	if err != nil || value == "" {
 		// 如果检查出现错误或者不存在该键，设置为默认值，使用默认值
 		d.configMap[key] = &ConfigValue{
@@ -60,7 +60,7 @@ func (d *DCC) initConfigValue(key, defaultValue string) {
 		return
 	} else {
 		// 如果Redis中存在该键，获取其值
-		value, err = d.data.Rdb.Get(ctx, configKey).Result()
+		value, err = d.redisClient.Get(ctx, configKey).Result()
 		if err != nil {
 			value = defaultValue
 		}
@@ -74,7 +74,7 @@ func (d *DCC) initConfigValue(key, defaultValue string) {
 
 // listenForConfigChanges 监听配置变化
 func (d *DCC) listenForConfigChanges(ctx context.Context) {
-	pubsub := d.data.Rdb.Subscribe(ctx, "group_buy_market_dcc")
+	pubsub := d.redisClient.Subscribe(ctx, "group_buy_market_dcc")
 	defer pubsub.Close()
 
 	ch := pubsub.Channel()
@@ -96,7 +96,7 @@ func (d *DCC) handleConfigChange(payload string) {
 
 	// 更新Redis中的值
 	ctx := context.Background()
-	d.data.Rdb.Set(ctx, configKey, value, 0)
+	d.redisClient.Set(ctx, configKey, value, 0)
 
 	// 更新内存中的值
 	if config, exists := d.configMap[attribute]; exists {
@@ -107,7 +107,7 @@ func (d *DCC) handleConfigChange(payload string) {
 // PublishConfigChange 发布配置变更消息
 func (d *DCC) PublishConfigChange(ctx context.Context, key, value string) error {
 	message := key + consts.SPLIT + value
-	return d.data.Rdb.Publish(ctx, "group_buy_market_dcc", message).Err()
+	return d.redisClient.Publish(ctx, "group_buy_market_dcc", message).Err()
 }
 
 // GetValue 获取配置值

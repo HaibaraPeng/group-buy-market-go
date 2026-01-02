@@ -3,9 +3,9 @@ package repository
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis/v8"
 	"group-buy-market-go/internal/common/utils"
 	"group-buy-market-go/internal/domain/tag/model"
-	"group-buy-market-go/internal/infrastructure"
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/infrastructure/po"
 )
@@ -15,7 +15,7 @@ type TagRepository struct {
 	crowdTagsDAO       dao.CrowdTagsDAO
 	crowdTagsDetailDAO dao.CrowdTagsDetailDAO
 	crowdTagsJobDAO    dao.CrowdTagsJobDAO
-	data               infrastructure.Data
+	redisClient        *redis.Client
 }
 
 // NewTagRepository creates a new tag repository
@@ -24,14 +24,14 @@ func NewTagRepository(
 	crowdTagsDAO dao.CrowdTagsDAO,
 	crowdTagsDetailDAO dao.CrowdTagsDetailDAO,
 	crowdTagsJobDAO dao.CrowdTagsJobDAO,
-	data infrastructure.Data,
+	redisClient *redis.Client,
 ) *TagRepository {
 	return &TagRepository{
 		log:                log.NewHelper(logger),
 		crowdTagsDAO:       crowdTagsDAO,
 		crowdTagsDetailDAO: crowdTagsDetailDAO,
 		crowdTagsJobDAO:    crowdTagsJobDAO,
-		data:               data,
+		redisClient:        redisClient,
 	}
 }
 
@@ -80,7 +80,7 @@ func (r *TagRepository) AddCrowdTagsUserId(ctx context.Context, tagId string, us
 
 	// Set bit in Redis bitmap
 	bitKey := "tag:" + tagId
-	err = r.data.Rdb.SetBit(ctx, bitKey, index, 1).Err()
+	err = r.redisClient.SetBit(ctx, bitKey, index, 1).Err()
 	if err != nil {
 		// Log error but don't fail the operation
 		// In a production environment, you might want to use a proper logger
