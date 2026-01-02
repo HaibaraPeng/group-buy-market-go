@@ -50,7 +50,7 @@ func NewData(conf *conf.Data, logger log.Logger) (*Data, func(), error) {
 	}
 	return d, func() {
 		log.Info("message", "closing the data resources")
-		if err := d.rdb.Close(); err != nil {
+		if err := d.Rdb.Close(); err != nil {
 			log.Error(err)
 		}
 	}, nil
@@ -58,8 +58,8 @@ func NewData(conf *conf.Data, logger log.Logger) (*Data, func(), error) {
 
 type contextTxKey struct{}
 
-func (d *infrastructure.Data) InTx(ctx context.Context, fn func(ctx context.Context) error) error {
-	return d.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+func (d *Data) InTx(ctx context.Context, fn func(ctx context.Context) error) error {
+	return d.Db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		ctx = context.WithValue(ctx, contextTxKey{}, tx)
 		return fn(ctx)
 	})
@@ -70,5 +70,5 @@ func (d *Data) DB(ctx context.Context) *gorm.DB {
 	if ok {
 		return tx
 	}
-	return d.db
+	return d.Db
 }
