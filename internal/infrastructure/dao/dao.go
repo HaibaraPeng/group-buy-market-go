@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"gorm.io/driver/mysql"
@@ -31,6 +32,23 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 	db, err := gorm.Open(mysql.Open(conf.Database.Source), &gorm.Config{})
 	if err != nil {
 		log.NewHelper(logger).Fatalf("failed opening connection to mysql: %v", err)
+	}
+	return db
+}
+
+type contextTxKey struct{}
+
+func InTx(ctx context.Context, db *gorm.DB, fn func(ctx context.Context) error) error {
+	return db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		ctx = context.WithValue(ctx, contextTxKey{}, tx)
+		return fn(ctx)
+	})
+}
+
+func DB(ctx context.Context, db *gorm.DB) *gorm.DB {
+	tx, ok := ctx.Value(contextTxKey{}).(*gorm.DB)
+	if ok {
+		return tx
 	}
 	return db
 }
