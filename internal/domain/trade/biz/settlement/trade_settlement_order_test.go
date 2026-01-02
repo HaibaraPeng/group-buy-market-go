@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -56,7 +57,8 @@ func TestTradeSettlementOrderService_SettlementMarketPayOrder_Integration(t *tes
 	}
 
 	// 创建服务
-	service := NewTradeSettlementOrderService(testRepo)
+	logger := log.DefaultLogger
+	service := NewTradeSettlementOrderService(logger, testRepo)
 
 	tradePaySuccessEntity := &model.TradePaySuccessEntity{
 		Source:     "s01",
