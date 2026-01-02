@@ -14,14 +14,20 @@ import (
 
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(
-	NewRedisClient,
+	NewData,
 	dao.ProviderSet,
 	dcc.ProviderSet,
 	repository.ProviderSet,
 )
 
-// NewRedisClient 创建redis客户端
-func NewRedisClient(conf *conf.Data, logger log.Logger) (*redis.Client, func(), error) {
+type Data struct {
+	Rdb *redis.Client
+}
+
+// NewData .
+func NewData(conf *conf.Data, logger log.Logger) (*Data, func(), error) {
+	log := log.NewHelper(logger)
+
 	// 创建redis客户端
 	rdb := redis.NewClient(&redis.Options{
 		Addr:         conf.Redis.Addr,
@@ -38,13 +44,16 @@ func NewRedisClient(conf *conf.Data, logger log.Logger) (*redis.Client, func(), 
 	ctx := context.Background()
 	_, err := rdb.Ping(ctx).Result()
 	if err != nil {
-		log.NewHelper(logger).Errorf("failed to connect to redis: %v", err)
+		log.Fatalf("failed to connect to redis: %v", err)
 		return nil, nil, err
 	}
 
-	return rdb, func() {
-		log.Info("message", "closing the redis resources")
-		if err := rdb.Close(); err != nil {
+	d := &Data{
+		Rdb: rdb,
+	}
+	return d, func() {
+		log.Info("message", "closing the data resources")
+		if err := d.Rdb.Close(); err != nil {
 			log.Error(err)
 		}
 	}, nil
