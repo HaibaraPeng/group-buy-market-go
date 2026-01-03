@@ -2,7 +2,7 @@ package dao
 
 import (
 	"context"
-	"gorm.io/gorm"
+	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/po"
 	"time"
 )
@@ -14,13 +14,13 @@ type NotifyTaskDAO interface {
 
 // MySQLNotifyTaskDAO is a GORM implementation of NotifyTaskDAO
 type MySQLNotifyTaskDAO struct {
-	db *gorm.DB
+	data *data.Data
 }
 
 // NewMySQLNotifyTaskDAO creates a new MySQL notification task DAO
-func NewMySQLNotifyTaskDAO(db *gorm.DB) NotifyTaskDAO {
+func NewMySQLNotifyTaskDAO(data *data.Data) NotifyTaskDAO {
 	return &MySQLNotifyTaskDAO{
-		db: db,
+		data: data,
 	}
 }
 
@@ -28,5 +28,5 @@ func NewMySQLNotifyTaskDAO(db *gorm.DB) NotifyTaskDAO {
 func (r *MySQLNotifyTaskDAO) Insert(ctx context.Context, notifyTask *po.NotifyTask) error {
 	notifyTask.CreateTime = time.Now()
 	notifyTask.UpdateTime = time.Now()
-	return r.db.WithContext(ctx).Create(notifyTask).Error
+	return r.data.DB(ctx).WithContext(ctx).Create(notifyTask).Error
 }

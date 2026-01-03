@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"gorm.io/gorm"
+	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/po"
 )
 
@@ -16,27 +17,27 @@ type GroupBuyActivityDAO interface {
 
 // MySQLGroupBuyActivityDAO is a GORM implementation of GroupBuyActivityDAO
 type MySQLGroupBuyActivityDAO struct {
-	db *gorm.DB
+	data *data.Data
 }
 
 // NewMySQLGroupBuyActivityDAO creates a new MySQL group buy activity DAO
-func NewMySQLGroupBuyActivityDAO(db *gorm.DB) GroupBuyActivityDAO {
+func NewMySQLGroupBuyActivityDAO(data *data.Data) GroupBuyActivityDAO {
 	return &MySQLGroupBuyActivityDAO{
-		db: db,
+		data: data,
 	}
 }
 
 // QueryGroupBuyActivityList returns all group buy activities
 func (r *MySQLGroupBuyActivityDAO) QueryGroupBuyActivityList(ctx context.Context) ([]*po.GroupBuyActivity, error) {
 	var activities []*po.GroupBuyActivity
-	err := r.db.Find(&activities).Error
+	err := r.data.DB(ctx).WithContext(ctx).Find(&activities).Error
 	return activities, err
 }
 
 // FindValidByActivityID finds a group buy activity by activity ID
 func (r *MySQLGroupBuyActivityDAO) FindValidByActivityID(ctx context.Context, activityID int64) (*po.GroupBuyActivity, error) {
 	var activity po.GroupBuyActivity
-	err := r.db.Where("activity_id = ? AND status = ?", activityID, 1).First(&activity).Error
+	err := r.data.DB(ctx).WithContext(ctx).Where("activity_id = ? AND status = ?", activityID, 1).First(&activity).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
@@ -49,7 +50,7 @@ func (r *MySQLGroupBuyActivityDAO) FindValidByActivityID(ctx context.Context, ac
 // FindValidBySourceAndChannel finds the latest valid group buy activity by source and channel
 func (r *MySQLGroupBuyActivityDAO) FindValidBySourceAndChannel(ctx context.Context, source string, channel string) (*po.GroupBuyActivity, error) {
 	var activity po.GroupBuyActivity
-	err := r.db.Where("source = ? AND channel = ?", source, channel).
+	err := r.data.DB(ctx).WithContext(ctx).Where("source = ? AND channel = ?", source, channel).
 		Order("id DESC").
 		Limit(1).
 		First(&activity).Error
@@ -65,7 +66,7 @@ func (r *MySQLGroupBuyActivityDAO) FindValidBySourceAndChannel(ctx context.Conte
 // QueryGroupBuyActivityByActivityId finds a group buy activity by activity ID without considering status
 func (r *MySQLGroupBuyActivityDAO) QueryGroupBuyActivityByActivityId(ctx context.Context, activityID int64) (*po.GroupBuyActivity, error) {
 	var activity po.GroupBuyActivity
-	err := r.db.Where("activity_id = ?", activityID).First(&activity).Error
+	err := r.data.DB(ctx).WithContext(ctx).Where("activity_id = ?", activityID).First(&activity).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil

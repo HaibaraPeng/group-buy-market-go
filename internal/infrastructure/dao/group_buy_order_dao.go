@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"gorm.io/gorm"
+	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/po"
 	"time"
 )
@@ -20,13 +21,13 @@ type GroupBuyOrderDAO interface {
 
 // MySQLGroupBuyOrderDAO is a GORM implementation of GroupBuyOrderDAO
 type MySQLGroupBuyOrderDAO struct {
-	db *gorm.DB
+	data *data.Data
 }
 
 // NewMySQLGroupBuyOrderDAO creates a new MySQL group buy order DAO
-func NewMySQLGroupBuyOrderDAO(db *gorm.DB) GroupBuyOrderDAO {
+func NewMySQLGroupBuyOrderDAO(data *data.Data) GroupBuyOrderDAO {
 	return &MySQLGroupBuyOrderDAO{
-		db: db,
+		data: data,
 	}
 }
 
@@ -35,12 +36,12 @@ func (r *MySQLGroupBuyOrderDAO) Insert(ctx context.Context, groupBuyOrder *po.Gr
 	groupBuyOrder.Status = 0 // 默认状态为0(拼单中)
 	groupBuyOrder.CreateTime = time.Now()
 	groupBuyOrder.UpdateTime = time.Now()
-	return r.db.WithContext(ctx).Create(groupBuyOrder).Error
+	return r.data.DB(ctx).WithContext(ctx).Create(groupBuyOrder).Error
 }
 
 // UpdateAddLockCount increases the lock count for a group buy order
 func (r *MySQLGroupBuyOrderDAO) UpdateAddLockCount(ctx context.Context, teamId string) (int64, error) {
-	result := r.db.WithContext(ctx).Model(&po.GroupBuyOrder{}).
+	result := r.data.DB(ctx).WithContext(ctx).Model(&po.GroupBuyOrder{}).
 		Where("team_id = ? AND lock_count < target_count", teamId).
 		Updates(map[string]interface{}{
 			"lock_count":  gorm.Expr("lock_count + 1"),
@@ -51,7 +52,7 @@ func (r *MySQLGroupBuyOrderDAO) UpdateAddLockCount(ctx context.Context, teamId s
 
 // UpdateSubtractionLockCount decreases the lock count for a group buy order
 func (r *MySQLGroupBuyOrderDAO) UpdateSubtractionLockCount(ctx context.Context, teamId string) (int64, error) {
-	result := r.db.WithContext(ctx).Model(&po.GroupBuyOrder{}).
+	result := r.data.DB(ctx).WithContext(ctx).Model(&po.GroupBuyOrder{}).
 		Where("team_id = ? AND lock_count > 0", teamId).
 		Updates(map[string]interface{}{
 			"lock_count":  gorm.Expr("lock_count - 1"),
@@ -63,7 +64,7 @@ func (r *MySQLGroupBuyOrderDAO) UpdateSubtractionLockCount(ctx context.Context, 
 // QueryGroupBuyProgress queries the progress of a group buy order
 func (r *MySQLGroupBuyOrderDAO) QueryGroupBuyProgress(ctx context.Context, teamId string) (*po.GroupBuyOrder, error) {
 	var groupBuyOrder po.GroupBuyOrder
-	err := r.db.WithContext(ctx).Select("target_count", "complete_count", "lock_count").
+	err := r.data.DB(ctx).WithContext(ctx).Select("target_count", "complete_count", "lock_count").
 		Where("team_id = ?", teamId).
 		First(&groupBuyOrder).Error
 	if err != nil {
@@ -78,7 +79,7 @@ func (r *MySQLGroupBuyOrderDAO) QueryGroupBuyProgress(ctx context.Context, teamI
 // QueryGroupBuyTeamByTeamId queries the team information by teamId
 func (r *MySQLGroupBuyOrderDAO) QueryGroupBuyTeamByTeamId(ctx context.Context, teamId string) (*po.GroupBuyOrder, error) {
 	var groupBuyOrder po.GroupBuyOrder
-	err := r.db.WithContext(ctx).Select("team_id, activity_id, target_count, complete_count, lock_count, status").
+	err := r.data.DB(ctx).WithContext(ctx).Select("team_id, activity_id, target_count, complete_count, lock_count, status").
 		Where("team_id = ?", teamId).
 		First(&groupBuyOrder).Error
 	if err != nil {
@@ -92,7 +93,7 @@ func (r *MySQLGroupBuyOrderDAO) QueryGroupBuyTeamByTeamId(ctx context.Context, t
 
 // UpdateAddCompleteCount increases the complete count for a group buy order
 func (r *MySQLGroupBuyOrderDAO) UpdateAddCompleteCount(ctx context.Context, teamId string) (int64, error) {
-	result := r.db.WithContext(ctx).Model(&po.GroupBuyOrder{}).
+	result := r.data.DB(ctx).WithContext(ctx).Model(&po.GroupBuyOrder{}).
 		Where("team_id = ? AND complete_count < target_count", teamId).
 		Updates(map[string]interface{}{
 			"complete_count": gorm.Expr("complete_count + 1"),
@@ -103,7 +104,7 @@ func (r *MySQLGroupBuyOrderDAO) UpdateAddCompleteCount(ctx context.Context, team
 
 // UpdateOrderStatus2COMPLETE updates the order status to COMPLETE
 func (r *MySQLGroupBuyOrderDAO) UpdateOrderStatus2COMPLETE(ctx context.Context, teamId string) (int64, error) {
-	result := r.db.WithContext(ctx).Model(&po.GroupBuyOrder{}).
+	result := r.data.DB(ctx).WithContext(ctx).Model(&po.GroupBuyOrder{}).
 		Where("team_id = ? AND status = 0", teamId).
 		Updates(map[string]interface{}{
 			"status":      1, // 状态1表示已完成

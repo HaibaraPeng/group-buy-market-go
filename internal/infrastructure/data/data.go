@@ -80,7 +80,7 @@ func (d *Data) InTx(ctx context.Context, fn func(ctx context.Context) error) err
 	})
 }
 
-func (d *Data) DB(ctx context.Context, db *gorm.DB) *gorm.DB {
+func (d *Data) DB(ctx context.Context) *gorm.DB {
 	tx, ok := ctx.Value(contextTxKey{}).(*gorm.DB)
 	if ok {
 		return tx

@@ -2,7 +2,7 @@ package dao
 
 import (
 	"context"
-	"gorm.io/gorm"
+	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/po"
 	"time"
 )
@@ -14,19 +14,19 @@ type CrowdTagsDAO interface {
 
 // MySQLCrowdTagsDAO is a GORM implementation of CrowdTagsDAO
 type MySQLCrowdTagsDAO struct {
-	db *gorm.DB
+	data *data.Data
 }
 
 // NewMySQLCrowdTagsDAO creates a new MySQL crowd tags DAO
-func NewMySQLCrowdTagsDAO(db *gorm.DB) CrowdTagsDAO {
+func NewMySQLCrowdTagsDAO(data *data.Data) CrowdTagsDAO {
 	return &MySQLCrowdTagsDAO{
-		db: db,
+		data: data,
 	}
 }
 
 // UpdateCrowdTagsStatistics updates crowd tags statistics
 func (r *MySQLCrowdTagsDAO) UpdateCrowdTagsStatistics(ctx context.Context, crowdTags *po.CrowdTags) error {
-	return r.db.Model(&po.CrowdTags{}).Where("tag_id = ?", crowdTags.TagId).Updates(map[string]interface{}{
+	return r.data.DB(ctx).WithContext(ctx).Model(&po.CrowdTags{}).Where("tag_id = ?", crowdTags.TagId).Updates(map[string]interface{}{
 		"statistics":  crowdTags.Statistics,
 		"update_time": time.Now(),
 	}).Error

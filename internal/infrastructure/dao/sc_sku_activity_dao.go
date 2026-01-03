@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"gorm.io/gorm"
+	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/po"
 )
 
@@ -13,20 +14,20 @@ type SCSkuActivityDAO interface {
 
 // MySQLSCSkuActivityDAO is a GORM implementation of SCSkuActivityDAO
 type MySQLSCSkuActivityDAO struct {
-	db *gorm.DB
+	data *data.Data
 }
 
 // NewMySQLSCSkuActivityDAO creates a new MySQL sc sku activity DAO
-func NewMySQLSCSkuActivityDAO(db *gorm.DB) SCSkuActivityDAO {
+func NewMySQLSCSkuActivityDAO(data *data.Data) SCSkuActivityDAO {
 	return &MySQLSCSkuActivityDAO{
-		db: db,
+		data: data,
 	}
 }
 
 // QuerySCSkuActivityBySCGoodsId queries sc sku activity by source, channel and goods id
 func (r *MySQLSCSkuActivityDAO) QuerySCSkuActivityBySCGoodsId(ctx context.Context, scSkuActivity *po.SCSkuActivity) (*po.SCSkuActivity, error) {
 	var result po.SCSkuActivity
-	err := r.db.Where("source = ? AND channel = ? AND goods_id = ?", scSkuActivity.Source, scSkuActivity.Channel, scSkuActivity.GoodsId).First(&result).Error
+	err := r.data.DB(ctx).WithContext(ctx).Where("source = ? AND channel = ? AND goods_id = ?", scSkuActivity.Source, scSkuActivity.Channel, scSkuActivity.GoodsId).First(&result).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil

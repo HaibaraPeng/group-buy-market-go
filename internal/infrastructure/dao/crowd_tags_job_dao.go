@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"gorm.io/gorm"
+	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/po"
 )
 
@@ -13,20 +14,20 @@ type CrowdTagsJobDAO interface {
 
 // MySQLCrowdTagsJobDAO is a GORM implementation of CrowdTagsJobDAO
 type MySQLCrowdTagsJobDAO struct {
-	db *gorm.DB
+	data *data.Data
 }
 
 // NewMySQLCrowdTagsJobDAO creates a new MySQL crowd tags job DAO
-func NewMySQLCrowdTagsJobDAO(db *gorm.DB) CrowdTagsJobDAO {
+func NewMySQLCrowdTagsJobDAO(data *data.Data) CrowdTagsJobDAO {
 	return &MySQLCrowdTagsJobDAO{
-		db: db,
+		data: data,
 	}
 }
 
 // QueryCrowdTagsJob queries crowd tags job by condition
 func (r *MySQLCrowdTagsJobDAO) QueryCrowdTagsJob(ctx context.Context, crowdTagsJob *po.CrowdTagsJob) (*po.CrowdTagsJob, error) {
 	var result po.CrowdTagsJob
-	err := r.db.Where(crowdTagsJob).First(&result).Error
+	err := r.data.DB(ctx).WithContext(ctx).Where(crowdTagsJob).First(&result).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
