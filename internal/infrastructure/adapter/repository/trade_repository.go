@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"group-buy-market-go/internal/infrastructure/data"
 	"math/rand"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 )
 
 type TradeRepository struct {
+	data                 data.Data
 	groupBuyOrderDAO     dao.GroupBuyOrderDAO
 	groupBuyOrderListDAO dao.GroupBuyOrderListDAO
 	groupBuyActivityDAO  dao.GroupBuyActivityDAO // 添加活动DAO
@@ -21,12 +23,14 @@ type TradeRepository struct {
 
 // NewTradeRepository creates a new trade repository
 func NewTradeRepository(
+	data data.Data,
 	groupBuyOrderDAO dao.GroupBuyOrderDAO,
 	groupBuyOrderListDAO dao.GroupBuyOrderListDAO,
 	groupBuyActivityDAO dao.GroupBuyActivityDAO,
 	notifyTaskDAO dao.NotifyTaskDAO,
 ) *TradeRepository {
 	return &TradeRepository{
+		data:                 data,
 		groupBuyOrderDAO:     groupBuyOrderDAO,
 		groupBuyOrderListDAO: groupBuyOrderListDAO,
 		groupBuyActivityDAO:  groupBuyActivityDAO,
@@ -230,77 +234,79 @@ func (r *TradeRepository) QueryGroupBuyTeamByTeamId(ctx context.Context, teamId 
 
 // SettlementMarketPayOrder settles market pay order
 func (r *TradeRepository) SettlementMarketPayOrder(ctx context.Context, groupBuyTeamSettlementAggregate *model.GroupBuyTeamSettlementAggregate) error {
-	userEntity := groupBuyTeamSettlementAggregate.UserEntity
-	groupBuyTeamEntity := groupBuyTeamSettlementAggregate.GroupBuyTeamEntity
-	tradePaySuccessEntity := groupBuyTeamSettlementAggregate.TradePaySuccessEntity
+	return r.data.InTx(ctx, func(ctx context.Context) error {
+		userEntity := groupBuyTeamSettlementAggregate.UserEntity
+		groupBuyTeamEntity := groupBuyTeamSettlementAggregate.GroupBuyTeamEntity
+		tradePaySuccessEntity := groupBuyTeamSettlementAggregate.TradePaySuccessEntity
 
-	// 1. Update order list status to complete
-	groupBuyOrderListReq := &po.GroupBuyOrderList{
-		UserId:     userEntity.UserId,
-		OutTradeNo: tradePaySuccessEntity.OutTradeNo,
-	}
-	rowsAffected, err := r.groupBuyOrderListDAO.UpdateOrderStatus2COMPLETE(ctx, groupBuyOrderListReq)
-	if err != nil {
-		return err
-	}
-	if rowsAffected != 1 {
-		return fmt.Errorf("failed to update order status, affected rows: %d", rowsAffected)
-	}
-
-	// 2. Update complete count
-	rowsAffected, err = r.groupBuyOrderDAO.UpdateAddCompleteCount(ctx, groupBuyTeamEntity.TeamId)
-	if err != nil {
-		return err
-	}
-	if rowsAffected != 1 {
-		return fmt.Errorf("failed to update complete count, affected rows: %d", rowsAffected)
-	}
-
-	// 3. Update order status to complete if target is reached
-	if groupBuyTeamEntity.TargetCount-groupBuyTeamEntity.CompleteCount == 1 {
-		rowsAffected, err := r.groupBuyOrderDAO.UpdateOrderStatus2COMPLETE(ctx, groupBuyTeamEntity.TeamId)
+		// 1. Update order list status to complete
+		groupBuyOrderListReq := &po.GroupBuyOrderList{
+			UserId:     userEntity.UserId,
+			OutTradeNo: tradePaySuccessEntity.OutTradeNo,
+		}
+		rowsAffected, err := r.groupBuyOrderListDAO.UpdateOrderStatus2COMPLETE(ctx, groupBuyOrderListReq)
 		if err != nil {
 			return err
 		}
 		if rowsAffected != 1 {
-			return fmt.Errorf("failed to update order status to complete, affected rows: %d", rowsAffected)
+			return fmt.Errorf("failed to update order status, affected rows: %d", rowsAffected)
 		}
 
-		// Query completed order transaction numbers by team ID
-		outTradeNoList, err := r.groupBuyOrderListDAO.QueryGroupBuyCompleteOrderOutTradeNoListByTeamId(ctx, groupBuyTeamEntity.TeamId)
+		// 2. Update complete count
+		rowsAffected, err = r.groupBuyOrderDAO.UpdateAddCompleteCount(ctx, groupBuyTeamEntity.TeamId)
 		if err != nil {
 			return err
 		}
-
-		// Create notify task when group buy is completed
-		notifyTask := &po.NotifyTask{
-			ActivityId:    groupBuyTeamEntity.ActivityId,
-			TeamId:        groupBuyTeamEntity.TeamId,
-			NotifyUrl:     "暂无", // Placeholder for notify URL
-			NotifyCount:   0,
-			NotifyStatus:  0,
-			ParameterJson: "",
+		if rowsAffected != 1 {
+			return fmt.Errorf("failed to update complete count, affected rows: %d", rowsAffected)
 		}
 
-		// Prepare parameter JSON
-		params := map[string]interface{}{
-			"teamId":         groupBuyTeamEntity.TeamId,
-			"outTradeNoList": outTradeNoList,
-		}
-		jsonBytes, err := json.Marshal(params)
-		if err != nil {
-			return err
-		}
-		notifyTask.ParameterJson = string(jsonBytes)
+		// 3. Update order status to complete if target is reached
+		if groupBuyTeamEntity.TargetCount-groupBuyTeamEntity.CompleteCount == 1 {
+			rowsAffected, err := r.groupBuyOrderDAO.UpdateOrderStatus2COMPLETE(ctx, groupBuyTeamEntity.TeamId)
+			if err != nil {
+				return err
+			}
+			if rowsAffected != 1 {
+				return fmt.Errorf("failed to update order status to complete, affected rows: %d", rowsAffected)
+			}
 
-		// Insert notify task
-		err = r.notifyTaskDAO.Insert(ctx, notifyTask)
-		if err != nil {
-			return err
-		}
-	}
+			// Query completed order transaction numbers by team ID
+			outTradeNoList, err := r.groupBuyOrderListDAO.QueryGroupBuyCompleteOrderOutTradeNoListByTeamId(ctx, groupBuyTeamEntity.TeamId)
+			if err != nil {
+				return err
+			}
 
-	return nil
+			// Create notify task when group buy is completed
+			notifyTask := &po.NotifyTask{
+				ActivityId:    groupBuyTeamEntity.ActivityId,
+				TeamId:        groupBuyTeamEntity.TeamId,
+				NotifyUrl:     "暂无", // Placeholder for notify URL
+				NotifyCount:   0,
+				NotifyStatus:  0,
+				ParameterJson: "",
+			}
+
+			// Prepare parameter JSON
+			params := map[string]interface{}{
+				"teamId":         groupBuyTeamEntity.TeamId,
+				"outTradeNoList": outTradeNoList,
+			}
+			jsonBytes, err := json.Marshal(params)
+			if err != nil {
+				return err
+			}
+			notifyTask.ParameterJson = string(jsonBytes)
+
+			// Insert notify task
+			err = r.notifyTaskDAO.Insert(ctx, notifyTask)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }
 
 // generateRandomNumericString generates a random numeric string of specified length
