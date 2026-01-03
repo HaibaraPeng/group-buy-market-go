@@ -12,6 +12,7 @@ import (
 	"group-buy-market-go/internal/domain/trade/model"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/dao"
+	"group-buy-market-go/internal/infrastructure/dcc"
 )
 
 // setupTestDB 设置测试数据库
@@ -36,6 +37,8 @@ func createTestRepository(db *gorm.DB) *repository.TradeRepository {
 	groupBuyOrderListDAO := dao.NewMySQLGroupBuyOrderListDAO(d)
 	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(d)
 	notifyTaskDAO := dao.NewMySQLNotifyTaskDAO(d)
+	// 创建DCC服务实例
+	dccService := dcc.NewDCC(d)
 
 	return repository.NewTradeRepository(
 		d,
@@ -43,6 +46,7 @@ func createTestRepository(db *gorm.DB) *repository.TradeRepository {
 		groupBuyOrderListDAO,
 		groupBuyActivityDAO,
 		notifyTaskDAO,
+		dccService,
 	)
 }
 
