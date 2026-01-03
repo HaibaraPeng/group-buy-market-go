@@ -27,7 +27,11 @@ import (
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
 	db := data.NewDB(confData, logger)
-	dataData := data.NewData(db)
+	client, cleanup, err := data.NewRedisClient(confData, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	dataData := data.NewData(db, client)
 	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(dataData)
 	groupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(dataData)
 	skuDAO := dao.NewMySQLSkuDAO(dataData)
@@ -63,5 +67,6 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	httpServer := server.NewHTTPServer(confServer, activityService, tagService, dccService, tradeService, logger)
 	app := newApp(logger, httpServer)
 	return app, func() {
+		cleanup()
 	}, nil
 }

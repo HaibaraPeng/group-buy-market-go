@@ -225,12 +225,14 @@ func (r *TradeRepository) QueryGroupBuyTeamByTeamId(ctx context.Context, teamId 
 	}
 
 	entity := &model.GroupBuyTeamEntity{
-		TeamId:        groupBuyOrder.TeamId,
-		ActivityId:    groupBuyOrder.ActivityId,
-		TargetCount:   groupBuyOrder.TargetCount,
-		CompleteCount: groupBuyOrder.CompleteCount,
-		LockCount:     groupBuyOrder.LockCount,
-		Status:        model.GroupBuyOrderEnumVOValueOf(groupBuyOrder.Status),
+		TeamId:         groupBuyOrder.TeamId,
+		ActivityId:     groupBuyOrder.ActivityId,
+		TargetCount:    groupBuyOrder.TargetCount,
+		CompleteCount:  groupBuyOrder.CompleteCount,
+		LockCount:      groupBuyOrder.LockCount,
+		Status:         model.GroupBuyOrderEnumVOValueOf(groupBuyOrder.Status),
+		ValidStartTime: groupBuyOrder.ValidStartTime,
+		ValidEndTime:   groupBuyOrder.ValidEndTime,
 	}
 
 	return entity, nil

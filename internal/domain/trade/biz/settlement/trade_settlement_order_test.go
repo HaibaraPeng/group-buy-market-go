@@ -4,8 +4,10 @@ import (
 	"context"
 	"group-buy-market-go/internal/infrastructure/data"
 	"testing"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis/v8"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -32,8 +34,13 @@ func createTestRepository(db *gorm.DB) *repository.TradeRepository {
 		return nil
 	}
 
+	// 创建一个模拟的Redis客户端用于测试
+	rdb := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379", // 测试环境地址，实际测试时可能需要根据环境调整
+	})
+
 	// 创建必要的DAO实例
-	d := data.NewData(db)
+	d := data.NewData(db, rdb)
 	groupBuyOrderDAO := dao.NewMySQLGroupBuyOrderDAO(d)
 	groupBuyOrderListDAO := dao.NewMySQLGroupBuyOrderListDAO(d)
 	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(d)
@@ -83,10 +90,11 @@ func TestTradeSettlementOrderService_SettlementMarketPayOrder_Integration(t *tes
 	service := NewTradeSettlementOrderService(logger, testRepo, filterFactory)
 
 	tradePaySuccessEntity := &model.TradePaySuccessEntity{
-		Source:     "s01",
-		Channel:    "c01",
-		UserId:     "xfg04",
-		OutTradeNo: "451517755304",
+		Source:       "s01",
+		Channel:      "c01",
+		UserId:       "xfg04",
+		OutTradeNo:   "075605651839",
+		OutTradeTime: time.Now(),
 	}
 
 	_, err := service.SettlementMarketPayOrder(context.Background(), tradePaySuccessEntity)

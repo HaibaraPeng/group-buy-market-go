@@ -64,9 +64,10 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 }
 
 // NewData .
-func NewData(db *gorm.DB) *Data {
+func NewData(db *gorm.DB, rdb *redis.Client) *Data {
 	d := &Data{
-		db: db,
+		db:  db,
+		rdb: rdb,
 	}
 	return d
 }
