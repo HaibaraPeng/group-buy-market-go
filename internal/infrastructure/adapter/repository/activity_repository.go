@@ -2,10 +2,10 @@ package repository
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
 	"group-buy-market-go/internal/common/utils"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/infrastructure/dao"
+	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/dcc" // 添加dcc包
 	"group-buy-market-go/internal/infrastructure/po"
 )
@@ -15,19 +15,19 @@ type ActivityRepository struct {
 	groupBuyDiscountDAO dao.GroupBuyDiscountDAO
 	skuDAO              dao.SkuDAO
 	scSkuActivityDAO    dao.SCSkuActivityDAO
-	redisClient         *redis.Client
+	data                *data.Data
 	dcc                 *dcc.DCC // 添加DCC
 }
 
 // NewActivityRepository creates a new activity repository
 func NewActivityRepository(groupBuyActivityDAO dao.GroupBuyActivityDAO, groupBuyDiscountDAO dao.GroupBuyDiscountDAO,
-	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO, redisClient *redis.Client, dcc *dcc.DCC) *ActivityRepository { // 添加dcc参数
+	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO, data *data.Data, dcc *dcc.DCC) *ActivityRepository { // 添加dcc参数
 	return &ActivityRepository{
 		groupBuyActivityDAO: groupBuyActivityDAO,
 		groupBuyDiscountDAO: groupBuyDiscountDAO,
 		skuDAO:              skuDAO,
 		scSkuActivityDAO:    scSkuActivityDAO,
-		redisClient:         redisClient,
+		data:                data,
 		dcc:                 dcc, // 初始化DCC服务
 	}
 }
@@ -89,9 +89,9 @@ func (r *ActivityRepository) QueryGroupBuyActivityDiscountVO(ctx context.Context
 }
 
 // QuerySkuByGoodsId queries sku by goods id
-func (r *ActivityRepository) QuerySkuByGoodsId(goodsId string) (*model.SkuVO, error) {
+func (r *ActivityRepository) QuerySkuByGoodsId(ctx context.Context, goodsId string) (*model.SkuVO, error) {
 	// Query sku by goods id
-	sku, err := r.skuDAO.FindByGoodsId(goodsId)
+	sku, err := r.skuDAO.FindByGoodsId(ctx, goodsId)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +145,7 @@ func (r *ActivityRepository) QuerySCSkuActivityBySCGoodsId(ctx context.Context, 
 // IsTagCrowdRange checks if user is in the tag crowd range
 func (r *ActivityRepository) IsTagCrowdRange(ctx context.Context, tagId string, userId string) (bool, error) {
 	// Check if bitset exists for tagId
-	exists, err := r.redisClient.Exists(ctx, tagId).Result()
+	exists, err := r.data.Rdb(ctx).Exists(ctx, tagId).Result()
 	if err != nil {
 		return false, err
 	}
@@ -160,7 +160,7 @@ func (r *ActivityRepository) IsTagCrowdRange(ctx context.Context, tagId string, 
 	userIndex := utils.GetIndexFromUserId(userId)
 
 	// Get bit value at user index
-	bitValue, err := r.redisClient.GetBit(ctx, tagId, userIndex).Result()
+	bitValue, err := r.data.Rdb(ctx).GetBit(ctx, tagId, userIndex).Result()
 	if err != nil {
 		return false, err
 	}

@@ -87,3 +87,7 @@ func (d *Data) DB(ctx context.Context) *gorm.DB {
 	}
 	return d.db
 }
+
+func (d *Data) Rdb(ctx context.Context) *redis.Client {
+	return d.rdb
+}
