@@ -112,6 +112,8 @@ type TradePaySuccessEntity struct {
 	UserId string `json:"userId"`
 	// 外部交易号
 	OutTradeNo string `json:"outTradeNo"`
+	// 外部交易时间
+	OutTradeTime time.Time `json:"outTradeTime"`
 }
 
 // GroupBuyTeamSettlementAggregate 拼团团队结算聚合根
