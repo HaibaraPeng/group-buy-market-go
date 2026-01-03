@@ -126,3 +126,37 @@ type TradePaySettlementEntity struct {
 	ActivityId int64  `json:"activityId"`
 	OutTradeNo string `json:"outTradeNo"`
 }
+
+// TradeSettlementRuleCommandEntity 拼团交易结算规则命令
+type TradeSettlementRuleCommandEntity struct {
+	// 渠道
+	Source string `json:"source"`
+	// 来源
+	Channel string `json:"channel"`
+	// 用户ID
+	UserId string `json:"userId"`
+	// 外部交易单号
+	OutTradeNo string `json:"outTradeNo"`
+	// 外部交易时间
+	OutTradeTime time.Time `json:"outTradeTime"`
+}
+
+// TradeSettlementRuleFilterBackEntity 拼团交易结算规则反馈
+type TradeSettlementRuleFilterBackEntity struct {
+	// 拼单组队ID
+	TeamId string `json:"teamId"`
+	// 活动ID
+	ActivityId int64 `json:"activityId"`
+	// 目标数量
+	TargetCount int `json:"targetCount"`
+	// 完成数量
+	CompleteCount int `json:"completeCount"`
+	// 锁单数量
+	LockCount int `json:"lockCount"`
+	// 状态（0-拼单中、1-完成、2-失败）
+	Status GroupBuyOrderEnumVO `json:"status"`
+	// 拼团开始时间 - 参与拼团时间
+	ValidStartTime time.Time `json:"validStartTime"`
+	// 拼团结束时间 - 拼团有效时长
+	ValidEndTime time.Time `json:"validEndTime"`
+}
