@@ -2,6 +2,7 @@ package settlement
 
 import (
 	"context"
+	"group-buy-market-go/internal/infrastructure/data"
 	"testing"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -15,7 +16,7 @@ import (
 
 // setupTestDB 设置测试数据库
 func setupTestDB() *gorm.DB {
-	db, err := gorm.Open(mysql.Open("root:root@tcp(127.0.0.1:3306)/group_buy_market?charset=utf8mb4&parseTime=True&loc=Local"), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open("root:root@tcp(127.0.0.1:3406)/group_buy_market?charset=utf8mb4&parseTime=True&loc=Local"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect to test database")
 	}
@@ -30,12 +31,14 @@ func createTestRepository(db *gorm.DB) *repository.TradeRepository {
 	}
 
 	// 创建必要的DAO实例
-	groupBuyOrderDAO := dao.NewMySQLGroupBuyOrderDAO(db)
-	groupBuyOrderListDAO := dao.NewMySQLGroupBuyOrderListDAO(db)
-	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(db)
-	notifyTaskDAO := dao.NewMySQLNotifyTaskDAO(db)
+	d := data.NewData(db)
+	groupBuyOrderDAO := dao.NewMySQLGroupBuyOrderDAO(d)
+	groupBuyOrderListDAO := dao.NewMySQLGroupBuyOrderListDAO(d)
+	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(d)
+	notifyTaskDAO := dao.NewMySQLNotifyTaskDAO(d)
 
 	return repository.NewTradeRepository(
+		d,
 		groupBuyOrderDAO,
 		groupBuyOrderListDAO,
 		groupBuyActivityDAO,
