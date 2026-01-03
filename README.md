@@ -110,7 +110,7 @@ Various discount calculation algorithms:
 The project implements responsibility chain pattern filters for trade rule validation:
 - **ActivityUsabilityRuleFilter**: Validates activity availability (status and time range)
 - **UserTakeLimitRuleFilter**: Checks user participation limits
-- **TradeRuleFilterFactory**: Assembles the filter chain
+- **TradeLockRuleFilterFactory**: Assembles the filter chain
 
 ## Getting Started
 

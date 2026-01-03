@@ -11,17 +11,17 @@ import (
 
 // TradeLockOrder 交易订单用例
 type TradeLockOrder struct {
-	repo                   *repository.TradeRepository
-	tradeRuleFilterFactory *filter.TradeRuleFilterFactory
-	log                    *log.Helper
+	repo                       *repository.TradeRepository
+	tradeLockRuleFilterFactory *filter.TradeLockRuleFilterFactory
+	log                        *log.Helper
 }
 
 // NewTradeLockOrder 创建交易订单用例实例
-func NewTradeLockOrder(repo *repository.TradeRepository, tradeRuleFilterFactory *filter.TradeRuleFilterFactory, logger log.Logger) *TradeLockOrder {
+func NewTradeLockOrder(repo *repository.TradeRepository, tradeLockRuleFilterFactory *filter.TradeLockRuleFilterFactory, logger log.Logger) *TradeLockOrder {
 	return &TradeLockOrder{
-		repo:                   repo,
-		tradeRuleFilterFactory: tradeRuleFilterFactory,
-		log:                    log.NewHelper(logger),
+		repo:                       repo,
+		tradeLockRuleFilterFactory: tradeLockRuleFilterFactory,
+		log:                        log.NewHelper(logger),
 	}
 }
 
@@ -42,7 +42,7 @@ func (uc *TradeLockOrder) LockMarketPayOrder(ctx context.Context, userEntity *mo
 	uc.log.Infof("拼团交易-锁定营销优惠支付订单:%s activityId:%d goodsId:%s", userEntity.UserId, payActivityEntity.ActivityId, payDiscountEntity.GoodsId)
 
 	// 交易规则过滤
-	tradeRuleFilterBackEntity, err := uc.tradeRuleFilterFactory.Execute(ctx,
+	tradeRuleFilterBackEntity, err := uc.tradeLockRuleFilterFactory.Execute(ctx,
 		&model.TradeRuleCommandEntity{
 			ActivityId: payActivityEntity.ActivityId,
 			UserId:     userEntity.UserId,

@@ -13,5 +13,5 @@ var ProviderSet = wire.NewSet(
 	settlement.NewTradeSettlementOrderService,
 	filter.NewActivityUsabilityRuleFilter,
 	filter.NewUserTakeLimitRuleFilter,
-	filter.NewTradeRuleFilterFactory,
+	filter.NewTradeLockRuleFilterFactory,
 )
