@@ -107,10 +107,25 @@ Various discount calculation algorithms:
 - **NCalculateService**: N yuan purchase calculation
 
 ### Responsibility Chain Pattern Filters
-The project implements responsibility chain pattern filters for trade rule validation:
-- **ActivityUsabilityRuleFilter**: Validates activity availability (status and time range)
-- **UserTakeLimitRuleFilter**: Checks user participation limits
-- **TradeLockRuleFilterFactory**: Assembles the filter chain
+The project implements responsibility chain pattern filters for trade rule validation in the trade settlement domain:
+- **SCRuleFilter**: Validates channel blacklist using DCC configuration
+- **SettableRuleFilter**: Validates transaction time against group buy valid time range
+- **OutTradeNoRuleFilter**: Validates external trade number existence
+- **EndRuleFilter**: Finalizes the settlement process and returns results
+- **TradeSettlementRuleFilterFactory**: Assembles the filter chain for trade settlement validation
+
+### Dynamic Configuration Center (DCC)
+The project includes a Dynamic Configuration Center for runtime configuration management:
+- **DCC Service**: Provides configuration retrieval and update capabilities
+- **Channel Blacklist Configuration**: Allows dynamic management of blocked source-channel combinations
+- **Runtime Configuration**: Enables configuration changes without application restart
+
+### Error Code Management
+Comprehensive error code system with business-specific error codes for different domains:
+- **System-level errors**: SUCCESS, UN_ERROR, ILLEGAL_PARAMETER, INDEX_EXCEPTION, UPDATE_ZERO
+- **Business-level errors**: E0001-E0007 for general business operations
+- **Activity-related errors**: E0101-E0106 for activity and settlement operations
+- **Consistent error handling**: Standardized error codes across Java and Go implementations
 
 ## Getting Started
 
