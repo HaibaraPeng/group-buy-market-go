@@ -1,3 +1,4 @@
+README.md
 # Group Buy Market (Go)
 
 A distributed group buying marketplace built with Go, following Domain-Driven Design (DDD) principles and Clean Architecture.
@@ -23,6 +24,7 @@ This project follows a DDD-based layered architecture:
 │   ├── common/            # Common utilities and constants
 │   │   ├── consts/        # Constants
 │   │   └── utils/         # Utility functions
+│   │   └── exception/     # Exception handling utilities
 │   ├── conf/              # Configuration protobuf definitions
 │   ├── domain/            # Domain layer (entities, value objects, aggregates, domain services)
 │   │   ├── activity/      # Activity domain
@@ -45,6 +47,7 @@ This project follows a DDD-based layered architecture:
 │   │   ├── cache/         # Cache implementations
 │   │   ├── dao/           # Data Access Objects
 │   │   ├── dcc/           # Dynamic configuration client
+│   │   ├── data/          # Data layer with database and redis clients
 │   │   └── po/            # Persistent Objects (data models)
 │   ├── server/            # Server initialization
 │   └── service/           # Service layer (application services)
@@ -78,6 +81,7 @@ Contains technology-specific implementations:
 - External service clients
 - Repository implementations
 - Cache implementations (Redis)
+- Data layer with database and Redis clients (Data struct)
 
 ### 4. Interfaces Layer (`internal/server`)
 Contains adapters that convert external requests into internal formats:
