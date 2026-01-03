@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"group-buy-market-go/internal/domain/trade/biz/settlement/filter"
 	"group-buy-market-go/internal/domain/trade/model"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/dao"
@@ -65,7 +66,21 @@ func TestTradeSettlementOrderService_SettlementMarketPayOrder_Integration(t *tes
 
 	// 创建服务
 	logger := log.DefaultLogger
-	service := NewTradeSettlementOrderService(logger, testRepo)
+
+	// 创建所有必要的过滤器实例
+	scRuleFilter := filter.NewSCRuleFilter(logger, testRepo)
+	outTradeNoRuleFilter := filter.NewOutTradeNoRuleFilter(logger, testRepo)
+	settableRuleFilter := filter.NewSettableRuleFilter(logger, testRepo)
+	endRuleFilter := filter.NewEndRuleFilter(logger)
+
+	// 创建真实的过滤器工厂
+	filterFactory := filter.NewTradeSettlementRuleFilterFactory(
+		scRuleFilter,
+		outTradeNoRuleFilter,
+		settableRuleFilter,
+		endRuleFilter,
+	)
+	service := NewTradeSettlementOrderService(logger, testRepo, filterFactory)
 
 	tradePaySuccessEntity := &model.TradePaySuccessEntity{
 		Source:     "s01",
