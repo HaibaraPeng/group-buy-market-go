@@ -14,16 +14,19 @@ type DynamicContext struct {
 
 // TradeSettlementRuleFilterFactory 交易结算规则过滤工厂
 type TradeSettlementRuleFilterFactory struct {
+	scRuleFilter         *SCRuleFilter
 	outTradeNoRuleFilter *OutTradeNoRuleFilter
 	endRuleFilter        *EndRuleFilter
 }
 
 // NewTradeSettlementRuleFilterFactory 创建交易结算规则过滤工厂
 func NewTradeSettlementRuleFilterFactory(
+	scRuleFilter *SCRuleFilter,
 	outTradeNoRuleFilter *OutTradeNoRuleFilter,
 	endRuleFilter *EndRuleFilter,
 ) *TradeSettlementRuleFilterFactory {
 	return &TradeSettlementRuleFilterFactory{
+		scRuleFilter:         scRuleFilter,
 		outTradeNoRuleFilter: outTradeNoRuleFilter,
 		endRuleFilter:        endRuleFilter,
 	}
@@ -34,6 +37,7 @@ func (f *TradeSettlementRuleFilterFactory) TradeRuleFilter() *model2.BusinessLin
 	// 组装链
 	linkArmory := model2.NewLinkArmory(
 		"交易结算规则过滤链",
+		model2.ILogicHandler[*model.TradeSettlementRuleCommandEntity, *DynamicContext, *model.TradeSettlementRuleFilterBackEntity](f.scRuleFilter),
 		model2.ILogicHandler[*model.TradeSettlementRuleCommandEntity, *DynamicContext, *model.TradeSettlementRuleFilterBackEntity](f.outTradeNoRuleFilter),
 		model2.ILogicHandler[*model.TradeSettlementRuleCommandEntity, *DynamicContext, *model.TradeSettlementRuleFilterBackEntity](f.endRuleFilter),
 	)
