@@ -30,6 +30,10 @@ type GroupBuyOrder struct {
 	LockCount int `json:"lock_count" gorm:"column:lock_count"`
 	// Status (0-pending, 1-completed, 2-failed)
 	Status int `json:"status" gorm:"column:status"`
+	// Valid start time for group buying
+	ValidStartTime time.Time `json:"valid_start_time" gorm:"column:valid_start_time"`
+	// Valid end time for group buying
+	ValidEndTime time.Time `json:"valid_end_time" gorm:"column:valid_end_time"`
 	// Creation time
 	CreateTime time.Time `json:"create_time" gorm:"column:create_time;default:CURRENT_TIMESTAMP"`
 	// Update time
