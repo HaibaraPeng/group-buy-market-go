@@ -32,12 +32,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	groupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(dataData)
 	skuDAO := dao.NewMySQLSkuDAO(dataData)
 	scSkuActivityDAO := dao.NewMySQLSCSkuActivityDAO(dataData)
-	client, cleanup, err := data.NewRedisClient(confData, logger)
-	if err != nil {
-		return nil, nil, err
-	}
-	dccDCC := dcc.NewDCC(client)
-	activityRepository := repository.NewActivityRepository(groupBuyActivityDAO, groupBuyDiscountDAO, skuDAO, scSkuActivityDAO, client, dccDCC)
+	dccDCC := dcc.NewDCC(dataData)
+	activityRepository := repository.NewActivityRepository(groupBuyActivityDAO, groupBuyDiscountDAO, skuDAO, scSkuActivityDAO, dataData, dccDCC)
 	endNode := node.NewEndNode(logger)
 	tagNode := node.NewTagNode(activityRepository, endNode, logger)
 	errorNode := node.NewErrorNode(logger)
@@ -52,13 +48,13 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	crowdTagsDAO := dao.NewMySQLCrowdTagsDAO(dataData)
 	crowdTagsDetailDAO := dao.NewMySQLCrowdTagsDetailDAO(dataData)
 	crowdTagsJobDAO := dao.NewMySQLCrowdTagsJobDAO(dataData)
-	tagRepository := repository.NewTagRepository(logger, crowdTagsDAO, crowdTagsDetailDAO, crowdTagsJobDAO, client)
+	tagRepository := repository.NewTagRepository(logger, crowdTagsDAO, crowdTagsDetailDAO, crowdTagsJobDAO, dataData)
 	tagService := service.NewTagService(logger, tagRepository)
 	dccService := service.NewDccService(logger, dccDCC)
 	groupBuyOrderDAO := dao.NewMySQLGroupBuyOrderDAO(dataData)
 	groupBuyOrderListDAO := dao.NewMySQLGroupBuyOrderListDAO(dataData)
 	notifyTaskDAO := dao.NewMySQLNotifyTaskDAO(dataData)
-	tradeRepository := repository.NewTradeRepository(dataData, groupBuyOrderDAO, groupBuyOrderListDAO, groupBuyActivityDAO, notifyTaskDAO)
+	tradeRepository := repository.NewTradeRepository(dataData, groupBuyOrderDAO, groupBuyOrderListDAO, groupBuyActivityDAO, notifyTaskDAO, dccDCC)
 	activityUsabilityRuleFilter := filter.NewActivityUsabilityRuleFilter(logger, tradeRepository)
 	userTakeLimitRuleFilter := filter.NewUserTakeLimitRuleFilter(logger, tradeRepository)
 	tradeLockRuleFilterFactory := filter.NewTradeLockRuleFilterFactory(activityUsabilityRuleFilter, userTakeLimitRuleFilter)
@@ -67,6 +63,5 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	httpServer := server.NewHTTPServer(confServer, activityService, tagService, dccService, tradeService, logger)
 	app := newApp(logger, httpServer)
 	return app, func() {
-		cleanup()
 	}, nil
 }
