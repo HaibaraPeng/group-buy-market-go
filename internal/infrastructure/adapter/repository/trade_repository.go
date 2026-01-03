@@ -10,6 +10,7 @@ import (
 
 	"group-buy-market-go/internal/domain/trade/model"
 	"group-buy-market-go/internal/infrastructure/dao"
+	"group-buy-market-go/internal/infrastructure/dcc"
 	"group-buy-market-go/internal/infrastructure/po"
 )
 
@@ -19,6 +20,7 @@ type TradeRepository struct {
 	groupBuyOrderListDAO dao.GroupBuyOrderListDAO
 	groupBuyActivityDAO  dao.GroupBuyActivityDAO // 添加活动DAO
 	notifyTaskDAO        dao.NotifyTaskDAO       // 添加通知任务DAO
+	dcc                  *dcc.DCC                // 添加DCC服务
 }
 
 // NewTradeRepository creates a new trade repository
@@ -28,6 +30,7 @@ func NewTradeRepository(
 	groupBuyOrderListDAO dao.GroupBuyOrderListDAO,
 	groupBuyActivityDAO dao.GroupBuyActivityDAO,
 	notifyTaskDAO dao.NotifyTaskDAO,
+	dcc *dcc.DCC, // 添加DCC服务
 ) *TradeRepository {
 	return &TradeRepository{
 		data:                 data,
@@ -35,6 +38,7 @@ func NewTradeRepository(
 		groupBuyOrderListDAO: groupBuyOrderListDAO,
 		groupBuyActivityDAO:  groupBuyActivityDAO,
 		notifyTaskDAO:        notifyTaskDAO,
+		dcc:                  dcc, // 初始化DCC服务
 	}
 }
 
@@ -318,4 +322,9 @@ func generateRandomNumericString(length int) string {
 		b[i] = charset[rand.Intn(len(charset))]
 	}
 	return string(b)
+}
+
+// IsSCBlackIntercept 判断黑名单拦截渠道，true 拦截、false 放行
+func (r *TradeRepository) IsSCBlackIntercept(source, channel string) bool {
+	return r.dcc.IsSCBlackIntercept(source, channel)
 }

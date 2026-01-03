@@ -3,18 +3,18 @@ package dcc
 import (
 	"context"
 	"fmt"
+	"group-buy-market-go/internal/infrastructure/data"
 	"hash/fnv"
 	"strconv"
 	"strings"
 
-	"github.com/go-redis/redis/v8"
 	"group-buy-market-go/internal/common/consts"
 )
 
 // DCC 动态配置中心服务
 type DCC struct {
-	redisClient *redis.Client
-	configMap   map[string]*ConfigValue
+	data      *data.Data
+	configMap map[string]*ConfigValue
 }
 
 // ConfigValue 配置值包装器
@@ -24,10 +24,10 @@ type ConfigValue struct {
 }
 
 // NewDCC 创建DCC服务实例
-func NewDCC(redisClient *redis.Client) *DCC {
+func NewDCC(data *data.Data) *DCC {
 	dcc := &DCC{
-		redisClient: redisClient,
-		configMap:   make(map[string]*ConfigValue),
+		data:      data,
+		configMap: make(map[string]*ConfigValue),
 	}
 
 	// 初始化默认配置
@@ -43,6 +43,7 @@ func NewDCC(redisClient *redis.Client) *DCC {
 func (d *DCC) initDefaultConfigs() {
 	d.initConfigValue("downgradeSwitch", "0")
 	d.initConfigValue("cutRange", "100")
+	d.initConfigValue("scBlacklist", "s02c02")
 }
 
 // initConfigValue 初始化配置值
@@ -50,7 +51,7 @@ func (d *DCC) initConfigValue(key, defaultValue string) {
 	configKey := "group_buy_market_dcc_" + key
 	// 检查Redis中是否存在该键值
 	ctx := context.Background()
-	value, err := d.redisClient.Get(ctx, configKey).Result()
+	value, err := d.data.Rdb(ctx).Get(ctx, configKey).Result()
 	if err != nil || value == "" {
 		// 如果检查出现错误或者不存在该键，设置为默认值，使用默认值
 		d.configMap[key] = &ConfigValue{
@@ -60,7 +61,7 @@ func (d *DCC) initConfigValue(key, defaultValue string) {
 		return
 	} else {
 		// 如果Redis中存在该键，获取其值
-		value, err = d.redisClient.Get(ctx, configKey).Result()
+		value, err = d.data.Rdb(ctx).Get(ctx, configKey).Result()
 		if err != nil {
 			value = defaultValue
 		}
@@ -74,7 +75,7 @@ func (d *DCC) initConfigValue(key, defaultValue string) {
 
 // listenForConfigChanges 监听配置变化
 func (d *DCC) listenForConfigChanges(ctx context.Context) {
-	pubsub := d.redisClient.Subscribe(ctx, "group_buy_market_dcc")
+	pubsub := d.data.Rdb(ctx).Subscribe(ctx, "group_buy_market_dcc")
 	defer pubsub.Close()
 
 	ch := pubsub.Channel()
@@ -96,7 +97,7 @@ func (d *DCC) handleConfigChange(payload string) {
 
 	// 更新Redis中的值
 	ctx := context.Background()
-	d.redisClient.Set(ctx, configKey, value, 0)
+	d.data.Rdb(ctx).Set(ctx, configKey, value, 0)
 
 	// 更新内存中的值
 	if config, exists := d.configMap[attribute]; exists {
@@ -107,7 +108,7 @@ func (d *DCC) handleConfigChange(payload string) {
 // PublishConfigChange 发布配置变更消息
 func (d *DCC) PublishConfigChange(ctx context.Context, key, value string) error {
 	message := key + consts.SPLIT + value
-	return d.redisClient.Publish(ctx, "group_buy_market_dcc", message).Err()
+	return d.data.Rdb(ctx).Publish(ctx, "group_buy_market_dcc", message).Err()
 }
 
 // GetValue 获取配置值
@@ -146,4 +147,18 @@ func (d *DCC) IsCutRange(userId string) (bool, error) {
 
 	// 判断是否在切量范围内
 	return lastTwoDigits <= cutRange, nil
+}
+
+// IsSCBlackIntercept 判断黑名单拦截渠道，true 拦截、false 放行
+func (d *DCC) IsSCBlackIntercept(source, channel string) bool {
+	scBlacklist := d.GetValue("scBlacklist")
+	list := strings.Split(scBlacklist, consts.SPLIT)
+
+	for _, item := range list {
+		if item == source+channel {
+			return true
+		}
+	}
+
+	return false
 }
