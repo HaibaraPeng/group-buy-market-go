@@ -30,11 +30,11 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 }
 
 // NewData .
-func NewData(db *gorm.DB) (*Data, error) {
+func NewData(db *gorm.DB) *Data {
 	d := &Data{
 		db: db,
 	}
-	return d, nil
+	return d
 }
 
 type contextTxKey struct{}

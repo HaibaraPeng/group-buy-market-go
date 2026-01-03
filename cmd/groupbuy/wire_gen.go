@@ -17,6 +17,7 @@ import (
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/cache"
 	"group-buy-market-go/internal/infrastructure/dao"
+	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/dcc"
 	"group-buy-market-go/internal/server"
 	"group-buy-market-go/internal/service"
@@ -25,13 +26,13 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	db := dao.NewDB(data, logger)
+func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
+	db := data.NewDB(confData, logger)
 	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(db)
 	groupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(db)
 	skuDAO := dao.NewMySQLSkuDAO(db)
 	scSkuActivityDAO := dao.NewMySQLSCSkuActivityDAO(db)
-	client, cleanup, err := cache.NewRedisClient(data, logger)
+	client, cleanup, err := cache.NewRedisClient(confData, logger)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -54,10 +55,11 @@ func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*krat
 	tagRepository := repository.NewTagRepository(logger, crowdTagsDAO, crowdTagsDetailDAO, crowdTagsJobDAO, client)
 	tagService := service.NewTagService(logger, tagRepository)
 	dccService := service.NewDccService(logger, dccDCC)
+	dataData := data.NewData(db)
 	groupBuyOrderDAO := dao.NewMySQLGroupBuyOrderDAO(db)
 	groupBuyOrderListDAO := dao.NewMySQLGroupBuyOrderListDAO(db)
 	notifyTaskDAO := dao.NewMySQLNotifyTaskDAO(db)
-	tradeRepository := repository.NewTradeRepository(groupBuyOrderDAO, groupBuyOrderListDAO, groupBuyActivityDAO, notifyTaskDAO)
+	tradeRepository := repository.NewTradeRepository(dataData, groupBuyOrderDAO, groupBuyOrderListDAO, groupBuyActivityDAO, notifyTaskDAO)
 	activityUsabilityRuleFilter := filter.NewActivityUsabilityRuleFilter(logger, tradeRepository)
 	userTakeLimitRuleFilter := filter.NewUserTakeLimitRuleFilter(logger, tradeRepository)
 	tradeRuleFilterFactory := filter.NewTradeRuleFilterFactory(activityUsabilityRuleFilter, userTakeLimitRuleFilter)

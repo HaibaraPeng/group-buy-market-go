@@ -14,7 +14,7 @@ import (
 )
 
 type TradeRepository struct {
-	data                 data.Data
+	data                 *data.Data
 	groupBuyOrderDAO     dao.GroupBuyOrderDAO
 	groupBuyOrderListDAO dao.GroupBuyOrderListDAO
 	groupBuyActivityDAO  dao.GroupBuyActivityDAO // 添加活动DAO
@@ -23,7 +23,7 @@ type TradeRepository struct {
 
 // NewTradeRepository creates a new trade repository
 func NewTradeRepository(
-	data data.Data,
+	data *data.Data,
 	groupBuyOrderDAO dao.GroupBuyOrderDAO,
 	groupBuyOrderListDAO dao.GroupBuyOrderListDAO,
 	groupBuyActivityDAO dao.GroupBuyActivityDAO,
