@@ -15,7 +15,6 @@ import (
 	"group-buy-market-go/internal/domain/trade/biz/lock"
 	"group-buy-market-go/internal/domain/trade/biz/lock/filter"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
-	"group-buy-market-go/internal/infrastructure/cache"
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/dcc"
@@ -32,7 +31,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	groupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(db)
 	skuDAO := dao.NewMySQLSkuDAO(db)
 	scSkuActivityDAO := dao.NewMySQLSCSkuActivityDAO(db)
-	client, cleanup, err := cache.NewRedisClient(confData, logger)
+	client, cleanup, err := data.NewRedisClient(confData, logger)
 	if err != nil {
 		return nil, nil, err
 	}
