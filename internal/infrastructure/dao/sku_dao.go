@@ -1,31 +1,33 @@
 package dao
 
 import (
+	"context"
 	"gorm.io/gorm"
+	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/po"
 )
 
 // SkuDAO defines the interface for sku persistence
 type SkuDAO interface {
-	FindByGoodsId(goodsId string) (*po.Sku, error)
+	FindByGoodsId(ctx context.Context, goodsId string) (*po.Sku, error)
 }
 
 // MySQLSkuDAO is a GORM implementation of SkuDAO
 type MySQLSkuDAO struct {
-	db *gorm.DB
+	data *data.Data
 }
 
 // NewMySQLSkuDAO creates a new MySQL sku DAO
-func NewMySQLSkuDAO(db *gorm.DB) SkuDAO {
+func NewMySQLSkuDAO(data *data.Data) SkuDAO {
 	return &MySQLSkuDAO{
-		db: db,
+		data: data,
 	}
 }
 
 // FindByGoodsId finds a sku by goods id
-func (r *MySQLSkuDAO) FindByGoodsId(goodsId string) (*po.Sku, error) {
+func (r *MySQLSkuDAO) FindByGoodsId(ctx context.Context, goodsId string) (*po.Sku, error) {
 	var sku po.Sku
-	err := r.db.Where("goods_id = ?", goodsId).First(&sku).Error
+	err := r.data.DB(ctx).WithContext(ctx).Where("goods_id = ?", goodsId).First(&sku).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
