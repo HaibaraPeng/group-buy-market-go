@@ -96,6 +96,10 @@ type GroupBuyTeamEntity struct {
 	LockCount int `json:"lockCount"`
 	// 状态
 	Status GroupBuyOrderEnumVO `json:"status"`
+	// 拼团开始时间 - 参与拼团时间
+	ValidStartTime time.Time `json:"validStartTime"`
+	// 拼团结束时间 - 拼团有效时长
+	ValidEndTime time.Time `json:"validEndTime"`
 }
 
 // TradePaySuccessEntity 交易支付成功实体
