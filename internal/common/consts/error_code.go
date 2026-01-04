@@ -14,6 +14,8 @@ const (
 	INDEX_EXCEPTION ResponseCode = "0003"
 	// UPDATE_ZERO 更新记录为0
 	UPDATE_ZERO ResponseCode = "0004"
+	// HTTP_EXCEPTION HTTP请求异常
+	HTTP_EXCEPTION ResponseCode = "0005"
 
 	// E0001 不存在对应的折扣计算服务
 	E0001 ResponseCode = "E0001"
@@ -57,6 +59,8 @@ func (rc ResponseCode) GetErrorMessage() string {
 		return "唯一索引冲突"
 	case UPDATE_ZERO:
 		return "更新记录为0"
+	case HTTP_EXCEPTION:
+		return "HTTP请求异常"
 	case E0001:
 		return "不存在对应的折扣计算服务"
 	case E0002:
