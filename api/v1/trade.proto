@@ -8,27 +8,28 @@ option go_package = "group-buy-market-go/api/v1;v1";
 
 // TradeService HTTP API
 service TradeHTTP {
-  // QueryNoPayMarketPayOrderByOutTradeNo 查询未支付的营销订单
-  rpc LockMarketPayOrder(LockMarketPayOrderRequest) returns (LockMarketPayOrderReply){
-    option (google.api.http) = {
-      post: "/trade/lockMarketPayOrder"
-      body: "*"
+    // QueryNoPayMarketPayOrderByOutTradeNo 查询未支付的营销订单
+    rpc LockMarketPayOrder (LockMarketPayOrderRequest) returns (LockMarketPayOrderReply) {
+        option (google.api.http) = {
+            post: "/trade/lockMarketPayOrder"
+            body: "*"
+        };
     };
-  };
 }
 
 message LockMarketPayOrderRequest {
-  string user_id = 1;
-  string team_id = 2;
-  int64 activity_id = 3;
-  string goods_id = 4;
-  string source = 5;
-  string channel = 6;
-  string out_trade_no = 7;
+    string user_id = 1;
+    string team_id = 2;
+    int64 activity_id = 3;
+    string goods_id = 4;
+    string source = 5;
+    string channel = 6;
+    string notify_url = 7;
+    string out_trade_no = 8;
 }
 
 message LockMarketPayOrderReply {
-  string order_id = 1;
-  double deduction_price = 2;
-  int32 trade_order_status = 3;
+    string order_id = 1;
+    double deduction_price = 2;
+    int32 trade_order_status = 3;
 }

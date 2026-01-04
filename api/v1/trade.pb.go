@@ -30,7 +30,8 @@ type LockMarketPayOrderRequest struct {
 	GoodsId       string                 `protobuf:"bytes,4,opt,name=goods_id,json=goodsId,proto3" json:"goods_id,omitempty"`
 	Source        string                 `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"`
 	Channel       string                 `protobuf:"bytes,6,opt,name=channel,proto3" json:"channel,omitempty"`
-	OutTradeNo    string                 `protobuf:"bytes,7,opt,name=out_trade_no,json=outTradeNo,proto3" json:"out_trade_no,omitempty"`
+	NotifyUrl     string                 `protobuf:"bytes,7,opt,name=notify_url,json=notifyUrl,proto3" json:"notify_url,omitempty"`
+	OutTradeNo    string                 `protobuf:"bytes,8,opt,name=out_trade_no,json=outTradeNo,proto3" json:"out_trade_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -107,6 +108,13 @@ func (x *LockMarketPayOrderRequest) GetChannel() string {
 	return ""
 }
 
+func (x *LockMarketPayOrderRequest) GetNotifyUrl() string {
+	if x != nil {
+		return x.NotifyUrl
+	}
+	return ""
+}
+
 func (x *LockMarketPayOrderRequest) GetOutTradeNo() string {
 	if x != nil {
 		return x.OutTradeNo
@@ -178,7 +186,7 @@ var File_api_v1_trade_proto protoreflect.FileDescriptor
 
 const file_api_v1_trade_proto_rawDesc = "" +
 	"\n" +
-	"\x12api/v1/trade.proto\x12\x06api.v1\x1a\x1cgoogle/api/annotations.proto\"\xdd\x01\n" +
+	"\x12api/v1/trade.proto\x12\x06api.v1\x1a\x1cgoogle/api/annotations.proto\"\xfc\x01\n" +
 	"\x19LockMarketPayOrderRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
 	"\ateam_id\x18\x02 \x01(\tR\x06teamId\x12\x1f\n" +
@@ -186,8 +194,10 @@ const file_api_v1_trade_proto_rawDesc = "" +
 	"activityId\x12\x19\n" +
 	"\bgoods_id\x18\x04 \x01(\tR\agoodsId\x12\x16\n" +
 	"\x06source\x18\x05 \x01(\tR\x06source\x12\x18\n" +
-	"\achannel\x18\x06 \x01(\tR\achannel\x12 \n" +
-	"\fout_trade_no\x18\a \x01(\tR\n" +
+	"\achannel\x18\x06 \x01(\tR\achannel\x12\x1d\n" +
+	"\n" +
+	"notify_url\x18\a \x01(\tR\tnotifyUrl\x12 \n" +
+	"\fout_trade_no\x18\b \x01(\tR\n" +
 	"outTradeNo\"\x8b\x01\n" +
 	"\x17LockMarketPayOrderReply\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\tR\aorderId\x12'\n" +
