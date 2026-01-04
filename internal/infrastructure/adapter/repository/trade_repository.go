@@ -82,6 +82,10 @@ func (r *TradeRepository) LockMarketPayOrder(ctx context.Context, groupBuyOrderA
 		// Generate random team ID
 		teamId = generateRandomNumericString(8)
 
+		// Calculate valid start and end time
+		currentTime := time.Now()
+		validEndTime := currentTime.Add(time.Duration(payActivityEntity.ValidTime) * time.Minute)
+
 		// Build group buy order
 		groupBuyOrder := &po.GroupBuyOrder{
 			TeamId:         teamId,
@@ -90,10 +94,13 @@ func (r *TradeRepository) LockMarketPayOrder(ctx context.Context, groupBuyOrderA
 			Channel:        payDiscountEntity.Channel,
 			OriginalPrice:  payDiscountEntity.OriginalPrice,
 			DeductionPrice: payDiscountEntity.DeductionPrice,
-			PayPrice:       payDiscountEntity.DeductionPrice,
+			PayPrice:       payDiscountEntity.PayPrice,
 			TargetCount:    payActivityEntity.TargetCount,
 			CompleteCount:  0,
 			LockCount:      1,
+			ValidStartTime: currentTime,
+			ValidEndTime:   validEndTime,
+			NotifyUrl:      payDiscountEntity.NotifyUrl,
 		}
 
 		// Insert record

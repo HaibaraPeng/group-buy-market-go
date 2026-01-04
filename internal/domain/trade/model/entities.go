@@ -27,6 +27,7 @@ type PayActivityEntity struct {
 	TargetCount  int       `json:"targetCount"`
 	StartTime    time.Time `json:"startTime"`
 	EndTime      time.Time `json:"endTime"`
+	ValidTime    int       `json:"validTime"`
 }
 
 // PayDiscountEntity 支付折扣实体
