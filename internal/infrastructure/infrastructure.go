@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"github.com/google/wire"
+	"group-buy-market-go/internal/infrastructure/adapter/port"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/infrastructure/data"
@@ -14,4 +15,5 @@ var ProviderSet = wire.NewSet(
 	data.ProviderSet,
 	dcc.ProviderSet,
 	repository.ProviderSet,
+	port.NewTradePort,
 )
