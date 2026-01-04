@@ -37,7 +37,9 @@ type PayDiscountEntity struct {
 	GoodsName      string  `json:"goodsName"`
 	OriginalPrice  float64 `json:"originalPrice"`
 	DeductionPrice float64 `json:"deductionPrice"`
+	PayPrice       float64 `json:"payPrice"`
 	OutTradeNo     string  `json:"outTradeNo"`
+	NotifyUrl      string  `json:"notifyUrl"`
 }
 
 // GroupBuyActivityEntity 拼团活动实体对象
@@ -100,6 +102,8 @@ type GroupBuyTeamEntity struct {
 	ValidStartTime time.Time `json:"validStartTime"`
 	// 拼团结束时间 - 拼团有效时长
 	ValidEndTime time.Time `json:"validEndTime"`
+	// 回调地址
+	NotifyUrl string `json:"notifyUrl"`
 }
 
 // TradePaySuccessEntity 交易支付成功实体
@@ -165,4 +169,23 @@ type TradeSettlementRuleFilterBackEntity struct {
 	ValidStartTime time.Time `json:"validStartTime"`
 	// 拼团结束时间 - 拼团有效时长
 	ValidEndTime time.Time `json:"validEndTime"`
+	// 回调地址
+	NotifyUrl string `json:"notifyUrl"`
+}
+
+// NotifyTaskEntity 回调任务实体
+type NotifyTaskEntity struct {
+	// 拼单组队ID
+	TeamId string `json:"teamId"`
+	// 回调接口
+	NotifyUrl string `json:"notifyUrl"`
+	// 回调次数
+	NotifyCount int `json:"notifyCount"`
+	// 参数对象
+	ParameterJson string `json:"parameterJson"`
+}
+
+// lockKey 生成锁键
+func (n *NotifyTaskEntity) lockKey() string {
+	return "notify_job_lock_key_" + n.TeamId
 }

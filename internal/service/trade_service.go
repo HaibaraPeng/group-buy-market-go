@@ -44,6 +44,7 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 	activityId := req.ActivityId
 	outTradeNo := req.OutTradeNo
 	teamId := req.TeamId
+	notifyUrl := req.NotifyUrl
 
 	s.log.WithContext(ctx).Infof("营销交易锁单:%s LockMarketPayOrderRequest:%+v", userId, req)
 
@@ -123,7 +124,9 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 			GoodsName:      trialBalanceEntity.GoodsName,
 			OriginalPrice:  trialBalanceEntity.OriginalPrice,
 			DeductionPrice: trialBalanceEntity.DeductionPrice,
+			PayPrice:       trialBalanceEntity.PayPrice,
 			OutTradeNo:     outTradeNo,
+			NotifyUrl:      notifyUrl,
 		})
 	if err != nil {
 		return nil, fmt.Errorf("锁单失败: %w", err)

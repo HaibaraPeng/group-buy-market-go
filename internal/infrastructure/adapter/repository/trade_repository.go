@@ -233,6 +233,7 @@ func (r *TradeRepository) QueryGroupBuyTeamByTeamId(ctx context.Context, teamId 
 		Status:         model.GroupBuyOrderEnumVOValueOf(groupBuyOrder.Status),
 		ValidStartTime: groupBuyOrder.ValidStartTime,
 		ValidEndTime:   groupBuyOrder.ValidEndTime,
+		NotifyUrl:      groupBuyOrder.NotifyUrl,
 	}
 
 	return entity, nil
