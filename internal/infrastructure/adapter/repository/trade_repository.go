@@ -295,7 +295,7 @@ func (r *TradeRepository) SettlementMarketPayOrder(ctx context.Context, groupBuy
 			notifyTask := &po.NotifyTask{
 				ActivityId:    groupBuyTeamEntity.ActivityId,
 				TeamId:        groupBuyTeamEntity.TeamId,
-				NotifyUrl:     "暂无", // Placeholder for notify URL
+				NotifyUrl:     groupBuyTeamEntity.NotifyUrl,
 				NotifyCount:   0,
 				NotifyStatus:  0,
 				ParameterJson: "",
