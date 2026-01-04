@@ -186,7 +186,7 @@ type NotifyTaskEntity struct {
 	ParameterJson string `json:"parameterJson"`
 }
 
-// lockKey 生成锁键
-func (n *NotifyTaskEntity) lockKey() string {
+// LockKey 生成锁键
+func (n *NotifyTaskEntity) LockKey() string {
 	return "notify_job_lock_key_" + n.TeamId
 }
