@@ -2,7 +2,9 @@ package settlement
 
 import (
 	"context"
+	"group-buy-market-go/internal/infrastructure/adapter/port"
 	"group-buy-market-go/internal/infrastructure/data"
+	"group-buy-market-go/internal/infrastructure/gateway"
 	"testing"
 	"time"
 
@@ -29,27 +31,16 @@ func setupTestDB() *gorm.DB {
 }
 
 // createTestRepository 创建测试仓库
-func createTestRepository(db *gorm.DB) *repository.TradeRepository {
-	if db == nil {
-		return nil
-	}
-
-	// 创建一个模拟的Redis客户端用于测试
-	rdb := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379", // 测试环境地址，实际测试时可能需要根据环境调整
-	})
-
-	// 创建必要的DAO实例
-	d := data.NewData(db, rdb)
-	groupBuyOrderDAO := dao.NewMySQLGroupBuyOrderDAO(d)
-	groupBuyOrderListDAO := dao.NewMySQLGroupBuyOrderListDAO(d)
-	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(d)
-	notifyTaskDAO := dao.NewMySQLNotifyTaskDAO(d)
+func createTestRepository(data *data.Data) *repository.TradeRepository {
+	groupBuyOrderDAO := dao.NewMySQLGroupBuyOrderDAO(data)
+	groupBuyOrderListDAO := dao.NewMySQLGroupBuyOrderListDAO(data)
+	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(data)
+	notifyTaskDAO := dao.NewMySQLNotifyTaskDAO(data)
 	// 创建DCC服务实例
-	dccService := dcc.NewDCC(d)
+	dccService := dcc.NewDCC(data)
 
 	return repository.NewTradeRepository(
-		d,
+		data,
 		groupBuyOrderDAO,
 		groupBuyOrderListDAO,
 		groupBuyActivityDAO,
@@ -65,8 +56,16 @@ func TestTradeSettlementOrderService_SettlementMarketPayOrder_Integration(t *tes
 		t.Skip("Could not connect to test database, skipping integration test")
 	}
 
+	// 创建一个模拟的Redis客户端用于测试
+	rdb := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379", // 测试环境地址，实际测试时可能需要根据环境调整
+	})
+
+	// 创建必要的DAO实例
+	d := data.NewData(db, rdb)
+
 	// 创建测试仓库
-	testRepo := createTestRepository(db)
+	testRepo := createTestRepository(d)
 	if testRepo == nil {
 		t.Skip("Could not create test repository, skipping integration test")
 	}
@@ -80,6 +79,12 @@ func TestTradeSettlementOrderService_SettlementMarketPayOrder_Integration(t *tes
 	settableRuleFilter := filter.NewSettableRuleFilter(logger, testRepo)
 	endRuleFilter := filter.NewEndRuleFilter(logger)
 
+	// 创建通知服务实例
+	notifyService := gateway.NewGroupBuyNotifyService()
+
+	// 创建端口实例
+	port := port.NewTradePort(notifyService, d) // 需要传入notifyService和data
+
 	// 创建真实的过滤器工厂
 	filterFactory := filter.NewTradeSettlementRuleFilterFactory(
 		scRuleFilter,
@@ -87,7 +92,7 @@ func TestTradeSettlementOrderService_SettlementMarketPayOrder_Integration(t *tes
 		settableRuleFilter,
 		endRuleFilter,
 	)
-	service := NewTradeSettlementOrderService(logger, testRepo, filterFactory)
+	service := NewTradeSettlementOrderService(logger, testRepo, port, filterFactory, notifyService)
 
 	tradePaySuccessEntity := &model.TradePaySuccessEntity{
 		Source:       "s01",

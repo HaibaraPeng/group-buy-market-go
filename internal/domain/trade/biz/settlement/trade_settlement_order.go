@@ -104,7 +104,7 @@ func (s *TradeSettlementOrderService) ExecSettlementNotifyJob(ctx context.Contex
 	s.log.Info("拼团交易-执行结算通知任务")
 
 	// 查询未执行任务
-	notifyTaskEntityList, err := s.repository.QueryUnExecutedNotifyTaskList(context.Background())
+	notifyTaskEntityList, err := s.repository.QueryUnExecutedNotifyTaskList(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (s *TradeSettlementOrderService) ExecSettlementNotifyJob(ctx context.Contex
 func (s *TradeSettlementOrderService) ExecSettlementNotifyJobByTeamId(ctx context.Context, teamId string) (map[string]int, error) {
 	s.log.Infof("拼团交易-执行结算通知回调，指定 teamId:%s", teamId)
 
-	notifyTaskEntity, err := s.repository.QueryUnExecutedNotifyTaskByTeamId(context.Background(), teamId)
+	notifyTaskEntity, err := s.repository.QueryUnExecutedNotifyTaskByTeamId(ctx, teamId)
 	if err != nil {
 		return nil, err
 	}
