@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"group-buy-market-go/internal/common/exception"
 	"io"
 	"net/http"
 
