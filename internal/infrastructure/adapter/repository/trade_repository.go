@@ -247,17 +247,18 @@ func (r *TradeRepository) QueryGroupBuyTeamByTeamId(ctx context.Context, teamId 
 }
 
 // SettlementMarketPayOrder settles market pay order
-func (r *TradeRepository) SettlementMarketPayOrder(ctx context.Context, groupBuyTeamSettlementAggregate *model.GroupBuyTeamSettlementAggregate) error {
-	return r.data.InTx(ctx, func(ctx context.Context) error {
-		userEntity := groupBuyTeamSettlementAggregate.UserEntity
-		groupBuyTeamEntity := groupBuyTeamSettlementAggregate.GroupBuyTeamEntity
-		tradePaySuccessEntity := groupBuyTeamSettlementAggregate.TradePaySuccessEntity
+func (r *TradeRepository) SettlementMarketPayOrder(ctx context.Context, groupBuyTeamSettlementAggregate *model.GroupBuyTeamSettlementAggregate) (bool, error) {
+	userEntity := groupBuyTeamSettlementAggregate.UserEntity
+	groupBuyTeamEntity := groupBuyTeamSettlementAggregate.GroupBuyTeamEntity
+	tradePaySuccessEntity := groupBuyTeamSettlementAggregate.TradePaySuccessEntity
 
-		// 1. Update order list status to complete
-		groupBuyOrderListReq := &po.GroupBuyOrderList{
-			UserId:     userEntity.UserId,
-			OutTradeNo: tradePaySuccessEntity.OutTradeNo,
-		}
+	// 1. Update order list status to complete
+	groupBuyOrderListReq := &po.GroupBuyOrderList{
+		UserId:       userEntity.UserId,
+		OutTradeNo:   tradePaySuccessEntity.OutTradeNo,
+		OutTradeTime: tradePaySuccessEntity.OutTradeTime,
+	}
+	err := r.data.InTx(ctx, func(ctx context.Context) error {
 		rowsAffected, err := r.groupBuyOrderListDAO.UpdateOrderStatus2COMPLETE(ctx, groupBuyOrderListReq)
 		if err != nil {
 			return err
@@ -318,9 +319,15 @@ func (r *TradeRepository) SettlementMarketPayOrder(ctx context.Context, groupBuy
 				return err
 			}
 		}
-
 		return nil
 	})
+	if err != nil {
+		return false, err
+	}
+	if groupBuyTeamEntity.TargetCount-groupBuyTeamEntity.CompleteCount == 1 {
+		return true, nil
+	}
+	return false, nil
 }
 
 // generateRandomNumericString generates a random numeric string of specified length
@@ -337,4 +344,61 @@ func generateRandomNumericString(length int) string {
 // IsSCBlackIntercept 判断黑名单拦截渠道，true 拦截、false 放行
 func (r *TradeRepository) IsSCBlackIntercept(source, channel string) bool {
 	return r.dcc.IsSCBlackIntercept(source, channel)
+}
+
+// QueryUnExecutedNotifyTaskList 查询未执行的通知任务列表
+func (r *TradeRepository) QueryUnExecutedNotifyTaskList(ctx context.Context) ([]*model.NotifyTaskEntity, error) {
+	notifyTaskList, err := r.notifyTaskDAO.QueryUnExecutedNotifyTaskList(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if notifyTaskList == nil {
+		return []*model.NotifyTaskEntity{}, nil
+	}
+
+	notifyTaskEntities := make([]*model.NotifyTaskEntity, 0, len(notifyTaskList))
+	for _, notifyTask := range notifyTaskList {
+		notifyTaskEntity := &model.NotifyTaskEntity{
+			TeamId:        notifyTask.TeamId,
+			NotifyUrl:     notifyTask.NotifyUrl,
+			NotifyCount:   notifyTask.NotifyCount,
+			ParameterJson: notifyTask.ParameterJson,
+		}
+		notifyTaskEntities = append(notifyTaskEntities, notifyTaskEntity)
+	}
+
+	return notifyTaskEntities, nil
+}
+
+// QueryUnExecutedNotifyTaskByTeamId 根据团队ID查询未执行的通知任务
+func (r *TradeRepository) QueryUnExecutedNotifyTaskByTeamId(ctx context.Context, teamId string) (*model.NotifyTaskEntity, error) {
+	notifyTask, err := r.notifyTaskDAO.QueryUnExecutedNotifyTaskByTeamId(ctx, teamId)
+	if err != nil {
+		return nil, err
+	}
+	if notifyTask == nil {
+		return nil, nil
+	}
+
+	return &model.NotifyTaskEntity{
+		TeamId:        notifyTask.TeamId,
+		NotifyUrl:     notifyTask.NotifyUrl,
+		NotifyCount:   notifyTask.NotifyCount,
+		ParameterJson: notifyTask.ParameterJson,
+	}, nil
+}
+
+// UpdateNotifyTaskStatusSuccess 更新通知任务状态为成功
+func (r *TradeRepository) UpdateNotifyTaskStatusSuccess(ctx context.Context, teamId string) error {
+	return r.notifyTaskDAO.UpdateNotifyTaskStatusSuccess(ctx, teamId)
+}
+
+// UpdateNotifyTaskStatusError 更新通知任务状态为错误
+func (r *TradeRepository) UpdateNotifyTaskStatusError(ctx context.Context, teamId string) error {
+	return r.notifyTaskDAO.UpdateNotifyTaskStatusError(ctx, teamId)
+}
+
+// UpdateNotifyTaskStatusRetry 更新通知任务状态为重试
+func (r *TradeRepository) UpdateNotifyTaskStatusRetry(ctx context.Context, teamId string) error {
+	return r.notifyTaskDAO.UpdateNotifyTaskStatusRetry(ctx, teamId)
 }
