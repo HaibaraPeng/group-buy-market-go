@@ -7,6 +7,7 @@ import (
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/dcc"
+	"group-buy-market-go/internal/infrastructure/gateway"
 	"group-buy-market-go/internal/infrastructure/job"
 )
 
@@ -15,7 +16,8 @@ var ProviderSet = wire.NewSet(
 	dao.ProviderSet,
 	data.ProviderSet,
 	dcc.ProviderSet,
+	gateway.NewGroupBuyNotifyService,
 	repository.ProviderSet,
-	port.NewTradePort,
 	job.ProviderSet,
+	port.NewTradePort,
 )

@@ -14,10 +14,15 @@ import (
 	"group-buy-market-go/internal/domain/activity/service/trial/node"
 	"group-buy-market-go/internal/domain/trade/biz/lock"
 	"group-buy-market-go/internal/domain/trade/biz/lock/filter"
+	"group-buy-market-go/internal/domain/trade/biz/settlement"
+	filter2 "group-buy-market-go/internal/domain/trade/biz/settlement/filter"
+	"group-buy-market-go/internal/infrastructure/adapter/port"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/dcc"
+	"group-buy-market-go/internal/infrastructure/gateway"
+	"group-buy-market-go/internal/infrastructure/job"
 	"group-buy-market-go/internal/server"
 	"group-buy-market-go/internal/service"
 )
@@ -65,7 +70,16 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	tradeLockOrder := lock.NewTradeLockOrder(tradeRepository, tradeLockRuleFilterFactory, logger)
 	tradeService := service.NewTradeService(logger, tradeLockOrder, rootNode)
 	httpServer := server.NewHTTPServer(confServer, activityService, tagService, dccService, tradeService, logger)
-	app := newApp(logger, httpServer)
+	groupBuyNotifyService := gateway.NewGroupBuyNotifyService()
+	tradePort := port.NewTradePort(groupBuyNotifyService, dataData)
+	scRuleFilter := filter2.NewSCRuleFilter(logger, tradeRepository)
+	outTradeNoRuleFilter := filter2.NewOutTradeNoRuleFilter(logger, tradeRepository)
+	settableRuleFilter := filter2.NewSettableRuleFilter(logger, tradeRepository)
+	endRuleFilter := filter2.NewEndRuleFilter(logger)
+	tradeSettlementRuleFilterFactory := filter2.NewTradeSettlementRuleFilterFactory(scRuleFilter, outTradeNoRuleFilter, settableRuleFilter, endRuleFilter)
+	tradeSettlementOrderService := settlement.NewTradeSettlementOrderService(logger, tradeRepository, tradePort, tradeSettlementRuleFilterFactory, groupBuyNotifyService)
+	jobJob := job.NewGroupBuyNotifyJob(logger, tradeSettlementOrderService)
+	app := newApp(logger, httpServer, jobJob)
 	return app, func() {
 		cleanup()
 	}, nil
