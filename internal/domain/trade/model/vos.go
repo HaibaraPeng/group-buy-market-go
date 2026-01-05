@@ -13,7 +13,9 @@ type NotifyTaskHTTPEnumVO string
 
 const (
 	// SUCCESS 成功
-	SUCCESS NotifyTaskHTTPEnumVO = "0000"
+	SUCCESS NotifyTaskHTTPEnumVO = "success"
+	// ERROR 错误
+	ERROR NotifyTaskHTTPEnumVO = "error"
 	// NULL 空值
 	NULL NotifyTaskHTTPEnumVO = "1001"
 )

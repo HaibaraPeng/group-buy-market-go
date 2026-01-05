@@ -143,12 +143,12 @@ func (s *TradeSettlementOrderService) execSettlementNotifyJob(ctx context.Contex
 		}
 
 		// 更新状态判断&变更数据库表回调任务状态
-		if response == "success" {
+		if response == string(model.SUCCESS) {
 			err = s.repository.UpdateNotifyTaskStatusSuccess(ctx, notifyTask.TeamId)
 			if err == nil {
 				successCount += 1
 			}
-		} else if response == "error" {
+		} else if response == string(model.ERROR) {
 			if notifyTask.NotifyCount < 5 {
 				err = s.repository.UpdateNotifyTaskStatusError(ctx, notifyTask.TeamId)
 				if err == nil {
