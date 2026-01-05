@@ -1,9 +1,14 @@
 package job
 
 import (
+	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/google/wire"
 	"github.com/robfig/cron/v3"
 )
+
+// ProviderSet is job providers.
+var ProviderSet = wire.NewSet(NewGroupBuyNotifyJob)
 
 type Job struct {
 	cron *cron.Cron
@@ -50,4 +55,27 @@ func Logger(logger log.Logger) JobOption {
 
 func newLogger(log *log.Helper) *slog {
 	return &slog{log: log}
+}
+
+func (r *Job) AddFunc(spec string, cmd func(context.Context)) error {
+	job, err := r.cron.AddFunc(spec, func() {
+		cmd(context.Background())
+	})
+	if err != nil {
+		return err
+	}
+	r.log.Infof("add job id:%d cron: %s ", job, spec)
+	return err
+}
+
+func (r *Job) Start(ctx context.Context) error {
+	r.log.Info("[job] server start")
+	r.cron.Start()
+	return nil
+}
+
+func (r *Job) Stop(ctx context.Context) error {
+	r.log.Info("[job] server stop")
+	r.cron.Stop()
+	return nil
 }
