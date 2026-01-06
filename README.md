@@ -1,30 +1,35 @@
-README.md
 # Group Buy Market (Go)
 
 A distributed group buying marketplace built with Go, following Domain-Driven Design (DDD) principles and Clean Architecture.
 
 ## Project Structure
 
-This project follows a DDD-based layered architecture:
+This project follows a DDD-based layered architecture with additional design patterns like Strategy Tree and Responsibility Chain Pattern for flexible business logic processing:
 
 ```
 ├── api/                   # API definition files (protobuf)
+│   ├── v1/                # API v1 definitions
+│   │   ├── activity.proto # Activity service definitions
+│   │   ├── dcc.proto      # Dynamic configuration service definitions
+│   │   ├── tag.proto      # Tag service definitions
+│   │   └── trade.proto    # Trade service definitions
 ├── cmd/                   # Application entry points
 │   └── groupbuy/          # Main application
 │       ├── main.go        # Entry point
 │       ├── wire.go        # Wire dependency injection definitions
 │       └── wire_gen.go    # Auto-generated Wire code
-├── common/                # Common utilities
-├── internal/
-│   └── common/
-│       └── design/
-│           └── tree/      # Strategy tree pattern implementation
 ├── configs/               # Configuration files
+│   └── config.yaml        # Main configuration file
 ├── internal/              # Private application code
 │   ├── common/            # Common utilities and constants
-│   │   ├── consts/        # Constants
+│   │   ├── consts/        # Constants and error codes
+│   │   ├── design/        # Design pattern implementations
+│   │   │   ├── link/      # Responsibility chain pattern implementations
+│   │   │   │   ├── model1/ # First responsibility chain model
+│   │   │   │   └── model2/ # Second responsibility chain model
+│   │   │   └── tree/      # Strategy tree pattern implementation
+│   │   ├── exception/     # Exception handling utilities
 │   │   └── utils/         # Utility functions
-│   │   └── exception/     # Exception handling utilities
 │   ├── conf/              # Configuration protobuf definitions
 │   ├── domain/            # Domain layer (entities, value objects, aggregates, domain services)
 │   │   ├── activity/      # Activity domain
@@ -40,19 +45,31 @@ This project follows a DDD-based layered architecture:
 │   │   │   └── model/     # Tag models
 │   │   └── trade/         # Trade domain
 │   │       ├── biz/       # Trade business logic
-│   │       └── model/     # Trade models
+│   │       │   ├── lock/         # Trade lock business logic
+│   │       │   │   └── filter/   # Trade lock filters
+│   │       │   └── settlement/   # Trade settlement business logic
+│   │       │       └── filter/   # Trade settlement filters
+│   │       ├── model/     # Trade models
+│   │       └── trade.go   # Trade interface definition
 │   ├── infrastructure/    # Infrastructure layer (database, external services)
 │   │   ├── adapter/       # Adapters for external services
 │   │   │   └── repository/    # Repository implementations
-│   │   ├── cache/         # Cache implementations
 │   │   ├── dao/           # Data Access Objects
-│   │   ├── dcc/           # Dynamic configuration client
 │   │   ├── data/          # Data layer with database and redis clients
+│   │   ├── dcc/           # Dynamic configuration client
+│   │   ├── gateway/       # Gateway implementations
+│   │   ├── job/           # Scheduled job implementations
 │   │   └── po/            # Persistent Objects (data models)
 │   ├── server/            # Server initialization
 │   └── service/           # Service layer (application services)
+│       ├── activity_service.go # Activity application service
+│       ├── dcc_service.go      # Dynamic configuration application service
+│       ├── tag_service.go      # Tag application service
+│       └── trade_service.go    # Trade application service
 ├── third_party/           # Third-party proto files
-└── README.md              # This file
+│   └── google/api/        # Google API annotations and HTTP rules
+├── README.md              # This file
+└── openapi.yaml           # OpenAPI specification generated from protobuf
 ```
 
 ## Layers Overview
@@ -82,6 +99,8 @@ Contains technology-specific implementations:
 - Repository implementations
 - Cache implementations (Redis)
 - Data layer with database and Redis clients (Data struct)
+- Job scheduling implementations
+- Dynamic Configuration Center (DCC)
 
 ### 4. Interfaces Layer (`internal/server`)
 Contains adapters that convert external requests into internal formats:
@@ -119,6 +138,14 @@ The project includes a Dynamic Configuration Center for runtime configuration ma
 - **DCC Service**: Provides configuration retrieval and update capabilities
 - **Channel Blacklist Configuration**: Allows dynamic management of blocked source-channel combinations
 - **Runtime Configuration**: Enables configuration changes without application restart
+- **Downgrade Switch**: Provides capability to disable features during high load
+- **User Cut Range**: Supports percentage-based feature rollout
+
+### Job Scheduling System
+The project includes a scheduled job system for background tasks:
+- **Group Buy Notification Job**: Handles group buy completion notifications
+- **Cron-based scheduling**: Uses cron expressions for flexible scheduling
+- **Context-aware execution**: Maintains context across job executions
 
 ### Error Code Management
 Comprehensive error code system with business-specific error codes for different domains:
@@ -126,6 +153,13 @@ Comprehensive error code system with business-specific error codes for different
 - **Business-level errors**: E0001-E0007 for general business operations
 - **Activity-related errors**: E0101-E0106 for activity and settlement operations
 - **Consistent error handling**: Standardized error codes across Java and Go implementations
+
+### Data Persistence
+The project uses modern data access patterns with GORM for database operations and Redis for caching:
+- **MySQL with GORM**: Provides ORM capabilities with database abstraction
+- **Redis for caching**: Implements caching and bitmap operations for user targeting
+- **DAO Layer**: Data Access Objects abstract database operations
+- **Repository Pattern**: Provides domain-specific data access interfaces
 
 ## Getting Started
 
@@ -165,7 +199,7 @@ wire
 ```
 
 ## Configuration
-Configuration files are located in the `configs/` directory. The project uses protobuf for configuration definitions.
+Configuration files are located in the `configs/` directory. The project uses protobuf for configuration definitions and YAML for runtime configurations. The DCC (Dynamic Configuration Center) allows runtime configuration changes without restarts.
 
 ## Testing
 ```bash
@@ -178,3 +212,5 @@ API endpoints are defined in the `api/` directory using Protocol Buffers. The se
 - TagService: For user targeting and segmentation
 - TradeService: For order processing and management
 - DccService: For dynamic configuration management
+
+An OpenAPI specification is automatically generated and available in the `openapi.yaml` file for REST API documentation.
