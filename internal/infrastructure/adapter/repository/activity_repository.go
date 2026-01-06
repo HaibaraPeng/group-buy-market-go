@@ -11,24 +11,29 @@ import (
 )
 
 type ActivityRepository struct {
-	groupBuyActivityDAO dao.GroupBuyActivityDAO
-	groupBuyDiscountDAO dao.GroupBuyDiscountDAO
-	skuDAO              dao.SkuDAO
-	scSkuActivityDAO    dao.SCSkuActivityDAO
-	data                *data.Data
-	dcc                 *dcc.DCC // 添加DCC
+	groupBuyActivityDAO  dao.GroupBuyActivityDAO
+	groupBuyDiscountDAO  dao.GroupBuyDiscountDAO
+	skuDAO               dao.SkuDAO
+	scSkuActivityDAO     dao.SCSkuActivityDAO
+	groupBuyOrderDAO     dao.GroupBuyOrderDAO
+	groupBuyOrderListDAO dao.GroupBuyOrderListDAO
+	data                 *data.Data
+	dcc                  *dcc.DCC // 添加DCC
 }
 
 // NewActivityRepository creates a new activity repository
 func NewActivityRepository(groupBuyActivityDAO dao.GroupBuyActivityDAO, groupBuyDiscountDAO dao.GroupBuyDiscountDAO,
-	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO, data *data.Data, dcc *dcc.DCC) *ActivityRepository { // 添加dcc参数
+	skuDAO dao.SkuDAO, scSkuActivityDAO dao.SCSkuActivityDAO, groupBuyOrderDAO dao.GroupBuyOrderDAO,
+	groupBuyOrderListDAO dao.GroupBuyOrderListDAO, data *data.Data, dcc *dcc.DCC) *ActivityRepository { // 添加新参数
 	return &ActivityRepository{
-		groupBuyActivityDAO: groupBuyActivityDAO,
-		groupBuyDiscountDAO: groupBuyDiscountDAO,
-		skuDAO:              skuDAO,
-		scSkuActivityDAO:    scSkuActivityDAO,
-		data:                data,
-		dcc:                 dcc, // 初始化DCC服务
+		groupBuyActivityDAO:  groupBuyActivityDAO,
+		groupBuyDiscountDAO:  groupBuyDiscountDAO,
+		skuDAO:               skuDAO,
+		scSkuActivityDAO:     scSkuActivityDAO,
+		groupBuyOrderDAO:     groupBuyOrderDAO,
+		groupBuyOrderListDAO: groupBuyOrderListDAO,
+		data:                 data,
+		dcc:                  dcc, // 初始化DCC服务
 	}
 }
 
@@ -177,4 +182,192 @@ func (r *ActivityRepository) DowngradeSwitch() bool {
 // CutRange 判断用户是否在切量范围内
 func (r *ActivityRepository) CutRange(userId string) (bool, error) {
 	return r.dcc.IsCutRange(userId)
+}
+
+// QueryInProgressUserGroupBuyOrderDetailListByOwner 查询拥有者参与的拼团详情列表
+func (r *ActivityRepository) QueryInProgressUserGroupBuyOrderDetailListByOwner(ctx context.Context, activityId int64, userId string, ownerCount int) ([]*model.UserGroupBuyOrderDetailEntity, error) {
+	// 1. 根据用户ID、活动ID，查询用户参与的拼团队伍
+	req := &po.GroupBuyOrderList{
+		ActivityId: activityId,
+		UserId:     userId,
+		Count:      int64(ownerCount),
+	}
+	groupBuyOrderLists, err := r.groupBuyOrderListDAO.QueryInProgressUserGroupBuyOrderDetailListByUserId(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if groupBuyOrderLists == nil || len(groupBuyOrderLists) == 0 {
+		return nil, nil
+	}
+
+	// 2. 过滤队伍获取 TeamId
+	teamIds := make([]string, 0)
+	for _, list := range groupBuyOrderLists {
+		if list.TeamId != "" {
+			teamIds = append(teamIds, list.TeamId)
+		}
+	}
+
+	// 3. 查询队伍明细，组装Map结构
+	groupBuyOrders, err := r.groupBuyOrderDAO.QueryGroupBuyProgressByTeamIds(ctx, teamIds)
+	if err != nil {
+		return nil, err
+	}
+	if groupBuyOrders == nil || len(groupBuyOrders) == 0 {
+		return nil, nil
+	}
+
+	groupBuyOrderMap := make(map[string]*po.GroupBuyOrder)
+	for _, order := range groupBuyOrders {
+		groupBuyOrderMap[order.TeamId] = order
+	}
+
+	// 4. 转换数据
+	userGroupBuyOrderDetailEntities := make([]*model.UserGroupBuyOrderDetailEntity, 0)
+	for _, list := range groupBuyOrderLists {
+		teamId := list.TeamId
+		groupBuyOrder, exists := groupBuyOrderMap[teamId]
+		if !exists {
+			continue
+		}
+
+		userGroupBuyOrderDetailEntity := &model.UserGroupBuyOrderDetailEntity{
+			UserId:         list.UserId,
+			TeamId:         groupBuyOrder.TeamId,
+			ActivityId:     groupBuyOrder.ActivityId,
+			TargetCount:    groupBuyOrder.TargetCount,
+			CompleteCount:  groupBuyOrder.CompleteCount,
+			LockCount:      groupBuyOrder.LockCount,
+			ValidStartTime: groupBuyOrder.ValidStartTime.Unix(),
+			ValidEndTime:   groupBuyOrder.ValidEndTime.Unix(),
+			OutTradeNo:     list.OutTradeNo,
+		}
+
+		userGroupBuyOrderDetailEntities = append(userGroupBuyOrderDetailEntities, userGroupBuyOrderDetailEntity)
+	}
+
+	return userGroupBuyOrderDetailEntities, nil
+}
+
+// QueryInProgressUserGroupBuyOrderDetailListByRandom 随机查询拼团详情列表
+func (r *ActivityRepository) QueryInProgressUserGroupBuyOrderDetailListByRandom(ctx context.Context, activityId int64, userId string, randomCount int) ([]*model.UserGroupBuyOrderDetailEntity, error) {
+	// 1. 根据用户ID、活动ID，查询用户参与的拼团队伍
+	req := &po.GroupBuyOrderList{
+		ActivityId: activityId,
+		UserId:     userId,
+		Count:      int64(randomCount * 2), // 查询2倍的量，之后其中 randomCount 数量
+	}
+	groupBuyOrderLists, err := r.groupBuyOrderListDAO.QueryInProgressUserGroupBuyOrderDetailListByRandom(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if groupBuyOrderLists == nil || len(groupBuyOrderLists) == 0 {
+		return nil, nil
+	}
+
+	// 判断总量是否大于 randomCount
+	if len(groupBuyOrderLists) > randomCount {
+		// 随机打乱列表
+		for i := len(groupBuyOrderLists) - 1; i > 0; i-- {
+			j := utils.Rand.Intn(i + 1)
+			groupBuyOrderLists[i], groupBuyOrderLists[j] = groupBuyOrderLists[j], groupBuyOrderLists[i]
+		}
+		// 获取前 randomCount 个元素
+		groupBuyOrderLists = groupBuyOrderLists[:randomCount]
+	}
+
+	// 2. 过滤队伍获取 TeamId
+	teamIds := make([]string, 0)
+	for _, list := range groupBuyOrderLists {
+		if list.TeamId != "" {
+			teamIds = append(teamIds, list.TeamId)
+		}
+	}
+
+	// 3. 查询队伍明细，组装Map结构
+	groupBuyOrders, err := r.groupBuyOrderDAO.QueryGroupBuyProgressByTeamIds(ctx, teamIds)
+	if err != nil {
+		return nil, err
+	}
+	if groupBuyOrders == nil || len(groupBuyOrders) == 0 {
+		return nil, nil
+	}
+
+	groupBuyOrderMap := make(map[string]*po.GroupBuyOrder)
+	for _, order := range groupBuyOrders {
+		groupBuyOrderMap[order.TeamId] = order
+	}
+
+	// 4. 转换数据
+	userGroupBuyOrderDetailEntities := make([]*model.UserGroupBuyOrderDetailEntity, 0)
+	for _, list := range groupBuyOrderLists {
+		teamId := list.TeamId
+		groupBuyOrder, exists := groupBuyOrderMap[teamId]
+		if !exists {
+			continue
+		}
+
+		userGroupBuyOrderDetailEntity := &model.UserGroupBuyOrderDetailEntity{
+			UserId:         list.UserId,
+			TeamId:         groupBuyOrder.TeamId,
+			ActivityId:     groupBuyOrder.ActivityId,
+			TargetCount:    groupBuyOrder.TargetCount,
+			CompleteCount:  groupBuyOrder.CompleteCount,
+			LockCount:      groupBuyOrder.LockCount,
+			ValidStartTime: groupBuyOrder.ValidStartTime.Unix(),
+			ValidEndTime:   groupBuyOrder.ValidEndTime.Unix(),
+		}
+
+		userGroupBuyOrderDetailEntities = append(userGroupBuyOrderDetailEntities, userGroupBuyOrderDetailEntity)
+	}
+
+	return userGroupBuyOrderDetailEntities, nil
+}
+
+// QueryTeamStatisticByActivityId 根据活动ID查询团队统计信息
+func (r *ActivityRepository) QueryTeamStatisticByActivityId(ctx context.Context, activityId int64) (*model.TeamStatisticVO, error) {
+	// 1. 根据活动ID查询拼团队伍
+	groupBuyOrderLists, err := r.groupBuyOrderListDAO.QueryInProgressUserGroupBuyOrderDetailListByActivityId(ctx, activityId)
+	if err != nil {
+		return nil, err
+	}
+
+	if groupBuyOrderLists == nil || len(groupBuyOrderLists) == 0 {
+		return &model.TeamStatisticVO{
+			AllTeamCount:         0,
+			AllTeamCompleteCount: 0,
+			AllTeamUserCount:     0,
+		}, nil
+	}
+
+	// 2. 过滤队伍获取 TeamId
+	teamIds := make([]string, 0)
+	for _, list := range groupBuyOrderLists {
+		if list.TeamId != "" {
+			teamIds = append(teamIds, list.TeamId)
+		}
+	}
+
+	// 3. 统计数据
+	allTeamCount, err := r.groupBuyOrderDAO.QueryAllTeamCount(ctx, teamIds)
+	if err != nil {
+		return nil, err
+	}
+
+	allTeamCompleteCount, err := r.groupBuyOrderDAO.QueryAllTeamCompleteCount(ctx, teamIds)
+	if err != nil {
+		return nil, err
+	}
+
+	allTeamUserCount, err := r.groupBuyOrderDAO.QueryAllUserCount(ctx, teamIds)
+	if err != nil {
+		return nil, err
+	}
+
+	// 4. 构建对象
+	return &model.TeamStatisticVO{
+		AllTeamCount:         allTeamCount,
+		AllTeamCompleteCount: allTeamCompleteCount,
+		AllTeamUserCount:     allTeamUserCount,
+	}, nil
 }
