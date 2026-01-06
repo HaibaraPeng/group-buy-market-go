@@ -15,6 +15,9 @@ type GroupBuyOrderListDAO interface {
 	QueryOrderCountByActivityId(ctx context.Context, req *po.GroupBuyOrderList) (int, error)
 	UpdateOrderStatus2COMPLETE(ctx context.Context, req *po.GroupBuyOrderList) (int64, error)
 	QueryGroupBuyCompleteOrderOutTradeNoListByTeamId(ctx context.Context, teamId string) ([]string, error)
+	QueryInProgressUserGroupBuyOrderDetailListByUserId(ctx context.Context, req *po.GroupBuyOrderList) ([]*po.GroupBuyOrderList, error)
+	QueryInProgressUserGroupBuyOrderDetailListByRandom(ctx context.Context, req *po.GroupBuyOrderList) ([]*po.GroupBuyOrderList, error)
+	QueryInProgressUserGroupBuyOrderDetailListByActivityId(ctx context.Context, activityId int64) ([]*po.GroupBuyOrderList, error)
 }
 
 // MySQLGroupBuyOrderListDAO is a GORM implementation of GroupBuyOrderListDAO
@@ -69,8 +72,9 @@ func (r *MySQLGroupBuyOrderListDAO) UpdateOrderStatus2COMPLETE(ctx context.Conte
 	result := r.data.DB(ctx).WithContext(ctx).Model(&po.GroupBuyOrderList{}).
 		Where("out_trade_no = ? AND user_id = ?", req.OutTradeNo, req.UserId).
 		Updates(map[string]interface{}{
-			"status":      1, // 状态1表示已完成
-			"update_time": time.Now(),
+			"status":         1, // 状态1表示已完成
+			"out_trade_time": req.OutTradeTime,
+			"update_time":    time.Now(),
 		})
 	return result.RowsAffected, result.Error
 }
@@ -86,4 +90,46 @@ func (r *MySQLGroupBuyOrderListDAO) QueryGroupBuyCompleteOrderOutTradeNoListByTe
 		return nil, err
 	}
 	return outTradeNos, nil
+}
+
+// QueryInProgressUserGroupBuyOrderDetailListByUserId queries the list of in-progress user group buy order details by user ID
+func (r *MySQLGroupBuyOrderListDAO) QueryInProgressUserGroupBuyOrderDetailListByUserId(ctx context.Context, req *po.GroupBuyOrderList) ([]*po.GroupBuyOrderList, error) {
+	var groupBuyOrderList []*po.GroupBuyOrderList
+	err := r.data.DB(ctx).WithContext(ctx).Select("user_id", "team_id", "out_trade_no").
+		Where("activity_id = ? AND user_id = ? AND status IN (0, 1) AND end_time > ?", req.ActivityId, req.UserId, time.Now()).
+		Order("id DESC").
+		Limit(int(req.Count)).
+		Find(&groupBuyOrderList).Error
+	if err != nil {
+		return nil, err
+	}
+	return groupBuyOrderList, nil
+}
+
+// QueryInProgressUserGroupBuyOrderDetailListByRandom queries the list of in-progress user group buy order details randomly
+func (r *MySQLGroupBuyOrderListDAO) QueryInProgressUserGroupBuyOrderDetailListByRandom(ctx context.Context, req *po.GroupBuyOrderList) ([]*po.GroupBuyOrderList, error) {
+	var groupBuyOrderList []*po.GroupBuyOrderList
+	err := r.data.DB(ctx).WithContext(ctx).Select("user_id", "team_id", "out_trade_no").
+		Where("activity_id = ? AND team_id IN (SELECT team_id FROM group_buy_order WHERE activity_id = ? AND status = 0) AND user_id != ? AND status IN (0, 1) AND end_time > ?",
+			req.ActivityId, req.ActivityId, req.UserId, time.Now()).
+		Order("id DESC").
+		Limit(int(req.Count)).
+		Find(&groupBuyOrderList).Error
+	if err != nil {
+		return nil, err
+	}
+	return groupBuyOrderList, nil
+}
+
+// QueryInProgressUserGroupBuyOrderDetailListByActivityId queries the list of in-progress user group buy order details by activity ID
+func (r *MySQLGroupBuyOrderListDAO) QueryInProgressUserGroupBuyOrderDetailListByActivityId(ctx context.Context, activityId int64) ([]*po.GroupBuyOrderList, error) {
+	var groupBuyOrderList []*po.GroupBuyOrderList
+	err := r.data.DB(ctx).WithContext(ctx).Select("user_id", "team_id", "out_trade_no").
+		Where("activity_id = ? AND status IN (0, 1)", activityId).
+		Group("team_id").
+		Find(&groupBuyOrderList).Error
+	if err != nil {
+		return nil, err
+	}
+	return groupBuyOrderList, nil
 }

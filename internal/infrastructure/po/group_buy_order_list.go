@@ -42,6 +42,8 @@ type GroupBuyOrderList struct {
 	CreateTime time.Time `json:"create_time" gorm:"column:create_time;default:CURRENT_TIMESTAMP"`
 	// Update time
 	UpdateTime time.Time `json:"update_time" gorm:"column:update_time;default:CURRENT_TIMESTAMP"`
+	// Count for limit operations
+	Count int64 `json:"count" gorm:"-"`
 }
 
 // TableName specifies the table name for GroupBuyOrderList
