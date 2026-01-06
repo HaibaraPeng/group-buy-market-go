@@ -17,6 +17,10 @@ type GroupBuyOrderDAO interface {
 	QueryGroupBuyTeamByTeamId(ctx context.Context, teamId string) (*po.GroupBuyOrder, error)
 	UpdateAddCompleteCount(ctx context.Context, teamId string) (int64, error)
 	UpdateOrderStatus2COMPLETE(ctx context.Context, teamId string) (int64, error)
+	QueryGroupBuyProgressByTeamIds(ctx context.Context, teamIds []string) ([]*po.GroupBuyOrder, error)
+	QueryAllTeamCount(ctx context.Context, teamIds []string) (int, error)
+	QueryAllTeamCompleteCount(ctx context.Context, teamIds []string) (int, error)
+	QueryAllUserCount(ctx context.Context, teamIds []string) (int, error)
 }
 
 // MySQLGroupBuyOrderDAO is a GORM implementation of GroupBuyOrderDAO
@@ -112,4 +116,53 @@ func (r *MySQLGroupBuyOrderDAO) UpdateOrderStatus2COMPLETE(ctx context.Context, 
 			"update_time": time.Now(),
 		})
 	return result.RowsAffected, result.Error
+}
+
+// QueryGroupBuyProgressByTeamIds queries the progress of group buy orders by team IDs
+func (r *MySQLGroupBuyOrderDAO) QueryGroupBuyProgressByTeamIds(ctx context.Context, teamIds []string) ([]*po.GroupBuyOrder, error) {
+	var groupBuyOrders []*po.GroupBuyOrder
+	err := r.data.DB(ctx).WithContext(ctx).Select("team_id, activity_id, target_count, complete_count, lock_count, status, valid_start_time, valid_end_time, notify_url").
+		Where("status = 0 AND target_count > lock_count AND team_id IN ?", teamIds).
+		Find(&groupBuyOrders).Error
+	if err != nil {
+		return nil, err
+	}
+	return groupBuyOrders, nil
+}
+
+// QueryAllTeamCount queries the total count of teams
+func (r *MySQLGroupBuyOrderDAO) QueryAllTeamCount(ctx context.Context, teamIds []string) (int, error) {
+	var count int64
+	err := r.data.DB(ctx).WithContext(ctx).Model(&po.GroupBuyOrder{}).
+		Where("team_id IN ?", teamIds).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return int(count), nil
+}
+
+// QueryAllTeamCompleteCount queries the count of completed teams
+func (r *MySQLGroupBuyOrderDAO) QueryAllTeamCompleteCount(ctx context.Context, teamIds []string) (int, error) {
+	var count int64
+	err := r.data.DB(ctx).WithContext(ctx).Model(&po.GroupBuyOrder{}).
+		Where("status = 1 AND team_id IN ?", teamIds).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return int(count), nil
+}
+
+// QueryAllUserCount queries the total user count
+func (r *MySQLGroupBuyOrderDAO) QueryAllUserCount(ctx context.Context, teamIds []string) (int, error) {
+	var count int64
+	err := r.data.DB(ctx).WithContext(ctx).Model(&po.GroupBuyOrder{}).
+		Select("SUM(lock_count)").
+		Where("team_id IN ?", teamIds).
+		Scan(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return int(count), nil
 }
