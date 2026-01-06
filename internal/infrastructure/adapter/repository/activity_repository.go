@@ -8,6 +8,8 @@ import (
 	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/dcc" // 添加dcc包
 	"group-buy-market-go/internal/infrastructure/po"
+	"math/rand"
+	"time"
 )
 
 type ActivityRepository struct {
@@ -268,8 +270,9 @@ func (r *ActivityRepository) QueryInProgressUserGroupBuyOrderDetailListByRandom(
 	// 判断总量是否大于 randomCount
 	if len(groupBuyOrderLists) > randomCount {
 		// 随机打乱列表
+		rand.Seed(time.Now().UnixNano())
 		for i := len(groupBuyOrderLists) - 1; i > 0; i-- {
-			j := utils.Rand.Intn(i + 1)
+			j := rand.Intn(i + 1)
 			groupBuyOrderLists[i], groupBuyOrderLists[j] = groupBuyOrderLists[j], groupBuyOrderLists[i]
 		}
 		// 获取前 randomCount 个元素
