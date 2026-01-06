@@ -455,9 +455,9 @@ const file_api_v1_index_proto_rawDesc = "" +
 	"\rTeamStatistic\x12$\n" +
 	"\x0eall_team_count\x18\x01 \x01(\x05R\fallTeamCount\x125\n" +
 	"\x17all_team_complete_count\x18\x02 \x01(\x05R\x14allTeamCompleteCount\x12-\n" +
-	"\x13all_team_user_count\x18\x03 \x01(\x05R\x10allTeamUserCount2\xa1\x01\n" +
-	"\tIndexHTTP\x12\x93\x01\n" +
-	"\x12LockMarketPayOrder\x12(.api.v1.QueryGroupBuyMarketConfigRequest\x1a&.api.v1.QueryGroupBuyMarketConfigReply\"+\x82\xd3\xe4\x93\x02%:\x01*\" /index/queryGroupBuyMarketConfigB\x1fZ\x1dgroup-buy-market-go/api/v1;v1b\x06proto3"
+	"\x13all_team_user_count\x18\x03 \x01(\x05R\x10allTeamUserCount2\xa8\x01\n" +
+	"\tIndexHTTP\x12\x9a\x01\n" +
+	"\x19QueryGroupBuyMarketConfig\x12(.api.v1.QueryGroupBuyMarketConfigRequest\x1a&.api.v1.QueryGroupBuyMarketConfigReply\"+\x82\xd3\xe4\x93\x02%:\x01*\" /index/queryGroupBuyMarketConfigB\x1fZ\x1dgroup-buy-market-go/api/v1;v1b\x06proto3"
 
 var (
 	file_api_v1_index_proto_rawDescOnce sync.Once
@@ -483,8 +483,8 @@ var file_api_v1_index_proto_depIdxs = []int32{
 	2, // 0: api.v1.QueryGroupBuyMarketConfigReply.goods:type_name -> api.v1.Goods
 	3, // 1: api.v1.QueryGroupBuyMarketConfigReply.team_list:type_name -> api.v1.Team
 	4, // 2: api.v1.QueryGroupBuyMarketConfigReply.team_statistic:type_name -> api.v1.TeamStatistic
-	0, // 3: api.v1.IndexHTTP.LockMarketPayOrder:input_type -> api.v1.QueryGroupBuyMarketConfigRequest
-	1, // 4: api.v1.IndexHTTP.LockMarketPayOrder:output_type -> api.v1.QueryGroupBuyMarketConfigReply
+	0, // 3: api.v1.IndexHTTP.QueryGroupBuyMarketConfig:input_type -> api.v1.QueryGroupBuyMarketConfigRequest
+	1, // 4: api.v1.IndexHTTP.QueryGroupBuyMarketConfig:output_type -> api.v1.QueryGroupBuyMarketConfigReply
 	4, // [4:5] is the sub-list for method output_type
 	3, // [3:4] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name

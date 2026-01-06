@@ -9,7 +9,7 @@ option go_package = "group-buy-market-go/api/v1;v1";
 // IndexService HTTP API
 service IndexHTTP {
     // QueryGroupBuyMarketConfig 查询拼团营销配置
-    rpc LockMarketPayOrder (QueryGroupBuyMarketConfigRequest) returns (QueryGroupBuyMarketConfigReply) {
+    rpc QueryGroupBuyMarketConfig (QueryGroupBuyMarketConfigRequest) returns (QueryGroupBuyMarketConfigReply) {
         option (google.api.http) = {
             post: "/index/queryGroupBuyMarketConfig"
             body: "*"

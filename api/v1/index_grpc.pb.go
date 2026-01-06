@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	IndexHTTP_LockMarketPayOrder_FullMethodName = "/api.v1.IndexHTTP/LockMarketPayOrder"
+	IndexHTTP_QueryGroupBuyMarketConfig_FullMethodName = "/api.v1.IndexHTTP/QueryGroupBuyMarketConfig"
 )
 
 // IndexHTTPClient is the client API for IndexHTTP service.
@@ -29,7 +29,7 @@ const (
 // IndexService HTTP API
 type IndexHTTPClient interface {
 	// QueryGroupBuyMarketConfig 查询拼团营销配置
-	LockMarketPayOrder(ctx context.Context, in *QueryGroupBuyMarketConfigRequest, opts ...grpc.CallOption) (*QueryGroupBuyMarketConfigReply, error)
+	QueryGroupBuyMarketConfig(ctx context.Context, in *QueryGroupBuyMarketConfigRequest, opts ...grpc.CallOption) (*QueryGroupBuyMarketConfigReply, error)
 }
 
 type indexHTTPClient struct {
@@ -40,10 +40,10 @@ func NewIndexHTTPClient(cc grpc.ClientConnInterface) IndexHTTPClient {
 	return &indexHTTPClient{cc}
 }
 
-func (c *indexHTTPClient) LockMarketPayOrder(ctx context.Context, in *QueryGroupBuyMarketConfigRequest, opts ...grpc.CallOption) (*QueryGroupBuyMarketConfigReply, error) {
+func (c *indexHTTPClient) QueryGroupBuyMarketConfig(ctx context.Context, in *QueryGroupBuyMarketConfigRequest, opts ...grpc.CallOption) (*QueryGroupBuyMarketConfigReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(QueryGroupBuyMarketConfigReply)
-	err := c.cc.Invoke(ctx, IndexHTTP_LockMarketPayOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, IndexHTTP_QueryGroupBuyMarketConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *indexHTTPClient) LockMarketPayOrder(ctx context.Context, in *QueryGroup
 // IndexService HTTP API
 type IndexHTTPServer interface {
 	// QueryGroupBuyMarketConfig 查询拼团营销配置
-	LockMarketPayOrder(context.Context, *QueryGroupBuyMarketConfigRequest) (*QueryGroupBuyMarketConfigReply, error)
+	QueryGroupBuyMarketConfig(context.Context, *QueryGroupBuyMarketConfigRequest) (*QueryGroupBuyMarketConfigReply, error)
 	mustEmbedUnimplementedIndexHTTPServer()
 }
 
@@ -68,8 +68,8 @@ type IndexHTTPServer interface {
 // pointer dereference when methods are called.
 type UnimplementedIndexHTTPServer struct{}
 
-func (UnimplementedIndexHTTPServer) LockMarketPayOrder(context.Context, *QueryGroupBuyMarketConfigRequest) (*QueryGroupBuyMarketConfigReply, error) {
-	return nil, status.Error(codes.Unimplemented, "method LockMarketPayOrder not implemented")
+func (UnimplementedIndexHTTPServer) QueryGroupBuyMarketConfig(context.Context, *QueryGroupBuyMarketConfigRequest) (*QueryGroupBuyMarketConfigReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method QueryGroupBuyMarketConfig not implemented")
 }
 func (UnimplementedIndexHTTPServer) mustEmbedUnimplementedIndexHTTPServer() {}
 func (UnimplementedIndexHTTPServer) testEmbeddedByValue()                   {}
@@ -92,20 +92,20 @@ func RegisterIndexHTTPServer(s grpc.ServiceRegistrar, srv IndexHTTPServer) {
 	s.RegisterService(&IndexHTTP_ServiceDesc, srv)
 }
 
-func _IndexHTTP_LockMarketPayOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _IndexHTTP_QueryGroupBuyMarketConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryGroupBuyMarketConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IndexHTTPServer).LockMarketPayOrder(ctx, in)
+		return srv.(IndexHTTPServer).QueryGroupBuyMarketConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IndexHTTP_LockMarketPayOrder_FullMethodName,
+		FullMethod: IndexHTTP_QueryGroupBuyMarketConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IndexHTTPServer).LockMarketPayOrder(ctx, req.(*QueryGroupBuyMarketConfigRequest))
+		return srv.(IndexHTTPServer).QueryGroupBuyMarketConfig(ctx, req.(*QueryGroupBuyMarketConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -118,8 +118,8 @@ var IndexHTTP_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*IndexHTTPServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "LockMarketPayOrder",
-			Handler:    _IndexHTTP_LockMarketPayOrder_Handler,
+			MethodName: "QueryGroupBuyMarketConfig",
+			Handler:    _IndexHTTP_QueryGroupBuyMarketConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -19,19 +19,19 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationIndexHTTPLockMarketPayOrder = "/api.v1.IndexHTTP/LockMarketPayOrder"
+const OperationIndexHTTPQueryGroupBuyMarketConfig = "/api.v1.IndexHTTP/QueryGroupBuyMarketConfig"
 
 type IndexHTTPHTTPServer interface {
-	// LockMarketPayOrder QueryGroupBuyMarketConfig 查询拼团营销配置
-	LockMarketPayOrder(context.Context, *QueryGroupBuyMarketConfigRequest) (*QueryGroupBuyMarketConfigReply, error)
+	// QueryGroupBuyMarketConfig QueryGroupBuyMarketConfig 查询拼团营销配置
+	QueryGroupBuyMarketConfig(context.Context, *QueryGroupBuyMarketConfigRequest) (*QueryGroupBuyMarketConfigReply, error)
 }
 
 func RegisterIndexHTTPHTTPServer(s *http.Server, srv IndexHTTPHTTPServer) {
 	r := s.Route("/")
-	r.POST("/index/queryGroupBuyMarketConfig", _IndexHTTP_LockMarketPayOrder0_HTTP_Handler(srv))
+	r.POST("/index/queryGroupBuyMarketConfig", _IndexHTTP_QueryGroupBuyMarketConfig0_HTTP_Handler(srv))
 }
 
-func _IndexHTTP_LockMarketPayOrder0_HTTP_Handler(srv IndexHTTPHTTPServer) func(ctx http.Context) error {
+func _IndexHTTP_QueryGroupBuyMarketConfig0_HTTP_Handler(srv IndexHTTPHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in QueryGroupBuyMarketConfigRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -40,9 +40,9 @@ func _IndexHTTP_LockMarketPayOrder0_HTTP_Handler(srv IndexHTTPHTTPServer) func(c
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationIndexHTTPLockMarketPayOrder)
+		http.SetOperation(ctx, OperationIndexHTTPQueryGroupBuyMarketConfig)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.LockMarketPayOrder(ctx, req.(*QueryGroupBuyMarketConfigRequest))
+			return srv.QueryGroupBuyMarketConfig(ctx, req.(*QueryGroupBuyMarketConfigRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -54,8 +54,8 @@ func _IndexHTTP_LockMarketPayOrder0_HTTP_Handler(srv IndexHTTPHTTPServer) func(c
 }
 
 type IndexHTTPHTTPClient interface {
-	// LockMarketPayOrder QueryGroupBuyMarketConfig 查询拼团营销配置
-	LockMarketPayOrder(ctx context.Context, req *QueryGroupBuyMarketConfigRequest, opts ...http.CallOption) (rsp *QueryGroupBuyMarketConfigReply, err error)
+	// QueryGroupBuyMarketConfig QueryGroupBuyMarketConfig 查询拼团营销配置
+	QueryGroupBuyMarketConfig(ctx context.Context, req *QueryGroupBuyMarketConfigRequest, opts ...http.CallOption) (rsp *QueryGroupBuyMarketConfigReply, err error)
 }
 
 type IndexHTTPHTTPClientImpl struct {
@@ -66,12 +66,12 @@ func NewIndexHTTPHTTPClient(client *http.Client) IndexHTTPHTTPClient {
 	return &IndexHTTPHTTPClientImpl{client}
 }
 
-// LockMarketPayOrder QueryGroupBuyMarketConfig 查询拼团营销配置
-func (c *IndexHTTPHTTPClientImpl) LockMarketPayOrder(ctx context.Context, in *QueryGroupBuyMarketConfigRequest, opts ...http.CallOption) (*QueryGroupBuyMarketConfigReply, error) {
+// QueryGroupBuyMarketConfig QueryGroupBuyMarketConfig 查询拼团营销配置
+func (c *IndexHTTPHTTPClientImpl) QueryGroupBuyMarketConfig(ctx context.Context, in *QueryGroupBuyMarketConfigRequest, opts ...http.CallOption) (*QueryGroupBuyMarketConfigReply, error) {
 	var out QueryGroupBuyMarketConfigReply
 	pattern := "/index/queryGroupBuyMarketConfig"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationIndexHTTPLockMarketPayOrder))
+	opts = append(opts, http.Operation(OperationIndexHTTPQueryGroupBuyMarketConfig))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
