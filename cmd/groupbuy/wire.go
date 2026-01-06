@@ -15,7 +15,7 @@ import (
 	"group-buy-market-go/internal/service"
 
 	"group-buy-market-go/internal/conf"
-	"group-buy-market-go/internal/domain/activity/service/discount"
+	"group-buy-market-go/internal/domain/activity/biz/discount"
 	"group-buy-market-go/internal/server"
 )
 
