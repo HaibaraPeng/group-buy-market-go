@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "group-buy-market-go/api/v1;v1";
+
+// IndexService HTTP API
+service IndexHTTP {
+    // QueryGroupBuyMarketConfig 查询拼团营销配置
+    rpc LockMarketPayOrder (QueryGroupBuyMarketConfigRequest) returns (QueryGroupBuyMarketConfigReply) {
+        option (google.api.http) = {
+            post: "/index/queryGroupBuyMarketConfig"
+            body: "*"
+        };
+    };
+}
+
+message QueryGroupBuyMarketConfigRequest {
+    string user_id = 1;
+    string source = 2;
+    string channel = 3;
+    string goods_id = 4;
+}
+
+// 商品营销应答对象
+message QueryGroupBuyMarketConfigReply {
+    // 商品信息
+    Goods goods = 1;
+    // 组队信息（1个个人的置顶、2个随机的「获取10个，随机取2个」）
+    repeated Team team_list = 2;
+    // 组队统计
+    TeamStatistic team_statistic = 3;
+}
+
+// 商品信息
+message Goods {
+    // 商品ID
+    string goods_id = 1;
+    // 原始价格
+    double original_price = 2;
+    // 折扣金额
+    double deduction_price = 3;
+    // 支付价格
+    double pay_price = 4;
+}
+
+// 组队信息
+message Team {
+    // 用户ID
+    string user_id = 1;
+    // 拼单组队ID
+    string team_id = 2;
+    // 活动ID
+    int64 activity_id = 3;
+    // 目标数量
+    int32 target_count = 4;
+    // 完成数量
+    int32 complete_count = 5;
+    // 锁单数量
+    int32 lock_count = 6;
+    // 拼团开始时间 - 参与拼团时间
+    int64 valid_start_time = 7;
+    // 拼团结束时间 - 拼团有效时长
+    int64 valid_end_time = 8;
+    // 倒计时(字符串) validEndTime - validStartTime
+    string valid_time_countdown = 9;
+    // 外部交易单号-确保外部调用唯一幂等
+    string out_trade_no = 10;
+}
+
+// 组队统计
+message TeamStatistic {
+    // 开团队伍数量
+    int32 all_team_count = 1;
+    // 成团队伍数量
+    int32 all_team_complete_count = 2;
+    // 参团人数总量 - 一个商品的总参团人数
+    int32 all_team_user_count = 3;
+}
