@@ -40,3 +40,25 @@ type TrialBalanceEntity struct {
 	// 拼团活动营销配置值对象
 	GroupBuyActivityDiscountVO GroupBuyActivityDiscountVO `json:"groupBuyActivityDiscountVO"`
 }
+
+// UserGroupBuyOrderDetailEntity 拼团组队实体对象
+type UserGroupBuyOrderDetailEntity struct {
+	// 用户ID
+	UserId string `json:"userId"`
+	// 拼单组队ID
+	TeamId string `json:"teamId"`
+	// 活动ID
+	ActivityId int64 `json:"activityId"`
+	// 目标数量
+	TargetCount int `json:"targetCount"`
+	// 完成数量
+	CompleteCount int `json:"completeCount"`
+	// 锁单数量
+	LockCount int `json:"lockCount"`
+	// 拼团开始时间 - 参与拼团时间
+	ValidStartTime int64 `json:"validStartTime"`
+	// 拼团结束时间 - 拼团有效时长
+	ValidEndTime int64 `json:"validEndTime"`
+	// 外部交易单号-确保外部调用唯一幂等
+	OutTradeNo string `json:"outTradeNo"`
+}
