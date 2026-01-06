@@ -134,3 +134,13 @@ type SCSkuActivityVO struct {
 	// Goods ID
 	GoodsId string `json:"goods_id"`
 }
+
+// TeamStatisticVO 队伍统计值对象
+type TeamStatisticVO struct {
+	// 开团队伍数量
+	AllTeamCount int `json:"allTeamCount"`
+	// 成团队伍数量
+	AllTeamCompleteCount int `json:"allTeamCompleteCount"`
+	// 参团人数总量 - 一个商品的总参团人数
+	AllTeamUserCount int `json:"allTeamUserCount"`
+}
