@@ -10,13 +10,11 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"group-buy-market-go/internal/domain/activity"
-	"group-buy-market-go/internal/domain/activity/service/trial"
 	"group-buy-market-go/internal/domain/trade"
 	"group-buy-market-go/internal/infrastructure"
 	"group-buy-market-go/internal/service"
 
 	"group-buy-market-go/internal/conf"
-	"group-buy-market-go/internal/domain/activity/biz/discount"
 	"group-buy-market-go/internal/server"
 )
 
@@ -27,7 +25,6 @@ func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		infrastructure.ProviderSet,
 		trade.ProviderSet,
 		service.ProviderSet,
-		discount.ProviderSet,
 		activity.ProviderSet,
 		newApp,
 	))
