@@ -29,25 +29,6 @@ func NewIndexService(rootNode *node.RootNode) *IndexService {
 	}
 }
 
-// IndexMarketTrial 营销首页试算
-// 对应Java中的IndexMarketTrial方法
-func (s *IndexService) IndexMarketTrial(ctx context.Context, marketProduct *model.MarketProductEntity) (*model.TrialBalanceEntity, error) {
-	log.Infof("营销首页试算 marketProduct:%v", marketProduct)
-
-	// 获取策略处理器
-	strategyHandler := s.strategyFactory.StrategyHandler()
-
-	// 创建动态上下文
-	dynamicContext := &core.DynamicContext{}
-
-	// 应用策略处理器
-	trialBalanceEntity, err := strategyHandler.Apply(ctx, marketProduct, dynamicContext)
-	if err != nil {
-		return nil, err
-	}
-	return trialBalanceEntity, nil
-}
-
 // QueryGroupBuyMarketConfig 查询拼团营销配置
 // 对应Java中的queryGroupBuyMarketConfig方法
 func (s *IndexService) QueryGroupBuyMarketConfig(ctx context.Context, req *v1.QueryGroupBuyMarketConfigRequest) (*v1.QueryGroupBuyMarketConfigReply, error) {
@@ -72,4 +53,23 @@ func (s *IndexService) QueryGroupBuyMarketConfig(ctx context.Context, req *v1.Qu
 		return nil, err
 	}
 	return &v1.QueryGroupBuyMarketConfigReply{}, nil
+}
+
+// IndexMarketTrial 营销首页试算
+// 对应Java中的IndexMarketTrial方法
+func (s *IndexService) IndexMarketTrial(ctx context.Context, marketProduct *model.MarketProductEntity) (*model.TrialBalanceEntity, error) {
+	log.Infof("营销首页试算 marketProduct:%v", marketProduct)
+
+	// 获取策略处理器
+	strategyHandler := s.strategyFactory.StrategyHandler()
+
+	// 创建动态上下文
+	dynamicContext := &core.DynamicContext{}
+
+	// 应用策略处理器
+	trialBalanceEntity, err := strategyHandler.Apply(ctx, marketProduct, dynamicContext)
+	if err != nil {
+		return nil, err
+	}
+	return trialBalanceEntity, nil
 }
