@@ -69,13 +69,70 @@ func (s *IndexService) QueryGroupBuyMarketConfig(ctx context.Context, req *v1.Qu
 		Channel: req.Channel,
 	}
 
-	// 营销优惠试算
+	// 1. 营销优惠试算
 	trialBalanceEntity, err := s.IndexMarketTrial(ctx, marketProduct)
 	if err != nil {
 		return nil, err
 	}
 
-	return &v1.QueryGroupBuyMarketConfigReply{}, nil
+	groupBuyActivityDiscountVO := trialBalanceEntity.GroupBuyActivityDiscountVO
+	activityId := groupBuyActivityDiscountVO.ActivityId
+
+	// 2. 查询拼团组队
+	userGroupBuyOrderDetailEntities, err := s.QueryInProgressUserGroupBuyOrderDetailList(ctx, activityId, req.UserId, 1, 2)
+	if err != nil {
+		return nil, err
+	}
+
+	// 3. 统计拼团数据
+	teamStatisticVO, err := s.QueryTeamStatisticByActivityId(ctx, activityId)
+	if err != nil {
+		return nil, err
+	}
+
+	// 构建响应数据
+	goods := &v1.Goods{
+		GoodsId:        trialBalanceEntity.GoodsId,
+		OriginalPrice:  trialBalanceEntity.OriginalPrice,
+		DeductionPrice: trialBalanceEntity.DeductionPrice,
+		PayPrice:       trialBalanceEntity.PayPrice,
+	}
+
+	teams := make([]*v1.Team, 0)
+	if userGroupBuyOrderDetailEntities != nil && len(userGroupBuyOrderDetailEntities) > 0 {
+		for _, userGroupBuyOrderDetailEntity := range userGroupBuyOrderDetailEntities {
+			team := &v1.Team{
+				UserId:         userGroupBuyOrderDetailEntity.UserId,
+				TeamId:         userGroupBuyOrderDetailEntity.TeamId,
+				ActivityId:     userGroupBuyOrderDetailEntity.ActivityId,
+				TargetCount:    int32(userGroupBuyOrderDetailEntity.TargetCount),
+				CompleteCount:  int32(userGroupBuyOrderDetailEntity.CompleteCount),
+				LockCount:      int32(userGroupBuyOrderDetailEntity.LockCount),
+				ValidStartTime: userGroupBuyOrderDetailEntity.ValidStartTime,
+				ValidEndTime:   userGroupBuyOrderDetailEntity.ValidEndTime,
+				// Note: 计算倒计时需要额外的逻辑，这里暂时设为0 TODO
+				ValidTimeCountdown: "0",
+				OutTradeNo:         userGroupBuyOrderDetailEntity.OutTradeNo,
+			}
+			teams = append(teams, team)
+		}
+	}
+
+	teamStatistic := &v1.TeamStatistic{
+		AllTeamCount:         int32(teamStatisticVO.AllTeamCount),
+		AllTeamCompleteCount: int32(teamStatisticVO.AllTeamCompleteCount),
+		AllTeamUserCount:     int32(teamStatisticVO.AllTeamUserCount),
+	}
+
+	reply := &v1.QueryGroupBuyMarketConfigReply{
+		Goods:         goods,
+		TeamList:      teams,
+		TeamStatistic: teamStatistic,
+	}
+
+	log.Infof("查询拼团营销配置完成 userId:%s goodsId:%s", req.GetUserId(), req.GetGoodsId())
+
+	return reply, nil
 }
 
 // QueryInProgressUserGroupBuyOrderDetailList 查询进行中的拼团订单详情列表
@@ -106,4 +163,10 @@ func (s *IndexService) QueryInProgressUserGroupBuyOrderDetailList(ctx context.Co
 	}
 
 	return unionAllList, nil
+}
+
+// QueryTeamStatisticByActivityId 根据活动ID查询团队统计信息
+// 对应Java中的queryTeamStatisticByActivityId方法
+func (s *IndexService) QueryTeamStatisticByActivityId(ctx context.Context, activityId int64) (*model.TeamStatisticVO, error) {
+	return s.activityRepository.QueryTeamStatisticByActivityId(ctx, activityId)
 }
