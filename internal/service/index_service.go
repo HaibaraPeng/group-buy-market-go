@@ -6,10 +6,10 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "group-buy-market-go/api/v1"
 	"group-buy-market-go/internal/common/consts"
+	"group-buy-market-go/internal/domain/activity/biz/trial/core"
+	"group-buy-market-go/internal/domain/activity/biz/trial/factory"
+	"group-buy-market-go/internal/domain/activity/biz/trial/node"
 	"group-buy-market-go/internal/domain/activity/model"
-	"group-buy-market-go/internal/domain/activity/service/trial/core"
-	"group-buy-market-go/internal/domain/activity/service/trial/factory"
-	"group-buy-market-go/internal/domain/activity/service/trial/node"
 )
 
 // IndexService 营销首页服务
@@ -29,6 +29,25 @@ func NewIndexService(rootNode *node.RootNode) *IndexService {
 	}
 }
 
+// IndexMarketTrial 营销首页试算
+// 对应Java中的IndexMarketTrial方法
+func (s *IndexService) IndexMarketTrial(ctx context.Context, marketProduct *model.MarketProductEntity) (*model.TrialBalanceEntity, error) {
+	log.Infof("营销首页试算 marketProduct:%v", marketProduct)
+
+	// 获取策略处理器
+	strategyHandler := s.strategyFactory.StrategyHandler()
+
+	// 创建动态上下文
+	dynamicContext := &core.DynamicContext{}
+
+	// 应用策略处理器
+	trialBalanceEntity, err := strategyHandler.Apply(ctx, marketProduct, dynamicContext)
+	if err != nil {
+		return nil, err
+	}
+	return trialBalanceEntity, nil
+}
+
 // QueryGroupBuyMarketConfig 查询拼团营销配置
 // 对应Java中的queryGroupBuyMarketConfig方法
 func (s *IndexService) QueryGroupBuyMarketConfig(ctx context.Context, req *v1.QueryGroupBuyMarketConfigRequest) (*v1.QueryGroupBuyMarketConfigReply, error) {
@@ -39,12 +58,6 @@ func (s *IndexService) QueryGroupBuyMarketConfig(ctx context.Context, req *v1.Qu
 		return nil, fmt.Errorf("%s: %s", string(consts.ILLEGAL_PARAMETER), consts.ILLEGAL_PARAMETER.GetErrorMessage())
 	}
 
-	// 获取策略处理器
-	strategyHandler := s.strategyFactory.StrategyHandler()
-
-	// 创建动态上下文
-	dynamicContext := &core.DynamicContext{}
-
 	// Create market product entity
 	marketProduct := &model.MarketProductEntity{
 		UserId:  req.UserId,
@@ -53,8 +66,8 @@ func (s *IndexService) QueryGroupBuyMarketConfig(ctx context.Context, req *v1.Qu
 		Channel: req.Channel,
 	}
 
-	// 应用策略处理器
-	trialBalanceEntity, err := strategyHandler.Apply(ctx, marketProduct, dynamicContext)
+	// 营销优惠试算
+	trialBalanceEntity, err := s.IndexMarketTrial(ctx, marketProduct)
 	if err != nil {
 		return nil, err
 	}
