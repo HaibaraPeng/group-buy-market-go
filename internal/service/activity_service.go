@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 	v1 "group-buy-market-go/api/v1"
+	"group-buy-market-go/internal/domain/activity/biz/trial/core"
+	"group-buy-market-go/internal/domain/activity/biz/trial/factory"
+	"group-buy-market-go/internal/domain/activity/biz/trial/node"
 	"group-buy-market-go/internal/domain/activity/model"
-	"group-buy-market-go/internal/domain/activity/service/trial/core"
-	"group-buy-market-go/internal/domain/activity/service/trial/factory"
-	"group-buy-market-go/internal/domain/activity/service/trial/node"
 )
 
 // ActivityService 拼团营销服务

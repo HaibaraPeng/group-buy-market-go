@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"group-buy-market-go/internal/common/design/tree"
+	"group-buy-market-go/internal/domain/activity/biz/discount"
+	"group-buy-market-go/internal/domain/activity/biz/trial/core"
+	"group-buy-market-go/internal/domain/activity/biz/trial/thread"
 	"group-buy-market-go/internal/domain/activity/model"
-	"group-buy-market-go/internal/domain/activity/service/discount"
-	"group-buy-market-go/internal/domain/activity/service/trial/core"
-	"group-buy-market-go/internal/domain/activity/service/trial/thread"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
 	"math/big"
 

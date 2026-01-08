@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"group-buy-market-go/internal/common/design/tree"
+	"group-buy-market-go/internal/domain/activity/biz/trial/core"
 	"group-buy-market-go/internal/domain/activity/model"
-	"group-buy-market-go/internal/domain/activity/service/trial/core"
 
 	"github.com/go-kratos/kratos/v2/log"
 )

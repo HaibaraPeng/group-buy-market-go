@@ -2,7 +2,7 @@ package trial
 
 import (
 	"github.com/google/wire"
-	"group-buy-market-go/internal/domain/activity/service/trial/node"
+	"group-buy-market-go/internal/domain/activity/biz/trial/node"
 )
 
 // ProviderSet is server providers.
