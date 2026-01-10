@@ -240,8 +240,8 @@ func (r *ActivityRepository) QueryInProgressUserGroupBuyOrderDetailListByOwner(c
 			TargetCount:    groupBuyOrder.TargetCount,
 			CompleteCount:  groupBuyOrder.CompleteCount,
 			LockCount:      groupBuyOrder.LockCount,
-			ValidStartTime: groupBuyOrder.ValidStartTime.Unix(),
-			ValidEndTime:   groupBuyOrder.ValidEndTime.Unix(),
+			ValidStartTime: groupBuyOrder.ValidStartTime,
+			ValidEndTime:   groupBuyOrder.ValidEndTime,
 			OutTradeNo:     list.OutTradeNo,
 		}
 
@@ -317,8 +317,8 @@ func (r *ActivityRepository) QueryInProgressUserGroupBuyOrderDetailListByRandom(
 			TargetCount:    groupBuyOrder.TargetCount,
 			CompleteCount:  groupBuyOrder.CompleteCount,
 			LockCount:      groupBuyOrder.LockCount,
-			ValidStartTime: groupBuyOrder.ValidStartTime.Unix(),
-			ValidEndTime:   groupBuyOrder.ValidEndTime.Unix(),
+			ValidStartTime: groupBuyOrder.ValidStartTime,
+			ValidEndTime:   groupBuyOrder.ValidEndTime,
 		}
 
 		userGroupBuyOrderDetailEntities = append(userGroupBuyOrderDetailEntities, userGroupBuyOrderDetailEntity)

@@ -6,11 +6,13 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "group-buy-market-go/api/v1"
 	"group-buy-market-go/internal/common/consts"
+	"group-buy-market-go/internal/common/utils"
 	"group-buy-market-go/internal/domain/activity/biz/trial/core"
 	"group-buy-market-go/internal/domain/activity/biz/trial/factory"
 	"group-buy-market-go/internal/domain/activity/biz/trial/node"
 	"group-buy-market-go/internal/domain/activity/model"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
+	"time"
 )
 
 // IndexService 营销首页服务
@@ -83,16 +85,15 @@ func (s *IndexService) QueryGroupBuyMarketConfig(ctx context.Context, req *v1.Qu
 	if userGroupBuyOrderDetailEntities != nil && len(userGroupBuyOrderDetailEntities) > 0 {
 		for _, userGroupBuyOrderDetailEntity := range userGroupBuyOrderDetailEntities {
 			team := &v1.Team{
-				UserId:         userGroupBuyOrderDetailEntity.UserId,
-				TeamId:         userGroupBuyOrderDetailEntity.TeamId,
-				ActivityId:     userGroupBuyOrderDetailEntity.ActivityId,
-				TargetCount:    int32(userGroupBuyOrderDetailEntity.TargetCount),
-				CompleteCount:  int32(userGroupBuyOrderDetailEntity.CompleteCount),
-				LockCount:      int32(userGroupBuyOrderDetailEntity.LockCount),
-				ValidStartTime: userGroupBuyOrderDetailEntity.ValidStartTime,
-				ValidEndTime:   userGroupBuyOrderDetailEntity.ValidEndTime,
-				// Note: 计算倒计时需要额外的逻辑，这里暂时设为0 TODO
-				ValidTimeCountdown: "0",
+				UserId:             userGroupBuyOrderDetailEntity.UserId,
+				TeamId:             userGroupBuyOrderDetailEntity.TeamId,
+				ActivityId:         userGroupBuyOrderDetailEntity.ActivityId,
+				TargetCount:        int32(userGroupBuyOrderDetailEntity.TargetCount),
+				CompleteCount:      int32(userGroupBuyOrderDetailEntity.CompleteCount),
+				LockCount:          int32(userGroupBuyOrderDetailEntity.LockCount),
+				ValidStartTime:     userGroupBuyOrderDetailEntity.ValidStartTime.Unix(),
+				ValidEndTime:       userGroupBuyOrderDetailEntity.ValidEndTime.Unix(),
+				ValidTimeCountdown: utils.DifferenceDateTime2Str(time.Now(), userGroupBuyOrderDetailEntity.ValidEndTime),
 				OutTradeNo:         userGroupBuyOrderDetailEntity.OutTradeNo,
 			}
 			teams = append(teams, team)

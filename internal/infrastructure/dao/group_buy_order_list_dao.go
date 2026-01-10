@@ -124,7 +124,7 @@ func (r *MySQLGroupBuyOrderListDAO) QueryInProgressUserGroupBuyOrderDetailListBy
 // QueryInProgressUserGroupBuyOrderDetailListByActivityId queries the list of in-progress user group buy order details by activity ID
 func (r *MySQLGroupBuyOrderListDAO) QueryInProgressUserGroupBuyOrderDetailListByActivityId(ctx context.Context, activityId int64) ([]*po.GroupBuyOrderList, error) {
 	var groupBuyOrderList []*po.GroupBuyOrderList
-	err := r.data.DB(ctx).WithContext(ctx).Select("user_id", "team_id", "out_trade_no").
+	err := r.data.DB(ctx).WithContext(ctx).Select("MAX(user_id) as user_id", "team_id", "MAX(out_trade_no) as out_trade_no").
 		Where("activity_id = ? AND status IN (0, 1)", activityId).
 		Group("team_id").
 		Find(&groupBuyOrderList).Error

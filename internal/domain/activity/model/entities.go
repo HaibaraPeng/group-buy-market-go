@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 // MarketProductEntity 营销商品实体
 // 表示参与营销活动的商品信息
 type MarketProductEntity struct {
@@ -56,9 +58,9 @@ type UserGroupBuyOrderDetailEntity struct {
 	// 锁单数量
 	LockCount int `json:"lockCount"`
 	// 拼团开始时间 - 参与拼团时间
-	ValidStartTime int64 `json:"validStartTime"`
+	ValidStartTime time.Time `json:"validStartTime"`
 	// 拼团结束时间 - 拼团有效时长
-	ValidEndTime int64 `json:"validEndTime"`
+	ValidEndTime time.Time `json:"validEndTime"`
 	// 外部交易单号-确保外部调用唯一幂等
 	OutTradeNo string `json:"outTradeNo"`
 }
