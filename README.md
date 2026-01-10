@@ -11,6 +11,7 @@ This project follows a DDD-based layered architecture with additional design pat
 │   ├── v1/                # API v1 definitions
 │   │   ├── activity.proto # Activity service definitions
 │   │   ├── dcc.proto      # Dynamic configuration service definitions
+│   │   ├── index.proto    # Index service definitions
 │   │   ├── tag.proto      # Tag service definitions
 │   │   └── trade.proto    # Trade service definitions
 ├── cmd/                   # Application entry points
@@ -35,37 +36,40 @@ This project follows a DDD-based layered architecture with additional design pat
 │   ├── conf/              # Configuration protobuf definitions
 │   ├── domain/            # Domain layer (entities, value objects, aggregates, domain services)
 │   │   ├── activity/      # Activity domain
-│   │   │   ├── model/     # Domain models and value objects
-│   │   │   └── service/   # Domain services
-│   │   │       ├── discount/  # Discount calculation services
-│   │   │       └── trial/     # Trial calculation services
-│   │   │           ├── core/      # Core trial components
-│   │   │           ├── factory/   # Strategy factory
-│   │   │           ├── node/      # Strategy tree nodes
-│   │   │           └── thread/    # Thread tasks
+│   │   │   ├── biz/       # Business logic implementations
+│   │   │   │   ├── discount/  # Discount calculation services
+│   │   │   │   └── trial/     # Trial calculation services
+│   │   │   │       ├── core/      # Core trial components
+│   │   │   │       ├── factory/   # Strategy factory
+│   │   │   │       ├── node/      # Strategy tree nodes (RootNode, SwitchNode, TagNode, MarketNode, EndNode, ErrorNode)
+│   │   │   │       └── thread/    # Thread tasks
+│   │   │   └── model/     # Domain models and value objects
 │   │   ├── tag/           # Tag domain
 │   │   │   └── model/     # Tag models
 │   │   └── trade/         # Trade domain
 │   │       ├── biz/       # Trade business logic
 │   │       │   ├── lock/         # Trade lock business logic
-│   │       │   │   └── filter/   # Trade lock filters
+│   │       │   │   └── filter/   # Trade lock filters (ActivityUsabilityRuleFilter, UserTakeLimitRuleFilter, TradeLockRuleFilterFactory)
 │   │       │   └── settlement/   # Trade settlement business logic
-│   │       │       └── filter/   # Trade settlement filters
+│   │       │       └── filter/   # Trade settlement filters (SCRuleFilter, SettableRuleFilter, OutTradeNoRuleFilter, EndRuleFilter, TradeSettlementRuleFilterFactory)
 │   │       ├── model/     # Trade models
 │   │       └── trade.go   # Trade interface definition
 │   ├── infrastructure/    # Infrastructure layer (database, external services)
 │   │   ├── adapter/       # Adapters for external services
+│   │   │   ├── port/      # Port interfaces
 │   │   │   └── repository/    # Repository implementations
 │   │   ├── dao/           # Data Access Objects
 │   │   ├── data/          # Data layer with database and redis clients
 │   │   ├── dcc/           # Dynamic configuration client
 │   │   ├── gateway/       # Gateway implementations
 │   │   ├── job/           # Scheduled job implementations
-│   │   └── po/            # Persistent Objects (data models)
+│   │   ├── po/            # Persistent Objects (data models)
+│   │   └── provider.go    # DCC provider implementation
 │   ├── server/            # Server initialization
 │   └── service/           # Service layer (application services)
 │       ├── activity_service.go # Activity application service
 │       ├── dcc_service.go      # Dynamic configuration application service
+│       ├── index_service.go    # Index application service
 │       ├── tag_service.go      # Tag application service
 │       └── trade_service.go    # Trade application service
 ├── third_party/           # Third-party proto files
@@ -135,6 +139,11 @@ The project implements responsibility chain pattern filters for trade rule valid
 - **EndRuleFilter**: Finalizes the settlement process and returns results
 - **TradeSettlementRuleFilterFactory**: Assembles the filter chain for trade settlement validation
 
+Additional responsibility chain filters for trade lock:
+- **ActivityUsabilityRuleFilter**: Validates if the activity is usable
+- **UserTakeLimitRuleFilter**: Validates if user has reached participation limit
+- **TradeLockRuleFilterFactory**: Assembles the filter chain for trade lock validation
+
 ### Dynamic Configuration Center (DCC)
 The project includes a Dynamic Configuration Center for runtime configuration management:
 - **DCC Service**: Provides configuration retrieval and update capabilities
@@ -166,6 +175,7 @@ The project uses modern data access patterns with GORM for database operations a
 - **Redis for caching**: Implements caching and bitmap operations for user targeting
 - **DAO Layer**: Data Access Objects abstract database operations
 - **Repository Pattern**: Provides domain-specific data access interfaces
+- **Persistent Objects (PO)**: Data models that map to database tables
 
 ## Getting Started
 
@@ -215,6 +225,7 @@ go test ./...
 ## API Documentation
 API endpoints are defined in the `api/` directory using Protocol Buffers. The service definitions include HTTP bindings for RESTful access to gRPC services. The main services are:
 - ActivityService: For group buying activity management
+- IndexService: For group buying market configuration queries
 - TagService: For user targeting and segmentation
 - TradeService: For order processing and management
 - DccService: For dynamic configuration management
