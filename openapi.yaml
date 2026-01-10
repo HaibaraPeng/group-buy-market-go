@@ -31,17 +31,17 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /market/trial:
+    /index/queryGroupBuyMarketConfig:
         post:
             tags:
-                - ActivityHTTP
-            description: MarketTrial handles market trial requests
-            operationId: ActivityHTTP_MarketTrial
+                - IndexHTTP
+            description: QueryGroupBuyMarketConfig 查询拼团营销配置
+            operationId: IndexHTTP_QueryGroupBuyMarketConfig
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/MarketTrialRequest'
+                            $ref: '#/components/schemas/QueryGroupBuyMarketConfigRequest'
                 required: true
             responses:
                 "200":
@@ -49,7 +49,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/MarketTrialReply'
+                                $ref: '#/components/schemas/QueryGroupBuyMarketConfigReply'
                 default:
                     description: Default error response
                     content:
@@ -120,6 +120,25 @@ components:
                     type: string
                 batchId:
                     type: string
+        Goods:
+            type: object
+            properties:
+                goodsId:
+                    type: string
+                    description: 商品ID
+                originalPrice:
+                    type: number
+                    description: 原始价格
+                    format: double
+                deductionPrice:
+                    type: number
+                    description: 折扣金额
+                    format: double
+                payPrice:
+                    type: number
+                    description: 支付价格
+                    format: double
+            description: 商品信息
         GoogleProtobufAny:
             type: object
             properties:
@@ -154,23 +173,37 @@ components:
                     type: string
                 channel:
                     type: string
+                notifyUrl:
+                    type: string
                 outTradeNo:
                     type: string
-        MarketTrialReply:
+        QueryGroupBuyMarketConfigReply:
             type: object
             properties:
-                trialResult:
-                    $ref: '#/components/schemas/TrialBalanceInfo'
-        MarketTrialRequest:
+                goods:
+                    allOf:
+                        - $ref: '#/components/schemas/Goods'
+                    description: 商品信息
+                teamList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Team'
+                    description: 组队信息（1个个人的置顶、2个随机的「获取10个，随机取2个」）
+                teamStatistic:
+                    allOf:
+                        - $ref: '#/components/schemas/TeamStatistic'
+                    description: 组队统计
+            description: 商品营销应答对象
+        QueryGroupBuyMarketConfigRequest:
             type: object
             properties:
                 userId:
                     type: string
-                goodsId:
-                    type: string
                 source:
                     type: string
                 channel:
+                    type: string
+                goodsId:
                     type: string
         Status:
             type: object
@@ -188,30 +221,59 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
-        TrialBalanceInfo:
+        Team:
             type: object
             properties:
-                goodsId:
+                userId:
                     type: string
-                goodsName:
+                    description: 用户ID
+                teamId:
                     type: string
-                originalPrice:
-                    type: number
-                    format: double
-                deductionPrice:
-                    type: number
-                    format: double
+                    description: 拼单组队ID
+                activityId:
+                    type: string
+                    description: 活动ID
                 targetCount:
                     type: integer
+                    description: 目标数量
                     format: int32
-                startTime:
+                completeCount:
+                    type: integer
+                    description: 完成数量
+                    format: int32
+                lockCount:
+                    type: integer
+                    description: 锁单数量
+                    format: int32
+                validStartTime:
                     type: string
-                endTime:
+                    description: 拼团开始时间 - 参与拼团时间
+                validEndTime:
                     type: string
-                isVisible:
-                    type: boolean
-                isEnable:
-                    type: boolean
+                    description: 拼团结束时间 - 拼团有效时长
+                validTimeCountdown:
+                    type: string
+                    description: 倒计时(字符串) validEndTime - validStartTime
+                outTradeNo:
+                    type: string
+                    description: 外部交易单号-确保外部调用唯一幂等
+            description: 组队信息
+        TeamStatistic:
+            type: object
+            properties:
+                allTeamCount:
+                    type: integer
+                    description: 开团队伍数量
+                    format: int32
+                allTeamCompleteCount:
+                    type: integer
+                    description: 成团队伍数量
+                    format: int32
+                allTeamUserCount:
+                    type: integer
+                    description: 参团人数总量 - 一个商品的总参团人数
+                    format: int32
+            description: 组队统计
         UpdateConfigReply:
             type: object
             properties:
@@ -225,10 +287,10 @@ components:
                 value:
                     type: string
 tags:
-    - name: ActivityHTTP
-      description: GroupBuyService HTTP API
     - name: DccHTTP
       description: DccService HTTP API
+    - name: IndexHTTP
+      description: IndexService HTTP API
     - name: TagHTTP
       description: TagService HTTP API
     - name: TradeHTTP
