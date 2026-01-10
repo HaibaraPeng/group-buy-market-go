@@ -5,4 +5,4 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewActivityService, NewDccService, NewTagService, NewTradeService)
+var ProviderSet = wire.NewSet(NewDccService, NewIndexService, NewTagService, NewTradeService)

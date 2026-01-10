@@ -11,7 +11,7 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, marketService *service.ActivityService, tagService *service.TagService, dccService *service.DccService, tradeService *service.TradeService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, indexService *service.IndexService, tagService *service.TagService, dccService *service.DccService, tradeService *service.TradeService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -27,7 +27,7 @@ func NewHTTPServer(c *conf.Server, marketService *service.ActivityService, tagSe
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	v1.RegisterActivityHTTPHTTPServer(srv, marketService)
+	v1.RegisterIndexHTTPHTTPServer(srv, indexService)
 	v1.RegisterTagHTTPHTTPServer(srv, tagService)
 	v1.RegisterDccHTTPHTTPServer(srv, dccService)
 	v1.RegisterTradeHTTPHTTPServer(srv, tradeService)
