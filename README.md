@@ -29,7 +29,9 @@ This project follows a DDD-based layered architecture with additional design pat
 │   │   │   │   └── model2/ # Second responsibility chain model
 │   │   │   └── tree/      # Strategy tree pattern implementation
 │   │   ├── exception/     # Exception handling utilities
-│   │   └── utils/         # Utility functions
+│   │   ├── utils/         # Utility functions
+│   │   │   ├── date_util.go    # Date utility functions
+│   │   │   └── user_util.go    # User utility functions
 │   ├── conf/              # Configuration protobuf definitions
 │   ├── domain/            # Domain layer (entities, value objects, aggregates, domain services)
 │   │   ├── activity/      # Activity domain
@@ -153,6 +155,10 @@ Comprehensive error code system with business-specific error codes for different
 - **Business-level errors**: E0001-E0007 for general business operations
 - **Activity-related errors**: E0101-E0106 for activity and settlement operations
 - **Consistent error handling**: Standardized error codes across Java and Go implementations
+
+### Date Utilities
+The project includes date utility functions for common time operations:
+- **DifferenceDateTime2Str**: Calculates the difference between two time values and formats as HH:MM:SS
 
 ### Data Persistence
 The project uses modern data access patterns with GORM for database operations and Redis for caching:
