@@ -61,6 +61,9 @@ This project follows a DDD-based layered architecture with additional design pat
 │   │   ├── dao/           # Data Access Objects
 │   │   ├── data/          # Data layer with database and redis clients
 │   │   ├── dcc/           # Dynamic configuration client
+│   │   ├── event/         # Event publishing and listening implementations
+│   │   │   ├── listener/  # Event listeners
+│   │   │   └── publish/   # Event publishers
 │   │   ├── gateway/       # Gateway implementations
 │   │   ├── job/           # Scheduled job implementations
 │   │   ├── po/            # Persistent Objects (data models)
@@ -94,6 +97,7 @@ Contains application-specific business logic:
 - Use cases
 - Service implementations:
   - ActivityService (marketing trial service)
+  - IndexService (group buying market configuration queries)
   - TagService (tag batch job service)
   - DccService (dynamic configuration service)
   - TradeService (trade order service)
@@ -105,6 +109,7 @@ Contains technology-specific implementations:
 - Repository implementations
 - Cache implementations (Redis)
 - Data layer with database and Redis clients (Data struct)
+- Event publishing and listening implementations
 - Job scheduling implementations
 - Dynamic Configuration Center (DCC)
 
@@ -118,9 +123,9 @@ Contains adapters that convert external requests into internal formats:
 ### Strategy Tree Pattern
 The project implements a strategy tree pattern for handling group buying calculations:
 - **RootNode**: Entry point of the strategy tree
-- **SwitchNode**: Determines if marketing activities are enabled
+- **SwitchNode**: Determines if marketing activities are enabled (handles downgrade switches and cut range checks)
 - **TagNode**: Checks if user belongs to target audience
-- **MarketNode**: Calculates marketing discounts
+- **MarketNode**: Calculates marketing discounts using various discount calculation services
 - **EndNode**: Finalizes the calculation and returns results
 - **ErrorNode**: Handles error cases
 
@@ -152,6 +157,12 @@ The project includes a Dynamic Configuration Center for runtime configuration ma
 - **Downgrade Switch**: Provides capability to disable features during high load
 - **User Cut Range**: Supports percentage-based feature rollout
 
+### Event Publishing System
+The project includes an event publishing system for message-based communication:
+- **RabbitMQ Event Publisher**: Publishes events to RabbitMQ queues
+- **Topic-based messaging**: Uses topic exchanges for flexible routing
+- **Integration testing**: Includes integration tests for real RabbitMQ connections
+
 ### Job Scheduling System
 The project includes a scheduled job system for background tasks:
 - **Group Buy Notification Job**: Handles group buy completion notifications
@@ -176,6 +187,7 @@ The project uses modern data access patterns with GORM for database operations a
 - **DAO Layer**: Data Access Objects abstract database operations
 - **Repository Pattern**: Provides domain-specific data access interfaces
 - **Persistent Objects (PO)**: Data models that map to database tables
+- **RabbitMQ Integration**: Message queue support for asynchronous processing
 
 ## Getting Started
 
@@ -183,6 +195,7 @@ The project uses modern data access patterns with GORM for database operations a
 - Go 1.16 or higher (recommended: Go 1.23.12)
 - Redis (for caching and bitmap operations)
 - MySQL (for data persistence)
+- RabbitMQ (for event publishing)
 
 ### Installation
 ```bash
@@ -201,6 +214,15 @@ go run cmd/groupbuy/main.go
 go build -o bin/groupbuy cmd/groupbuy/main.go
 ```
 
+## Configuration
+Configuration files are located in the `configs/` directory. The project uses protobuf for configuration definitions and YAML for runtime configurations. The DCC (Dynamic Configuration Center) allows runtime configuration changes without restarts.
+
+The main configuration file (`configs/config.yaml`) includes:
+- Server settings (HTTP and gRPC addresses and timeouts)
+- Database configuration (MySQL connection details)
+- Redis configuration (address, timeouts)
+- RabbitMQ configuration (addresses, credentials, queue settings)
+
 ## Dependency Injection
 This project uses [Google Wire](https://github.com/google/wire) for dependency injection.
 
@@ -214,20 +236,27 @@ cd cmd/groupbuy
 wire
 ```
 
-## Configuration
-Configuration files are located in the `configs/` directory. The project uses protobuf for configuration definitions and YAML for runtime configurations. The DCC (Dynamic Configuration Center) allows runtime configuration changes without restarts.
-
 ## Testing
 ```bash
 go test ./...
 ```
 
+The project includes both unit tests and integration tests (marked with `//go:build integration` tags).
+
 ## API Documentation
 API endpoints are defined in the `api/` directory using Protocol Buffers. The service definitions include HTTP bindings for RESTful access to gRPC services. The main services are:
-- ActivityService: For group buying activity management
 - IndexService: For group buying market configuration queries
 - TagService: For user targeting and segmentation
 - TradeService: For order processing and management
 - DccService: For dynamic configuration management
 
 An OpenAPI specification is automatically generated and available in the `openapi.yaml` file for REST API documentation.
+
+## Architecture Patterns
+The application implements several architectural patterns:
+- **Domain-Driven Design (DDD)**: Clear separation of domain logic from infrastructure concerns
+- **Strategy Pattern**: For handling different discount calculation methods
+- **Chain of Responsibility**: For processing trade rules and validations
+- **Event-Driven Architecture**: Using RabbitMQ for asynchronous communication
+- **Repository Pattern**: Abstracting data access logic
+- **Dependency Injection**: Using Google Wire for managing dependencies
