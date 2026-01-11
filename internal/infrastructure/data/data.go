@@ -16,12 +16,14 @@ var ProviderSet = wire.NewSet(
 	NewDB,
 	NewData,
 	NewRedisClient,
+	NewRabbitMQClient,
 )
 
 // Data .
 type Data struct {
-	db  *gorm.DB
-	rdb *redis.Client
+	db       *gorm.DB
+	rdb      *redis.Client
+	rabbitmq *RabbitMQClient
 }
 
 // NewRedisClient 创建redis客户端
@@ -64,10 +66,11 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 }
 
 // NewData .
-func NewData(db *gorm.DB, rdb *redis.Client) *Data {
+func NewData(db *gorm.DB, rdb *redis.Client, rabbitmq *RabbitMQClient) *Data {
 	d := &Data{
-		db:  db,
-		rdb: rdb,
+		db:       db,
+		rdb:      rdb,
+		rabbitmq: rabbitmq,
 	}
 	return d
 }
@@ -91,4 +94,9 @@ func (d *Data) DB(ctx context.Context) *gorm.DB {
 
 func (d *Data) Rdb(ctx context.Context) *redis.Client {
 	return d.rdb
+}
+
+// Rmq 获取RabbitMQ客户端
+func (d *Data) Rmq(ctx context.Context) *RabbitMQClient {
+	return d.rabbitmq
 }

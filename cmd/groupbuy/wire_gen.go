@@ -36,7 +36,12 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	if err != nil {
 		return nil, nil, err
 	}
-	dataData := data.NewData(db, client)
+	rabbitMQClient, cleanup2, err := data.NewRabbitMQClient(confData, logger)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	dataData := data.NewData(db, client, rabbitMQClient)
 	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(dataData)
 	groupBuyDiscountDAO := dao.NewMySQLGroupBuyDiscountDAO(dataData)
 	skuDAO := dao.NewMySQLSkuDAO(dataData)
@@ -81,6 +86,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	jobJob := job.NewGroupBuyNotifyJob(logger, tradeSettlementOrderService)
 	app := newApp(logger, httpServer, jobJob)
 	return app, func() {
+		cleanup2()
 		cleanup()
 	}, nil
 }
