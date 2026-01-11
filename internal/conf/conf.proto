@@ -45,11 +45,10 @@ message Data {
         int32 port = 2;                     // Port
         string username = 3;                // Username
         string password = 4;                // Password
-        int32 delivery_mode = 5;           // Delivery mode (1=non-persistent, 2=persistent)
-        int32 prefetch_count = 6;          // Prefetch count for consumer
+        int32 prefetch_count = 5;          // Prefetch count for consumer
 
         // Producer configuration
-        RabbitMQProducer producer = 7;
+        RabbitMQProducer producer = 6;
     }
 
     message RabbitMQProducer {

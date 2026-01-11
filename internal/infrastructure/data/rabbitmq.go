@@ -119,18 +119,13 @@ func (r *RabbitMQClient) DeclareExchange() error {
 
 	return r.channel.ExchangeDeclare(
 		exchangeName, // name
-		"direct",     // type
+		"topic",      // topic
 		true,         // durable
 		false,        // auto-deleted
 		false,        // internal
 		false,        // no-wait
 		nil,          // arguments
 	)
-}
-
-// DeclareQueue 声明队列（使用配置中的默认队列名）
-func (r *RabbitMQClient) DeclareQueue() error {
-	return r.DeclareQueueWithName("") // 需要传递具体的队列名，这里暂时为空
 }
 
 // DeclareQueueWithName 声明指定名称的队列

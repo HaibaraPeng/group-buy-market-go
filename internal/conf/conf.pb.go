@@ -456,10 +456,9 @@ type Data_RabbitMQ struct {
 	Port          int32                  `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`                                        // Port
 	Username      string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`                                 // Username
 	Password      string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`                                 // Password
-	DeliveryMode  int32                  `protobuf:"varint,5,opt,name=delivery_mode,json=deliveryMode,proto3" json:"delivery_mode,omitempty"`    // Delivery mode (1=non-persistent, 2=persistent)
-	PrefetchCount int32                  `protobuf:"varint,6,opt,name=prefetch_count,json=prefetchCount,proto3" json:"prefetch_count,omitempty"` // Prefetch count for consumer
+	PrefetchCount int32                  `protobuf:"varint,5,opt,name=prefetch_count,json=prefetchCount,proto3" json:"prefetch_count,omitempty"` // Prefetch count for consumer
 	// Producer configuration
-	Producer      *Data_RabbitMQProducer `protobuf:"bytes,7,opt,name=producer,proto3" json:"producer,omitempty"`
+	Producer      *Data_RabbitMQProducer `protobuf:"bytes,6,opt,name=producer,proto3" json:"producer,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -520,13 +519,6 @@ func (x *Data_RabbitMQ) GetPassword() string {
 		return x.Password
 	}
 	return ""
-}
-
-func (x *Data_RabbitMQ) GetDeliveryMode() int32 {
-	if x != nil {
-		return x.DeliveryMode
-	}
-	return 0
 }
 
 func (x *Data_RabbitMQ) GetPrefetchCount() int32 {
@@ -666,7 +658,7 @@ const file_internal_conf_conf_proto_rawDesc = "" +
 	"\x04GRPC\x12\x18\n" +
 	"\anetwork\x18\x01 \x01(\tR\anetwork\x12\x12\n" +
 	"\x04addr\x18\x02 \x01(\tR\x04addr\x123\n" +
-	"\atimeout\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\atimeout\"\xd3\a\n" +
+	"\atimeout\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\atimeout\"\xae\a\n" +
 	"\x04Data\x125\n" +
 	"\bdatabase\x18\x01 \x01(\v2\x19.kratos.api.Data.DatabaseR\bdatabase\x12,\n" +
 	"\x05redis\x18\x02 \x01(\v2\x16.kratos.api.Data.RedisR\x05redis\x125\n" +
@@ -681,15 +673,14 @@ const file_internal_conf_conf_proto_rawDesc = "" +
 	"\x02db\x18\x04 \x01(\x05R\x02db\x12<\n" +
 	"\fdial_timeout\x18\x05 \x01(\v2\x19.google.protobuf.DurationR\vdialTimeout\x12<\n" +
 	"\fread_timeout\x18\x06 \x01(\v2\x19.google.protobuf.DurationR\vreadTimeout\x12>\n" +
-	"\rwrite_timeout\x18\a \x01(\v2\x19.google.protobuf.DurationR\fwriteTimeout\x1a\xff\x01\n" +
+	"\rwrite_timeout\x18\a \x01(\v2\x19.google.protobuf.DurationR\fwriteTimeout\x1a\xda\x01\n" +
 	"\bRabbitMQ\x12\x1c\n" +
 	"\taddresses\x18\x01 \x01(\tR\taddresses\x12\x12\n" +
 	"\x04port\x18\x02 \x01(\x05R\x04port\x12\x1a\n" +
 	"\busername\x18\x03 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x04 \x01(\tR\bpassword\x12#\n" +
-	"\rdelivery_mode\x18\x05 \x01(\x05R\fdeliveryMode\x12%\n" +
-	"\x0eprefetch_count\x18\x06 \x01(\x05R\rprefetchCount\x12=\n" +
-	"\bproducer\x18\a \x01(\v2!.kratos.api.Data.RabbitMQProducerR\bproducer\x1a\x82\x01\n" +
+	"\bpassword\x18\x04 \x01(\tR\bpassword\x12%\n" +
+	"\x0eprefetch_count\x18\x05 \x01(\x05R\rprefetchCount\x12=\n" +
+	"\bproducer\x18\x06 \x01(\v2!.kratos.api.Data.RabbitMQProducerR\bproducer\x1a\x82\x01\n" +
 	"\x10RabbitMQProducer\x12\x1a\n" +
 	"\bexchange\x18\x01 \x01(\tR\bexchange\x12R\n" +
 	"\x12topic_team_success\x18\x02 \x01(\v2$.kratos.api.Data.RabbitMQTopicConfigR\x10topicTeamSuccess\x1aL\n" +
