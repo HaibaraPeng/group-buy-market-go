@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-	"strings"
 	"sync"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -80,7 +79,7 @@ func NewRabbitMQClient(config *conf.Data, logger log.Logger) (*RabbitMQClient, f
 		}
 
 		routingKey := rmqConfig.Producer.TopicTeamSuccess.RoutingKey
-		queueName := rmqConfig.Producer.TopicTeamSuccess.Queue
+		queueName = rmqConfig.Producer.TopicTeamSuccess.Queue
 		if routingKey != "" && queueName != "" {
 			// 绑定队列到交换机
 			err = client.BindQueueWithParams(queueName, routingKey)
@@ -119,47 +118,53 @@ func (r *RabbitMQClient) DeclareExchange() error {
 	exchangeName := r.config.Producer.Exchange
 
 	return r.channel.ExchangeDeclare(
-		exchangeName,        // name
-		"direct",            // type
-		r.config.Durable,    // durable
-		r.config.AutoDelete, // auto-deleted
-		false,               // internal
-		false,               // no-wait
-		nil,                 // arguments
+		exchangeName, // name
+		"direct",     // type
+		true,         // durable
+		false,        // auto-deleted
+		false,        // internal
+		false,        // no-wait
+		nil,          // arguments
 	)
 }
 
 // DeclareQueue 声明队列（使用配置中的默认队列名）
 func (r *RabbitMQClient) DeclareQueue() error {
-	return r.DeclareQueueWithName(r.config.Queue)
+	return r.DeclareQueueWithName("") // 需要传递具体的队列名，这里暂时为空
 }
 
 // DeclareQueueWithName 声明指定名称的队列
 func (r *RabbitMQClient) DeclareQueueWithName(queueName string) error {
+	// 如果队列名为空，则使用默认队列名
+	if queueName == "" {
+		queueName = "default_queue" // 或者从配置中获取默认队列名
+	}
 	_, err := r.channel.QueueDeclare(
-		queueName,           // name
-		r.config.Durable,    // durable
-		r.config.AutoDelete, // delete when unused
-		false,               // exclusive
-		false,               // no-wait
-		nil,                 // arguments
+		queueName, // name
+		true,      // durable
+		false,     // delete when unused
+		false,     // exclusive
+		false,     // no-wait
+		nil,       // arguments
 	)
 	return err
 }
 
 // BindQueue 绑定队列到交换机（使用配置中的默认参数）
 func (r *RabbitMQClient) BindQueue() error {
-	return r.BindQueueWithParams(r.config.Queue, r.config.RoutingKey)
+	// 这里需要提供具体的队列名和路由键，目前不适用
+	return fmt.Errorf("BindQueue not applicable with current config structure")
 }
 
 // BindQueueWithParams 使用指定参数绑定队列到交换机
 func (r *RabbitMQClient) BindQueueWithParams(queueName, routingKey string) error {
+	exchangeName := r.config.Producer.Exchange
 	return r.channel.QueueBind(
-		queueName,         // queue name
-		routingKey,        // routing key
-		r.config.Exchange, // exchange
-		false,             // no-wait
-		nil,               // arguments
+		queueName,    // queue name
+		routingKey,   // routing key
+		exchangeName, // exchange
+		false,        // no-wait
+		nil,          // arguments
 	)
 }
 
@@ -170,14 +175,14 @@ func (r *RabbitMQClient) Publish(ctx context.Context, routingKey string, queueNa
 
 	err := r.channel.PublishWithContext(
 		ctx,
-		r.config.Exchange, // exchange
-		routingKey,        // routing key
-		false,             // mandatory
-		false,             // immediate
+		r.config.Producer.Exchange, // exchange
+		routingKey,                 // routing key
+		false,                      // mandatory
+		false,                      // immediate
 		amqp.Publishing{
 			ContentType:  "text/plain",
 			Body:         body,
-			DeliveryMode: amqp.DeliveryMode(r.config.DeliveryMode),
+			DeliveryMode: amqp.Persistent,
 		},
 	)
 
@@ -192,7 +197,13 @@ func (r *RabbitMQClient) Publish(ctx context.Context, routingKey string, queueNa
 
 // PublishWithDefaultRouting 发布使用默认路由键的消息
 func (r *RabbitMQClient) PublishWithDefaultRouting(ctx context.Context, body []byte) error {
-	return r.Publish(ctx, r.config.RoutingKey, r.config.Queue, body)
+	// 这里需要更具体的实现，可能需要配置中的默认值
+	// 使用默认的路由键和队列名，这里我们使用TopicTeamSuccess的配置
+	if r.config.Producer != nil && r.config.Producer.TopicTeamSuccess != nil {
+		return r.Publish(ctx, r.config.Producer.TopicTeamSuccess.RoutingKey,
+			r.config.Producer.TopicTeamSuccess.Queue, body)
+	}
+	return fmt.Errorf("no default routing configuration found")
 }
 
 // PublishTeamSuccessEvent 发布团队成功事件
