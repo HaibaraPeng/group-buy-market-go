@@ -1,6 +1,6 @@
 //go:build integration
 
-package event
+package publish
 
 import (
 	"context"
