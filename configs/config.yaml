@@ -1,5 +1,5 @@
 trace:
-  endpoint: http://127.0.0.1:14268/api/traces
+  endpoint: http://127.0.0.0:14268/api/traces
 server:
   http:
     addr: 0.0.0.0:8000
@@ -17,3 +17,22 @@ data:
     dial_timeout: 1s
     read_timeout: 0.4s
     write_timeout: 0.6s
+  rabbitmq:
+    addresses: localhost
+    port: 5672
+    username: admin
+    password: admin
+    delivery_mode: 2  # persistent
+    prefetch_count: 1
+    # 消息配置
+    config:
+      # 生产者
+      producer:
+        # 绑定交换机，统一一套交换机
+        exchange: group_buy_market_exchange
+        # 消息主题配置；路由key、队列
+        topic_team_success:
+          # 消息主题
+          routing_key: topic.team_success
+          # 消费队列
+          queue: group_buy_market_queue_2_topic_team_success
