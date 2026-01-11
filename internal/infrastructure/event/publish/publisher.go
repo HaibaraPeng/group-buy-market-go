@@ -16,13 +16,13 @@ type EventPublisher interface {
 
 // RabbitMQEventPublisher 基于RabbitMQ的事件发布器实现
 type RabbitMQEventPublisher struct {
-	rabbitmqClient *data.RabbitMQClient
+	data *data.Data
 }
 
 // NewRabbitMQEventPublisher 创建RabbitMQ事件发布器实例
-func NewRabbitMQEventPublisher(rabbitmqClient *data.RabbitMQClient) *RabbitMQEventPublisher {
+func NewRabbitMQEventPublisher(data *data.Data) *RabbitMQEventPublisher {
 	return &RabbitMQEventPublisher{
-		rabbitmqClient: rabbitmqClient,
+		data: data,
 	}
 }
 
@@ -35,7 +35,7 @@ func (p *RabbitMQEventPublisher) Publish(ctx context.Context, routingKey string,
 	}
 
 	// 发布消息
-	err = p.rabbitmqClient.Publish(ctx, routingKey, "", messageBody)
+	err = p.data.RabbitMQ(ctx).Publish(ctx, routingKey, "", messageBody)
 	if err != nil {
 		return err
 	}

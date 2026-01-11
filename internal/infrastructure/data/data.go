@@ -96,7 +96,7 @@ func (d *Data) Rdb(ctx context.Context) *redis.Client {
 	return d.rdb
 }
 
-// Rmq 获取RabbitMQ客户端
-func (d *Data) Rmq(ctx context.Context) *RabbitMQClient {
+// RabbitMQ 获取RabbitMQ客户端
+func (d *Data) RabbitMQ(ctx context.Context) *RabbitMQClient {
 	return d.rabbitmq
 }

@@ -61,7 +61,7 @@ func TestRabbitMQEventPublisher_RealConnection(t *testing.T) {
 	}
 
 	// 创建事件发布器
-	publisher := NewRabbitMQEventPublisher(testData.Rmq(context.Background()))
+	publisher := NewRabbitMQEventPublisher(testData.RabbitMQ(context.Background()))
 
 	// 测试发布多个消息，类似Java测试用例
 	messages := []string{
