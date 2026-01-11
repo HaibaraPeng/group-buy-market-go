@@ -21,6 +21,7 @@ import (
 	"group-buy-market-go/internal/infrastructure/dao"
 	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/dcc"
+	"group-buy-market-go/internal/infrastructure/event/listener"
 	"group-buy-market-go/internal/infrastructure/gateway"
 	"group-buy-market-go/internal/infrastructure/job"
 	"group-buy-market-go/internal/server"
@@ -84,7 +85,9 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	tradeSettlementRuleFilterFactory := filter2.NewTradeSettlementRuleFilterFactory(scRuleFilter, outTradeNoRuleFilter, settableRuleFilter, endRuleFilter)
 	tradeSettlementOrderService := settlement.NewTradeSettlementOrderService(logger, tradeRepository, tradePort, tradeSettlementRuleFilterFactory, groupBuyNotifyService)
 	jobJob := job.NewGroupBuyNotifyJob(logger, tradeSettlementOrderService)
-	app := newApp(logger, httpServer, jobJob)
+	teamSuccessEventListener := listener.NewTeamSuccessEventListener(rabbitMQClient, logger)
+	eventListenerManager := listener.NewEventListenerManager(teamSuccessEventListener, logger, dataData)
+	app := newApp(logger, httpServer, jobJob, eventListenerManager)
 	return app, func() {
 		cleanup2()
 		cleanup()

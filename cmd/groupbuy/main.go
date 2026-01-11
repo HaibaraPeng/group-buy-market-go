@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
+	"group-buy-market-go/internal/infrastructure/event/listener"
 	"group-buy-market-go/internal/infrastructure/job"
 	"os"
 
@@ -30,7 +31,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "configs/config.yaml", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, hs *http.Server, js *job.Job) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, js *job.Job, em *listener.EventListenerManager) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -40,6 +41,7 @@ func newApp(logger log.Logger, hs *http.Server, js *job.Job) *kratos.App {
 		kratos.Server(
 			hs,
 			js,
+			em,
 		),
 	)
 }
