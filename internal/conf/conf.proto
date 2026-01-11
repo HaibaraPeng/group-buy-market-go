@@ -1,4 +1,5 @@
 syntax = "proto3";
+
 package kratos.api;
 
 option go_package = "group-buy-market-go/internal/conf;conf";
@@ -6,39 +7,62 @@ option go_package = "group-buy-market-go/internal/conf;conf";
 import "google/protobuf/duration.proto";
 
 message Bootstrap {
-  Server server = 1;
-  Data data = 2;
+    Server server = 1;
+    Data data = 2;
 }
 
 message Server {
-  message HTTP {
-    string network = 1;
-    string addr = 2;
-    google.protobuf.Duration timeout = 3;
-  }
-  message GRPC {
-    string network = 1;
-    string addr = 2;
-    google.protobuf.Duration timeout = 3;
-  }
-  HTTP http = 1;
-  GRPC grpc = 2;
+    message HTTP {
+        string network = 1;
+        string addr = 2;
+        google.protobuf.Duration timeout = 3;
+    }
+    message GRPC {
+        string network = 1;
+        string addr = 2;
+        google.protobuf.Duration timeout = 3;
+    }
+    HTTP http = 1;
+    GRPC grpc = 2;
 }
 
 message Data {
-  message Database {
-    string driver = 1;
-    string source = 2;
-  }
-  message Redis {
-    string network = 1;
-    string addr = 2;
-    string password = 3;
-    int32 db = 4;
-    google.protobuf.Duration dial_timeout = 5;
-    google.protobuf.Duration read_timeout = 6;
-    google.protobuf.Duration write_timeout = 7;
-  }
-  Database database = 1;
-  Redis redis = 2;
+    message Database {
+        string driver = 1;
+        string source = 2;
+    }
+    message Redis {
+        string network = 1;
+        string addr = 2;
+        string password = 3;
+        int32 db = 4;
+        google.protobuf.Duration dial_timeout = 5;
+        google.protobuf.Duration read_timeout = 6;
+        google.protobuf.Duration write_timeout = 7;
+    }
+    message RabbitMQ {
+        string addresses = 1;               // Addresses
+        int32 port = 2;                     // Port
+        string username = 3;                // Username
+        string password = 4;                // Password
+        int32 delivery_mode = 5;           // Delivery mode (1=non-persistent, 2=persistent)
+        int32 prefetch_count = 6;          // Prefetch count for consumer
+
+        // Producer configuration
+        RabbitMQProducer producer = 7;
+    }
+
+    message RabbitMQProducer {
+        string exchange = 1;                // Exchange name for producer
+        RabbitMQTopicConfig topic_team_success = 2;  // Topic configuration
+    }
+
+    message RabbitMQTopicConfig {
+        string routing_key = 1;             // Routing key for topic
+        string queue = 2;                   // Queue name for topic
+    }
+
+    Database database = 1;
+    Redis redis = 2;
+    RabbitMQ rabbitmq = 3;
 }
