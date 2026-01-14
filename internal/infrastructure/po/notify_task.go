@@ -12,6 +12,10 @@ type NotifyTask struct {
 	ActivityId int64 `json:"activity_id" gorm:"column:activity_id"`
 	// Group team ID
 	TeamId string `json:"team_id" gorm:"column:team_id"`
+	// Notify type (HTTP, MQ)
+	NotifyType string `json:"notify_type" gorm:"column:notify_type"`
+	// Notify message
+	NotifyMQ string `json:"notify_mq" gorm:"column:notify_mq"`
 	// Callback URL
 	NotifyUrl string `json:"notify_url" gorm:"column:notify_url"`
 	// Callback count
