@@ -44,5 +44,6 @@ func (f *EndRuleFilter) Apply(ctx context.Context, command *model.TradeSettlemen
 		Status:         groupBuyTeamEntity.Status,
 		ValidStartTime: groupBuyTeamEntity.ValidStartTime,
 		ValidEndTime:   groupBuyTeamEntity.ValidEndTime,
+		NotifyConfigVO: groupBuyTeamEntity.NotifyConfigVO,
 	}, nil
 }

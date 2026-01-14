@@ -63,7 +63,7 @@ func (s *TradeSettlementOrderService) SettlementMarketPayOrder(ctx context.Conte
 		Status:         tradeSettlementRuleFilterBackEntity.Status,
 		ValidStartTime: tradeSettlementRuleFilterBackEntity.ValidStartTime,
 		ValidEndTime:   tradeSettlementRuleFilterBackEntity.ValidEndTime,
-		NotifyUrl:      tradeSettlementRuleFilterBackEntity.NotifyUrl,
+		NotifyConfigVO: tradeSettlementRuleFilterBackEntity.NotifyConfigVO,
 	}
 
 	// 3. 构建聚合对象
