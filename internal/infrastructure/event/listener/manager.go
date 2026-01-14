@@ -47,11 +47,3 @@ func (m *EventListenerManager) Stop(ctx context.Context) error {
 	m.logger.Info("正在停止事件监听器...")
 	return nil
 }
-
-// Implement transport.Service interface
-func (m *EventListenerManager) Run() error {
-	// Since the event listeners are initialized in Start(), we just keep this method for interface compliance
-	// Actual event processing happens in background goroutines started by Listen methods
-	<-make(chan struct{}) // Block forever, actual work happens in background
-	return nil
-}
