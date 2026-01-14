@@ -103,8 +103,8 @@ type GroupBuyTeamEntity struct {
 	ValidStartTime time.Time `json:"validStartTime"`
 	// 拼团结束时间 - 拼团有效时长
 	ValidEndTime time.Time `json:"validEndTime"`
-	// 回调地址
-	NotifyUrl string `json:"notifyUrl"`
+	// 回调配置
+	NotifyConfigVO *NotifyConfigVO `json:"notifyConfigVO"`
 }
 
 // TradePaySuccessEntity 交易支付成功实体

@@ -30,6 +30,18 @@ const (
 	MQ NotifyTypeEnumVO = "MQ"
 )
 
+// NotifyTypeEnumVOValueOf 将字符串转换为NotifyTypeEnumVO
+func NotifyTypeEnumVOValueOf(s string) NotifyTypeEnumVO {
+	switch s {
+	case "HTTP":
+		return HTTP
+	case "MQ":
+		return MQ
+	default:
+		return ""
+	}
+}
+
 // NotifyConfigVO 回调配置值对象
 type NotifyConfigVO struct {
 	// 回调方式；MQ、HTTP

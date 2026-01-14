@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"group-buy-market-go/internal/conf"
 	"group-buy-market-go/internal/infrastructure/data"
 	"math/rand"
 	"time"
@@ -21,6 +22,7 @@ type TradeRepository struct {
 	groupBuyActivityDAO  dao.GroupBuyActivityDAO // 添加活动DAO
 	notifyTaskDAO        dao.NotifyTaskDAO       // 添加通知任务DAO
 	dcc                  *dcc.DCC                // 添加DCC服务
+	config               *conf.Data
 }
 
 // NewTradeRepository creates a new trade repository
@@ -31,6 +33,7 @@ func NewTradeRepository(
 	groupBuyActivityDAO dao.GroupBuyActivityDAO,
 	notifyTaskDAO dao.NotifyTaskDAO,
 	dcc *dcc.DCC, // 添加DCC服务
+	config *conf.Data,
 ) *TradeRepository {
 	return &TradeRepository{
 		data:                 data,
@@ -39,6 +42,7 @@ func NewTradeRepository(
 		groupBuyActivityDAO:  groupBuyActivityDAO,
 		notifyTaskDAO:        notifyTaskDAO,
 		dcc:                  dcc, // 初始化DCC服务
+		config:               config,
 	}
 }
 
@@ -231,6 +235,19 @@ func (r *TradeRepository) QueryGroupBuyTeamByTeamId(ctx context.Context, teamId 
 		return nil, nil
 	}
 
+	// 处理可能为空的 NotifyType，默认为 HTTP
+	notifyType := groupBuyOrder.NotifyType
+	if notifyType == "" {
+		notifyType = "HTTP"
+	}
+
+	// 创建 NotifyConfigVO 对象
+	notifyConfigVO := &model.NotifyConfigVO{
+		NotifyType: model.NotifyTypeEnumVOValueOf(notifyType),
+		NotifyUrl:  groupBuyOrder.NotifyUrl,
+		NotifyMQ:   r.config.Rabbitmq.Producer.TopicTeamSuccess.RoutingKey,
+	}
+
 	entity := &model.GroupBuyTeamEntity{
 		TeamId:         groupBuyOrder.TeamId,
 		ActivityId:     groupBuyOrder.ActivityId,
@@ -240,7 +257,7 @@ func (r *TradeRepository) QueryGroupBuyTeamByTeamId(ctx context.Context, teamId 
 		Status:         model.GroupBuyOrderEnumVOValueOf(groupBuyOrder.Status),
 		ValidStartTime: groupBuyOrder.ValidStartTime,
 		ValidEndTime:   groupBuyOrder.ValidEndTime,
-		NotifyUrl:      groupBuyOrder.NotifyUrl,
+		NotifyConfigVO: notifyConfigVO,
 	}
 
 	return entity, nil
@@ -296,7 +313,7 @@ func (r *TradeRepository) SettlementMarketPayOrder(ctx context.Context, groupBuy
 			notifyTask := &po.NotifyTask{
 				ActivityId:    groupBuyTeamEntity.ActivityId,
 				TeamId:        groupBuyTeamEntity.TeamId,
-				NotifyUrl:     groupBuyTeamEntity.NotifyUrl,
+				NotifyUrl:     groupBuyTeamEntity.NotifyConfigVO.NotifyUrl,
 				NotifyCount:   0,
 				NotifyStatus:  0,
 				ParameterJson: "",
