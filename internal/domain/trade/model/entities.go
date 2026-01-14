@@ -175,19 +175,23 @@ type TradeSettlementRuleFilterBackEntity struct {
 	NotifyConfigVO *NotifyConfigVO `json:"notifyConfigVO"`
 }
 
-// NotifyTaskEntity 回调任务实体
+// NotifyTaskEntity 通知任务实体
 type NotifyTaskEntity struct {
 	// 拼单组队ID
 	TeamId string `json:"teamId"`
 	// 回调接口
 	NotifyUrl string `json:"notifyUrl"`
+	// 回调类型
+	NotifyType NotifyTypeEnumVO `json:"notifyType"`
+	// 回调消息
+	NotifyMQ string `json:"notifyMQ"`
 	// 回调次数
 	NotifyCount int `json:"notifyCount"`
 	// 参数对象
 	ParameterJson string `json:"parameterJson"`
 }
 
-// LockKey 生成锁键
+// LockKey 生成分布式锁的键
 func (n *NotifyTaskEntity) LockKey() string {
-	return "notify_job_lock_key_" + n.TeamId
+	return "notify_task_lock:" + n.TeamId
 }

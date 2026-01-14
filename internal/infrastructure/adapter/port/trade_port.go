@@ -9,6 +9,7 @@ import (
 
 	"group-buy-market-go/internal/domain/trade/model"
 	"group-buy-market-go/internal/infrastructure/data"
+	"group-buy-market-go/internal/infrastructure/event/publish"
 	"group-buy-market-go/internal/infrastructure/gateway"
 )
 
@@ -18,10 +19,11 @@ type TradePort struct {
 	groupBuyNotifyService *gateway.GroupBuyNotifyService
 	data                  *data.Data
 	redsync               *redsync.Redsync
+	publisher             publish.EventPublisher
 }
 
 // NewTradePort 创建新的交易端口实例
-func NewTradePort(groupBuyNotifyService *gateway.GroupBuyNotifyService, data *data.Data) *TradePort {
+func NewTradePort(groupBuyNotifyService *gateway.GroupBuyNotifyService, data *data.Data, publisher publish.EventPublisher) *TradePort {
 	pool := goredis.NewPool(data.Rdb(context.Background()))
 	redsync := redsync.New(pool)
 
@@ -29,6 +31,7 @@ func NewTradePort(groupBuyNotifyService *gateway.GroupBuyNotifyService, data *da
 		groupBuyNotifyService: groupBuyNotifyService,
 		data:                  data,
 		redsync:               redsync,
+		publisher:             publisher,
 	}
 }
 
@@ -44,16 +47,32 @@ func (t *TradePort) GroupBuyNotify(ctx context.Context, notifyTask *model.Notify
 	}
 	defer mutex.Unlock()
 
-	// 无效的 notifyUrl 则直接返回成功
-	if notifyTask.NotifyUrl == "" || notifyTask.NotifyUrl == "暂无" {
+	// HTTP回调方式
+	if notifyTask.NotifyType == model.HTTP {
+		// 无效的 notifyUrl 则直接返回成功
+		if notifyTask.NotifyUrl == "" || notifyTask.NotifyUrl == "暂无" {
+			return string(model.SUCCESS), nil
+		}
+
+		// 调用拼团回调服务
+		result, err := t.groupBuyNotifyService.GroupBuyNotify(ctx, notifyTask.NotifyUrl, notifyTask.ParameterJson)
+		if err != nil {
+			return string(model.NULL), err
+		}
+
+		return result, nil
+	}
+
+	// MQ回调方式
+	if notifyTask.NotifyType == model.MQ {
+		// 发布MQ消息
+		err := t.publisher.Publish(ctx, notifyTask.NotifyMQ, notifyTask.ParameterJson)
+		if err != nil {
+			return string(model.NULL), err
+		}
+
 		return string(model.SUCCESS), nil
 	}
 
-	// 调用拼团回调服务
-	result, err := t.groupBuyNotifyService.GroupBuyNotify(ctx, notifyTask.NotifyUrl, notifyTask.ParameterJson)
-	if err != nil {
-		return string(model.NULL), err
-	}
-
-	return result, nil
+	return string(model.SUCCESS), nil
 }
