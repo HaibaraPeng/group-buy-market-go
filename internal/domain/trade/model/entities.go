@@ -40,7 +40,8 @@ type PayDiscountEntity struct {
 	DeductionPrice float64 `json:"deductionPrice"`
 	PayPrice       float64 `json:"payPrice"`
 	OutTradeNo     string  `json:"outTradeNo"`
-	NotifyUrl      string  `json:"notifyUrl"`
+	// 回调配置
+	NotifyConfigVO *NotifyConfigVO `json:"notifyConfigVO"`
 }
 
 // GroupBuyActivityEntity 拼团活动实体对象

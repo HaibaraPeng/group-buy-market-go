@@ -42,6 +42,18 @@ func NotifyTypeEnumVOValueOf(s string) NotifyTypeEnumVO {
 	}
 }
 
+// String 返回NotifyTypeEnumVO的字符串表示
+func (n NotifyTypeEnumVO) String() string {
+	switch n {
+	case HTTP:
+		return "HTTP"
+	case MQ:
+		return "MQ"
+	default:
+		return ""
+	}
+}
+
 // NotifyConfigVO 回调配置值对象
 type NotifyConfigVO struct {
 	// 回调方式；MQ、HTTP

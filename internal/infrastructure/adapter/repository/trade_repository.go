@@ -78,6 +78,7 @@ func (r *TradeRepository) LockMarketPayOrder(ctx context.Context, groupBuyOrderA
 	userEntity := groupBuyOrderAggregate.UserEntity
 	payActivityEntity := groupBuyOrderAggregate.PayActivityEntity
 	payDiscountEntity := groupBuyOrderAggregate.PayDiscountEntity
+	notifyConfigVO := payDiscountEntity.NotifyConfigVO
 	userTakeOrderCount := groupBuyOrderAggregate.UserTakeOrderCount // 获取用户参与订单次数
 
 	// Check if there is a group - teamId is empty - new group, not empty - existing group
@@ -104,7 +105,8 @@ func (r *TradeRepository) LockMarketPayOrder(ctx context.Context, groupBuyOrderA
 			LockCount:      1,
 			ValidStartTime: currentTime,
 			ValidEndTime:   validEndTime,
-			NotifyUrl:      payDiscountEntity.NotifyUrl,
+			NotifyType:     notifyConfigVO.NotifyType.String(),
+			NotifyUrl:      notifyConfigVO.NotifyUrl, // 使用notifyConfigVO中的NotifyUrl
 		}
 
 		// Insert record
