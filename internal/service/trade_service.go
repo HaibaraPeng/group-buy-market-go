@@ -126,7 +126,11 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 			DeductionPrice: trialBalanceEntity.DeductionPrice,
 			PayPrice:       trialBalanceEntity.PayPrice,
 			OutTradeNo:     outTradeNo,
-			NotifyUrl:      notifyUrl,
+			NotifyConfigVO: &trade_model.NotifyConfigVO{
+				NotifyType: trade_model.NotifyTypeEnumVOValueOf(req.NotifyConfig.NotifyType),
+				NotifyMQ:   req.NotifyConfig.NotifyMq,
+				NotifyUrl:  req.NotifyConfig.NotifyUrl,
+			},
 		})
 	if err != nil {
 		return nil, fmt.Errorf("锁单失败: %w", err)
