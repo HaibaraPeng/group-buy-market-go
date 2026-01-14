@@ -34,6 +34,8 @@ type GroupBuyOrder struct {
 	ValidStartTime time.Time `json:"valid_start_time" gorm:"column:valid_start_time"`
 	// Valid end time for group buying
 	ValidEndTime time.Time `json:"valid_end_time" gorm:"column:valid_end_time"`
+	// Notify type (HTTP, MQ)
+	NotifyType string `json:"notify_type" gorm:"column:notify_type"`
 	// Notify URL
 	NotifyUrl string `json:"notify_url" gorm:"column:notify_url"`
 	// Creation time
