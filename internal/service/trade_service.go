@@ -44,12 +44,12 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 	activityId := req.ActivityId
 	outTradeNo := req.OutTradeNo
 	teamId := req.TeamId
-	notifyUrl := req.NotifyUrl
 
 	s.log.WithContext(ctx).Infof("营销交易锁单:%s LockMarketPayOrderRequest:%+v", userId, req)
 
 	// 检查必要参数
-	if userId == "" || source == "" || channel == "" || goodsId == "" || activityId == 0 {
+	if userId == "" || source == "" || channel == "" || goodsId == "" || activityId == 0 ||
+		(req.NotifyConfig != nil && req.NotifyConfig.NotifyType == "HTTP" && req.NotifyConfig.NotifyUrl == "") {
 		return nil, fmt.Errorf("非法参数")
 	}
 
