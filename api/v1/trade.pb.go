@@ -30,8 +30,8 @@ type LockMarketPayOrderRequest struct {
 	GoodsId       string                 `protobuf:"bytes,4,opt,name=goods_id,json=goodsId,proto3" json:"goods_id,omitempty"`
 	Source        string                 `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"`
 	Channel       string                 `protobuf:"bytes,6,opt,name=channel,proto3" json:"channel,omitempty"`
-	NotifyUrl     string                 `protobuf:"bytes,7,opt,name=notify_url,json=notifyUrl,proto3" json:"notify_url,omitempty"`
-	OutTradeNo    string                 `protobuf:"bytes,8,opt,name=out_trade_no,json=outTradeNo,proto3" json:"out_trade_no,omitempty"`
+	OutTradeNo    string                 `protobuf:"bytes,7,opt,name=out_trade_no,json=outTradeNo,proto3" json:"out_trade_no,omitempty"`
+	NotifyConfig  *NotifyConfig          `protobuf:"bytes,8,opt,name=notify_config,json=notifyConfig,proto3" json:"notify_config,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -108,16 +108,76 @@ func (x *LockMarketPayOrderRequest) GetChannel() string {
 	return ""
 }
 
-func (x *LockMarketPayOrderRequest) GetNotifyUrl() string {
+func (x *LockMarketPayOrderRequest) GetOutTradeNo() string {
 	if x != nil {
-		return x.NotifyUrl
+		return x.OutTradeNo
 	}
 	return ""
 }
 
-func (x *LockMarketPayOrderRequest) GetOutTradeNo() string {
+func (x *LockMarketPayOrderRequest) GetNotifyConfig() *NotifyConfig {
 	if x != nil {
-		return x.OutTradeNo
+		return x.NotifyConfig
+	}
+	return nil
+}
+
+type NotifyConfig struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	NotifyType    string                 `protobuf:"bytes,1,opt,name=notify_type,json=notifyType,proto3" json:"notify_type,omitempty"`
+	NotifyMq      string                 `protobuf:"bytes,2,opt,name=notify_mq,json=notifyMq,proto3" json:"notify_mq,omitempty"`
+	NotifyUrl     string                 `protobuf:"bytes,3,opt,name=notify_url,json=notifyUrl,proto3" json:"notify_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NotifyConfig) Reset() {
+	*x = NotifyConfig{}
+	mi := &file_api_v1_trade_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NotifyConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NotifyConfig) ProtoMessage() {}
+
+func (x *NotifyConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_api_v1_trade_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NotifyConfig.ProtoReflect.Descriptor instead.
+func (*NotifyConfig) Descriptor() ([]byte, []int) {
+	return file_api_v1_trade_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *NotifyConfig) GetNotifyType() string {
+	if x != nil {
+		return x.NotifyType
+	}
+	return ""
+}
+
+func (x *NotifyConfig) GetNotifyMq() string {
+	if x != nil {
+		return x.NotifyMq
+	}
+	return ""
+}
+
+func (x *NotifyConfig) GetNotifyUrl() string {
+	if x != nil {
+		return x.NotifyUrl
 	}
 	return ""
 }
@@ -133,7 +193,7 @@ type LockMarketPayOrderReply struct {
 
 func (x *LockMarketPayOrderReply) Reset() {
 	*x = LockMarketPayOrderReply{}
-	mi := &file_api_v1_trade_proto_msgTypes[1]
+	mi := &file_api_v1_trade_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -145,7 +205,7 @@ func (x *LockMarketPayOrderReply) String() string {
 func (*LockMarketPayOrderReply) ProtoMessage() {}
 
 func (x *LockMarketPayOrderReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v1_trade_proto_msgTypes[1]
+	mi := &file_api_v1_trade_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -158,7 +218,7 @@ func (x *LockMarketPayOrderReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LockMarketPayOrderReply.ProtoReflect.Descriptor instead.
 func (*LockMarketPayOrderReply) Descriptor() ([]byte, []int) {
-	return file_api_v1_trade_proto_rawDescGZIP(), []int{1}
+	return file_api_v1_trade_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *LockMarketPayOrderReply) GetOrderId() string {
@@ -186,7 +246,7 @@ var File_api_v1_trade_proto protoreflect.FileDescriptor
 
 const file_api_v1_trade_proto_rawDesc = "" +
 	"\n" +
-	"\x12api/v1/trade.proto\x12\x06api.v1\x1a\x1cgoogle/api/annotations.proto\"\xfc\x01\n" +
+	"\x12api/v1/trade.proto\x12\x06api.v1\x1a\x1cgoogle/api/annotations.proto\"\x98\x02\n" +
 	"\x19LockMarketPayOrderRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
 	"\ateam_id\x18\x02 \x01(\tR\x06teamId\x12\x1f\n" +
@@ -194,11 +254,16 @@ const file_api_v1_trade_proto_rawDesc = "" +
 	"activityId\x12\x19\n" +
 	"\bgoods_id\x18\x04 \x01(\tR\agoodsId\x12\x16\n" +
 	"\x06source\x18\x05 \x01(\tR\x06source\x12\x18\n" +
-	"\achannel\x18\x06 \x01(\tR\achannel\x12\x1d\n" +
+	"\achannel\x18\x06 \x01(\tR\achannel\x12 \n" +
+	"\fout_trade_no\x18\a \x01(\tR\n" +
+	"outTradeNo\x129\n" +
+	"\rnotify_config\x18\b \x01(\v2\x14.api.v1.NotifyConfigR\fnotifyConfig\"k\n" +
+	"\fNotifyConfig\x12\x1f\n" +
+	"\vnotify_type\x18\x01 \x01(\tR\n" +
+	"notifyType\x12\x1b\n" +
+	"\tnotify_mq\x18\x02 \x01(\tR\bnotifyMq\x12\x1d\n" +
 	"\n" +
-	"notify_url\x18\a \x01(\tR\tnotifyUrl\x12 \n" +
-	"\fout_trade_no\x18\b \x01(\tR\n" +
-	"outTradeNo\"\x8b\x01\n" +
+	"notify_url\x18\x03 \x01(\tR\tnotifyUrl\"\x8b\x01\n" +
 	"\x17LockMarketPayOrderReply\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\tR\aorderId\x12'\n" +
 	"\x0fdeduction_price\x18\x02 \x01(\x01R\x0edeductionPrice\x12,\n" +
@@ -218,19 +283,21 @@ func file_api_v1_trade_proto_rawDescGZIP() []byte {
 	return file_api_v1_trade_proto_rawDescData
 }
 
-var file_api_v1_trade_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_api_v1_trade_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_api_v1_trade_proto_goTypes = []any{
 	(*LockMarketPayOrderRequest)(nil), // 0: api.v1.LockMarketPayOrderRequest
-	(*LockMarketPayOrderReply)(nil),   // 1: api.v1.LockMarketPayOrderReply
+	(*NotifyConfig)(nil),              // 1: api.v1.NotifyConfig
+	(*LockMarketPayOrderReply)(nil),   // 2: api.v1.LockMarketPayOrderReply
 }
 var file_api_v1_trade_proto_depIdxs = []int32{
-	0, // 0: api.v1.TradeHTTP.LockMarketPayOrder:input_type -> api.v1.LockMarketPayOrderRequest
-	1, // 1: api.v1.TradeHTTP.LockMarketPayOrder:output_type -> api.v1.LockMarketPayOrderReply
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: api.v1.LockMarketPayOrderRequest.notify_config:type_name -> api.v1.NotifyConfig
+	0, // 1: api.v1.TradeHTTP.LockMarketPayOrder:input_type -> api.v1.LockMarketPayOrderRequest
+	2, // 2: api.v1.TradeHTTP.LockMarketPayOrder:output_type -> api.v1.LockMarketPayOrderReply
+	2, // [2:3] is the sub-list for method output_type
+	1, // [1:2] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_api_v1_trade_proto_init() }
@@ -244,7 +311,7 @@ func file_api_v1_trade_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_v1_trade_proto_rawDesc), len(file_api_v1_trade_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -22,7 +22,7 @@ const _ = http.SupportPackageIsVersion1
 const OperationTagHTTPExecTagBatchJob = "/api.v1.TagHTTP/ExecTagBatchJob"
 
 type TagHTTPHTTPServer interface {
-	// ExecTagBatchJob MarketTrial handles market trial requests
+	// ExecTagBatchJob ExecTagBatchJob
 	ExecTagBatchJob(context.Context, *ExecTagBatchJobRequest) (*ExecTagBatchJobReply, error)
 }
 
@@ -54,7 +54,7 @@ func _TagHTTP_ExecTagBatchJob0_HTTP_Handler(srv TagHTTPHTTPServer) func(ctx http
 }
 
 type TagHTTPHTTPClient interface {
-	// ExecTagBatchJob MarketTrial handles market trial requests
+	// ExecTagBatchJob ExecTagBatchJob
 	ExecTagBatchJob(ctx context.Context, req *ExecTagBatchJobRequest, opts ...http.CallOption) (rsp *ExecTagBatchJobReply, err error)
 }
 
@@ -66,7 +66,7 @@ func NewTagHTTPHTTPClient(client *http.Client) TagHTTPHTTPClient {
 	return &TagHTTPHTTPClientImpl{client}
 }
 
-// ExecTagBatchJob MarketTrial handles market trial requests
+// ExecTagBatchJob ExecTagBatchJob
 func (c *TagHTTPHTTPClientImpl) ExecTagBatchJob(ctx context.Context, in *ExecTagBatchJobRequest, opts ...http.CallOption) (*ExecTagBatchJobReply, error) {
 	var out ExecTagBatchJobReply
 	pattern := "/tag/execTagBatchJob"

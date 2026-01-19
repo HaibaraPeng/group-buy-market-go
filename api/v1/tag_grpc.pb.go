@@ -26,9 +26,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// GroupBuyService HTTP API
+// TagService HTTP API
 type TagHTTPClient interface {
-	// MarketTrial handles market trial requests
+	// ExecTagBatchJob
 	ExecTagBatchJob(ctx context.Context, in *ExecTagBatchJobRequest, opts ...grpc.CallOption) (*ExecTagBatchJobReply, error)
 }
 
@@ -54,9 +54,9 @@ func (c *tagHTTPClient) ExecTagBatchJob(ctx context.Context, in *ExecTagBatchJob
 // All implementations must embed UnimplementedTagHTTPServer
 // for forward compatibility.
 //
-// GroupBuyService HTTP API
+// TagService HTTP API
 type TagHTTPServer interface {
-	// MarketTrial handles market trial requests
+	// ExecTagBatchJob
 	ExecTagBatchJob(context.Context, *ExecTagBatchJobRequest) (*ExecTagBatchJobReply, error)
 	mustEmbedUnimplementedTagHTTPServer()
 }
