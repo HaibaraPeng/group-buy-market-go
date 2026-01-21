@@ -278,7 +278,7 @@ func (r *TradeRepository) SettlementMarketPayOrder(ctx context.Context, groupBuy
 	groupBuyOrderListReq := &po.GroupBuyOrderList{
 		UserId:       userEntity.UserId,
 		OutTradeNo:   tradePaySuccessEntity.OutTradeNo,
-		OutTradeTime: tradePaySuccessEntity.OutTradeTime,
+		OutTradeTime: &tradePaySuccessEntity.OutTradeTime,
 	}
 	err := r.data.InTx(ctx, func(ctx context.Context) error {
 		rowsAffected, err := r.groupBuyOrderListDAO.UpdateOrderStatus2COMPLETE(ctx, groupBuyOrderListReq)

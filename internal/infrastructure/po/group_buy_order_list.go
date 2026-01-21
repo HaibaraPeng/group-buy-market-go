@@ -37,7 +37,7 @@ type GroupBuyOrderList struct {
 	// External trade number - ensures external call uniqueness
 	OutTradeNo string `json:"out_trade_no" gorm:"column:out_trade_no"`
 	// External trade time
-	OutTradeTime time.Time `json:"out_trade_time" gorm:"column:out_trade_time"`
+	OutTradeTime *time.Time `json:"out_trade_time" gorm:"column:out_trade_time"`
 	// 唯一业务ID
 	BizId string `json:"biz_id" gorm:"column:biz_id"`
 	// Creation time
