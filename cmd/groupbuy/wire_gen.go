@@ -22,6 +22,7 @@ import (
 	"group-buy-market-go/internal/infrastructure/data"
 	"group-buy-market-go/internal/infrastructure/dcc"
 	"group-buy-market-go/internal/infrastructure/event/listener"
+	"group-buy-market-go/internal/infrastructure/event/publish"
 	"group-buy-market-go/internal/infrastructure/gateway"
 	"group-buy-market-go/internal/infrastructure/job"
 	"group-buy-market-go/internal/server"
@@ -69,7 +70,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	tagService := service.NewTagService(logger, tagRepository)
 	dccService := service.NewDccService(logger, dccDCC)
 	notifyTaskDAO := dao.NewMySQLNotifyTaskDAO(dataData)
-	tradeRepository := repository.NewTradeRepository(dataData, groupBuyOrderDAO, groupBuyOrderListDAO, groupBuyActivityDAO, notifyTaskDAO, dccDCC)
+	tradeRepository := repository.NewTradeRepository(dataData, groupBuyOrderDAO, groupBuyOrderListDAO, groupBuyActivityDAO, notifyTaskDAO, dccDCC, confData)
 	activityUsabilityRuleFilter := filter.NewActivityUsabilityRuleFilter(logger, tradeRepository)
 	userTakeLimitRuleFilter := filter.NewUserTakeLimitRuleFilter(logger, tradeRepository)
 	tradeLockRuleFilterFactory := filter.NewTradeLockRuleFilterFactory(activityUsabilityRuleFilter, userTakeLimitRuleFilter)
@@ -77,7 +78,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	tradeService := service.NewTradeService(logger, tradeLockOrder, rootNode)
 	httpServer := server.NewHTTPServer(confServer, indexService, tagService, dccService, tradeService, logger)
 	groupBuyNotifyService := gateway.NewGroupBuyNotifyService()
-	tradePort := port.NewTradePort(groupBuyNotifyService, dataData)
+	rabbitMQEventPublisher := publish.NewRabbitMQEventPublisher(dataData)
+	tradePort := port.NewTradePort(groupBuyNotifyService, dataData, rabbitMQEventPublisher)
 	scRuleFilter := filter2.NewSCRuleFilter(logger, tradeRepository)
 	outTradeNoRuleFilter := filter2.NewOutTradeNoRuleFilter(logger, tradeRepository)
 	settableRuleFilter := filter2.NewSettableRuleFilter(logger, tradeRepository)
