@@ -19,11 +19,11 @@ type TradePort struct {
 	groupBuyNotifyService *gateway.GroupBuyNotifyService
 	data                  *data.Data
 	redsync               *redsync.Redsync
-	publisher             publish.EventPublisher
+	publisher             publish.RabbitMQEventPublisher
 }
 
 // NewTradePort 创建新的交易端口实例
-func NewTradePort(groupBuyNotifyService *gateway.GroupBuyNotifyService, data *data.Data, publisher publish.EventPublisher) *TradePort {
+func NewTradePort(groupBuyNotifyService *gateway.GroupBuyNotifyService, data *data.Data, publisher publish.RabbitMQEventPublisher) *TradePort {
 	pool := goredis.NewPool(data.Rdb(context.Background()))
 	redsync := redsync.New(pool)
 
