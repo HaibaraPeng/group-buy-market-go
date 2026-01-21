@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/google/wire"
 	"group-buy-market-go/internal/infrastructure/data"
 )
 
@@ -48,6 +47,3 @@ func (p *RabbitMQEventPublisher) PublishTeamSuccessEvent(ctx context.Context, pa
 	// 使用配置中的团队成功事件路由键
 	return p.Publish(ctx, "topic.team_success", payload)
 }
-
-// ProviderSet 提供依赖注入集合
-var ProviderSet = wire.NewSet(NewRabbitMQEventPublisher)
