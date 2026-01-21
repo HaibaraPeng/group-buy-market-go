@@ -65,7 +65,9 @@ func (r *TradeRepository) QueryMarketPayOrderEntityByOutTradeNo(ctx context.Cont
 	entity := &model.MarketPayOrderEntity{
 		TeamId:                 groupBuyOrderListRes.TeamId,
 		OrderId:                groupBuyOrderListRes.OrderId,
+		OriginalPrice:          groupBuyOrderListRes.OriginalPrice,
 		DeductionPrice:         groupBuyOrderListRes.DeductionPrice,
+		PayPrice:               groupBuyOrderListRes.PayPrice,
 		TradeOrderStatusEnumVO: model.TradeOrderStatusEnumVOValueOf(groupBuyOrderListRes.Status),
 	}
 
@@ -140,6 +142,7 @@ func (r *TradeRepository) LockMarketPayOrder(ctx context.Context, groupBuyOrderA
 		Channel:        payDiscountEntity.Channel,
 		OriginalPrice:  payDiscountEntity.OriginalPrice,
 		DeductionPrice: payDiscountEntity.DeductionPrice,
+		PayPrice:       payDiscountEntity.PayPrice,
 		Status:         model.CREATE.Code(),
 		OutTradeNo:     payDiscountEntity.OutTradeNo,
 		// 构建 bizId 唯一值；活动id_用户id_参与次数累加

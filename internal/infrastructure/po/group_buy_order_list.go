@@ -30,6 +30,8 @@ type GroupBuyOrderList struct {
 	OriginalPrice float64 `json:"original_price" gorm:"column:original_price"`
 	// Deduction price
 	DeductionPrice float64 `json:"deduction_price" gorm:"column:deduction_price"`
+	// Pay price
+	PayPrice float64 `json:"pay_price" gorm:"column:pay_price"`
 	// Status (0-initial locked, 1-consumption completed)
 	Status int `json:"status" gorm:"column:status"`
 	// External trade number - ensures external call uniqueness

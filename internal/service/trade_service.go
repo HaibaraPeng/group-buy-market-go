@@ -115,6 +115,7 @@ func (s *TradeService) LockMarketPayOrder(ctx context.Context, req *v1.LockMarke
 			ActivityName: groupBuyActivityDiscountVO.ActivityName,
 			StartTime:    groupBuyActivityDiscountVO.StartTime,
 			EndTime:      groupBuyActivityDiscountVO.EndTime,
+			ValidTime:    groupBuyActivityDiscountVO.ValidTime,
 			TargetCount:  groupBuyActivityDiscountVO.Target,
 		},
 		&trade_model.PayDiscountEntity{

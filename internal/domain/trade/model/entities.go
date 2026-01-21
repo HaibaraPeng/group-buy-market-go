@@ -8,8 +8,12 @@ type MarketPayOrderEntity struct {
 	TeamId string `json:"teamId"`
 	// 预购订单ID
 	OrderId string `json:"orderId"`
+	// 原始价格
+	OriginalPrice float64 `json:"originalPrice"`
 	// 折扣金额
 	DeductionPrice float64 `json:"deductionPrice"`
+	// 支付金额
+	PayPrice float64 `json:"payPrice"`
 	// 交易订单状态枚举
 	TradeOrderStatusEnumVO TradeOrderStatusEnumVO `json:"tradeOrderStatusEnumVO"`
 }
