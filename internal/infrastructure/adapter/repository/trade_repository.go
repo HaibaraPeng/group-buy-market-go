@@ -158,7 +158,9 @@ func (r *TradeRepository) LockMarketPayOrder(ctx context.Context, groupBuyOrderA
 
 	entity := &model.MarketPayOrderEntity{
 		OrderId:                orderId,
+		OriginalPrice:          payDiscountEntity.OriginalPrice,
 		DeductionPrice:         payDiscountEntity.DeductionPrice,
+		PayPrice:               payDiscountEntity.PayPrice,
 		TradeOrderStatusEnumVO: model.CREATE,
 	}
 
