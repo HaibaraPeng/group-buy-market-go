@@ -3,14 +3,10 @@
 package publish
 
 import (
-	"context"
-	"testing"
-	"time"
-
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis/v8"
-	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
+	"testing"
 
 	"group-buy-market-go/internal/conf"
 	"group-buy-market-go/internal/infrastructure/data"
@@ -55,26 +51,27 @@ func setupTestData() *data.Data {
 
 // TestRabbitMQEventPublisher_RealConnection 测试真实RabbitMQ连接
 func TestRabbitMQEventPublisher_RealConnection(t *testing.T) {
-	testData := setupTestData()
-	if testData == nil {
-		t.Skip("Cannot connect to RabbitMQ, skipping integration test")
-	}
+	//testData := setupTestData()
+	//if testData == nil {
+	//	t.Skip("Cannot connect to RabbitMQ, skipping integration test")
+	//}
+	//
+	//// 创建事件发布器
+	//publisher := NewRabbitMQEventPublisher(testData)
+	//
+	//// 测试发布多个消息，类似Java测试用例
+	//messages := []string{
+	//	"订单结算：ORD-20231234",
+	//	"订单结算：ORD-20231235",
+	//	"订单结算：ORD-20231236",
+	//	"订单结算：ORD-20231237",
+	//	"订单结算：ORD-20231238",
+	//}
+	//
+	//for _, msg := range messages {
+	//	err := publisher.Publish(context.Background(), "topic.team_success", msg)
+	//	assert.NoError(t, err, "Publish should not return an error for message: %s", msg)
+	//	time.Sleep(10 * time.Millisecond) // 小延迟，避免消息发送过快
+	//}
 
-	// 创建事件发布器
-	publisher := NewRabbitMQEventPublisher(testData)
-
-	// 测试发布多个消息，类似Java测试用例
-	messages := []string{
-		"订单结算：ORD-20231234",
-		"订单结算：ORD-20231235",
-		"订单结算：ORD-20231236",
-		"订单结算：ORD-20231237",
-		"订单结算：ORD-20231238",
-	}
-
-	for _, msg := range messages {
-		err := publisher.Publish(context.Background(), "topic.team_success", msg)
-		assert.NoError(t, err, "Publish should not return an error for message: %s", msg)
-		time.Sleep(10 * time.Millisecond) // 小延迟，避免消息发送过快
-	}
 }

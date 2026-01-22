@@ -39,7 +39,7 @@ func createTestIndexService() *IndexService {
 	}
 
 	// 创建测试用的Data实例
-	d := data.NewData(db, nil)
+	d := data.NewData(db, nil, nil)
 
 	// 创建所有需要的DAO实例
 	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(d)
@@ -178,7 +178,7 @@ func TestIndexService_Constructor(t *testing.T) {
 		t.Skip("Could not connect to test database, skipping test")
 	}
 
-	d := data.NewData(db, nil)
+	d := data.NewData(db, nil, nil)
 
 	// 创建所有需要的DAO实例
 	groupBuyActivityDAO := dao.NewMySQLGroupBuyActivityDAO(d)
