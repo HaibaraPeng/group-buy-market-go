@@ -40,9 +40,16 @@ func createTestRepository(data *data.Data) *repository.TradeRepository {
 	notifyTaskDAO := dao.NewMySQLNotifyTaskDAO(data)
 	// 创建DCC服务实例
 	dccService := dcc.NewDCC(data)
-	// 创建空的配置对象
-	var config *conf.Data
-	config.Rabbitmq.Producer.TopicTeamSuccess.RoutingKey = "topic.team_success"
+	// 创建空的配置对象并初始化
+	config := &conf.Data{
+		Rabbitmq: &conf.Data_RabbitMQ{
+			Producer: &conf.Data_RabbitMQProducer{
+				TopicTeamSuccess: &conf.Data_RabbitMQTopicConfig{
+					RoutingKey: "topic.team_success",
+				},
+			},
+		},
+	}
 
 	return repository.NewTradeRepository(
 		data,
