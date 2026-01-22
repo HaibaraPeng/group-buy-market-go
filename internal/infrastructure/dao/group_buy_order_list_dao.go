@@ -43,7 +43,7 @@ func (r *MySQLGroupBuyOrderListDAO) Insert(ctx context.Context, groupBuyOrderLis
 func (r *MySQLGroupBuyOrderListDAO) QueryGroupBuyOrderRecordByOutTradeNo(ctx context.Context, req *po.GroupBuyOrderList) (*po.GroupBuyOrderList, error) {
 	var groupBuyOrderList po.GroupBuyOrderList
 	err := r.data.DB(ctx).WithContext(ctx).Select("user_id", "team_id", "order_id", "activity_id", "start_time",
-		"end_time", "goods_id", "source", "channel", "original_price", "deduction_price", "status").
+		"end_time", "goods_id", "source", "channel", "original_price", "deduction_price", "pay_price", "status").
 		Where("out_trade_no = ? AND user_id = ? AND status = ?", req.OutTradeNo, req.UserId, 0).
 		First(&groupBuyOrderList).Error
 	if err != nil {

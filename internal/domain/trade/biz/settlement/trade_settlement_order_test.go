@@ -108,8 +108,8 @@ func TestTradeSettlementOrderService_SettlementMarketPayOrder_Integration(t *tes
 	tradePaySuccessEntity := &model.TradePaySuccessEntity{
 		Source:       "s01",
 		Channel:      "c01",
-		UserId:       "xfg04",
-		OutTradeNo:   "075605651839",
+		UserId:       "xfg03",
+		OutTradeNo:   "904941690333",
 		OutTradeTime: time.Now(),
 	}
 
