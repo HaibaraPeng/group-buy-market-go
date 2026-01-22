@@ -84,7 +84,7 @@ func (r *MySQLGroupBuyOrderDAO) QueryGroupBuyProgress(ctx context.Context, teamI
 func (r *MySQLGroupBuyOrderDAO) QueryGroupBuyTeamByTeamId(ctx context.Context, teamId string) (*po.GroupBuyOrder, error) {
 	var groupBuyOrder po.GroupBuyOrder
 	err := r.data.DB(ctx).WithContext(ctx).Select("team_id, activity_id, target_count, complete_count, lock_count, status, "+
-		"valid_start_time, valid_end_time, create_time, update_time").
+		"valid_start_time, valid_end_time, notify_type, notify_url, create_time, update_time").
 		Where("team_id = ?", teamId).
 		First(&groupBuyOrder).Error
 	if err != nil {
