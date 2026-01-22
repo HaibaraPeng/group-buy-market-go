@@ -4,6 +4,7 @@ import (
 	"context"
 	"group-buy-market-go/internal/infrastructure/adapter/port"
 	"group-buy-market-go/internal/infrastructure/data"
+	"group-buy-market-go/internal/infrastructure/event/publish"
 	"group-buy-market-go/internal/infrastructure/gateway"
 	"testing"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"group-buy-market-go/internal/conf"
 	"group-buy-market-go/internal/domain/trade/biz/settlement/filter"
 	"group-buy-market-go/internal/domain/trade/model"
 	"group-buy-market-go/internal/infrastructure/adapter/repository"
@@ -38,6 +40,8 @@ func createTestRepository(data *data.Data) *repository.TradeRepository {
 	notifyTaskDAO := dao.NewMySQLNotifyTaskDAO(data)
 	// 创建DCC服务实例
 	dccService := dcc.NewDCC(data)
+	// 创建空的配置对象
+	var config *conf.Data
 
 	return repository.NewTradeRepository(
 		data,
@@ -46,6 +50,7 @@ func createTestRepository(data *data.Data) *repository.TradeRepository {
 		groupBuyActivityDAO,
 		notifyTaskDAO,
 		dccService,
+		config,
 	)
 }
 
@@ -61,8 +66,11 @@ func TestTradeSettlementOrderService_SettlementMarketPayOrder_Integration(t *tes
 		Addr: "localhost:6379", // 测试环境地址，实际测试时可能需要根据环境调整
 	})
 
+	// 创建RabbitMQ客户端
+	rabbitmqClient := &data.RabbitMQClient{}
+
 	// 创建必要的DAO实例
-	d := data.NewData(db, rdb)
+	d := data.NewData(db, rdb, rabbitmqClient)
 
 	// 创建测试仓库
 	testRepo := createTestRepository(d)
@@ -82,8 +90,11 @@ func TestTradeSettlementOrderService_SettlementMarketPayOrder_Integration(t *tes
 	// 创建通知服务实例
 	notifyService := gateway.NewGroupBuyNotifyService()
 
+	// 创建事件发布器实例
+	publisher := &publish.RabbitMQEventPublisher{}
+
 	// 创建端口实例
-	port := port.NewTradePort(notifyService, d) // 需要传入notifyService和data
+	port := port.NewTradePort(notifyService, d, publisher) // 需要传入notifyService、data和publisher
 
 	// 创建真实的过滤器工厂
 	filterFactory := filter.NewTradeSettlementRuleFilterFactory(
